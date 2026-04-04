@@ -1,11 +1,7 @@
 module Demos.WorkerActor
 
-open Browser.Dom
-open Browser.Events
 open Browser.Workers
-open Browser.PubSub
-open Browser.Html.Elements
-open Browser.Html.Attrs
+open Browser.Html
 open Browser.Elmish.Core
 
 type Model = {
@@ -36,22 +32,30 @@ let update msg model =
         { model with WorkerStatus = s }, Cmd.none
 
 let view model dispatch =
-    article [class_ "worker-demo"] [
-        header [] [h2 [] [text "Worker Actor"]]
-        section [] [
-            p [] [text (sprintf "Status: %s" model.WorkerStatus)]
-            div [class_ "input-group"] [
-                input [
-                    type_ "text"
-                    value_ model.Input
+    article {
+        class' "worker-demo"
+        header { h2 "Worker Actor" }
+        section {
+            p (sprintf "Status: %s" model.WorkerStatus)
+            div {
+                class' "input-group"
+                input {
+                    type' "text"
+                    value' model.Input
                     placeholder "Message for worker..."
-                    onInput_ (fun s -> dispatch (InputChanged s))
-                ]
-                button [onClick_ (fun () -> dispatch SendToWorker)] [text "Send"]
-            ]
-            ul [] (model.Results |> List.map (fun r -> li [] [text r]))
-        ]
-    ]
+                    onInput (fun s -> dispatch (InputChanged s))
+                }
+                button {
+                    onClick (fun () -> dispatch SendToWorker)
+                    "Send"
+                }
+            }
+            ul {
+                for r in model.Results do
+                    li { r }
+            }
+        }
+    }
 
 let start () =
     run "worker-root" { Init = init; Update = update; View = view }

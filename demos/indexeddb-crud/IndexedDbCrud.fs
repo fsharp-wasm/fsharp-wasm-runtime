@@ -1,10 +1,7 @@
 module Demos.IndexedDbCrud
 
-open Browser.Dom
-open Browser.Events
 open Browser.IndexedDb
-open Browser.Html.Elements
-open Browser.Html.Attrs
+open Browser.Html
 open Browser.Elmish.Core
 
 type Model = {
@@ -62,23 +59,29 @@ let update msg model =
     | SetKeys keys -> { model with Keys = keys }, Cmd.none
 
 let view model dispatch =
-    article [class_ "indexeddb-demo"] [
-        header [] [h2 [] [text "IndexedDB CRUD"]]
-        section [] [
-            div [class_ "input-group"] [
-                input [type_ "text"; placeholder "Key"; value_ model.Key; onInput_ (fun s -> dispatch (KeyChanged s))]
-                input [type_ "text"; placeholder "Value"; value_ model.Value; onInput_ (fun s -> dispatch (ValueChanged s))]
-            ]
-            div [class_ "button-group"] [
-                button [onClick_ (fun () -> dispatch Save)] [text "Save"]
-                button [onClick_ (fun () -> dispatch Load)] [text "Load"]
-                button [onClick_ (fun () -> dispatch Delete)] [text "Delete"]
-                button [onClick_ (fun () -> dispatch ListKeys)] [text "List Keys"]
-            ]
-            p [] [text model.Result]
-            ul [] (model.Keys |> List.map (fun k -> li [] [text k]))
-        ]
-    ]
+    article {
+        class' "indexeddb-demo"
+        header { h2 "IndexedDB CRUD" }
+        section {
+            div {
+                class' "input-group"
+                input { type' "text"; placeholder "Key";   value' model.Key;   onInput (fun s -> dispatch (KeyChanged s)) }
+                input { type' "text"; placeholder "Value"; value' model.Value; onInput (fun s -> dispatch (ValueChanged s)) }
+            }
+            div {
+                class' "button-group"
+                button { onClick (fun () -> dispatch Save);     "Save" }
+                button { onClick (fun () -> dispatch Load);     "Load" }
+                button { onClick (fun () -> dispatch Delete);   "Delete" }
+                button { onClick (fun () -> dispatch ListKeys); "List Keys" }
+            }
+            p model.Result
+            ul {
+                for k in model.Keys do
+                    li { k }
+            }
+        }
+    }
 
 let start () =
     run "indexeddb-root" { Init = init; Update = update; View = view }

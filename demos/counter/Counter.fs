@@ -1,8 +1,7 @@
 module Demos.Counter
 
 open Browser.Elmish.Core
-open Browser.Html.Elements
-open Browser.Html.Attrs
+open Browser.Html
 
 type Model = { Count: int }
 
@@ -20,17 +19,19 @@ let update msg model =
     | Reset     -> { model with Count = 0 }, Cmd.none
 
 let view model dispatch =
-    article [class_ "counter-demo"] [
-        header [] [h2 [] [text "Counter"]]
-        section [] [
-            p [class_ "count-display"] [text (string model.Count)]
-            div [class_ "button-group"] [
-                button [onClick_ (fun () -> dispatch Decrement)] [text "−"]
-                button [onClick_ (fun () -> dispatch Reset)]     [text "Reset"]
-                button [onClick_ (fun () -> dispatch Increment)] [text "+"]
-            ]
-        ]
-    ]
+    article {
+        class' "counter-demo"
+        header { h2 "Counter" }
+        section {
+            el "p" { class' "count-display"; string model.Count }
+            div {
+                class' "button-group"
+                button { onClick (fun () -> dispatch Decrement); "−" }
+                button { onClick (fun () -> dispatch Reset);     "Reset" }
+                button { onClick (fun () -> dispatch Increment); "+" }
+            }
+        }
+    }
 
 let start () =
     run "counter-root" { Init = init; Update = update; View = view }

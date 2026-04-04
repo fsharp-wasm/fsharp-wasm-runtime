@@ -1,9 +1,7 @@
 module Demos.WebGpuBasic
 
-open Browser.Dom
 open Browser.Gpu
-open Browser.Html.Elements
-open Browser.Html.Attrs
+open Browser.Html
 open Browser.Elmish.Core
 
 type Model = {
@@ -31,21 +29,22 @@ let update msg model =
     | SetStatus s -> { model with Status = s }, Cmd.none
 
 let view model dispatch =
-    article [class_ "webgpu-demo"] [
-        header [] [h2 [] [text "WebGPU Basic"]]
-        section [] [
-            p [] [text model.Status]
-            button [onClick_ (fun () -> dispatch CheckAvailability)] [
-                text "Check WebGPU"
-            ]
-            (if model.IsAvailable then
-                div [] [
-                    canvas [id_ "webgpu-canvas"; attr_ "width" "400"; attr_ "height" "300"]
-                    p [] [text "WebGPU canvas ready for rendering"]
-                ]
-             else empty)
-        ]
-    ]
+    article {
+        class' "webgpu-demo"
+        header { h2 "WebGPU Basic" }
+        section {
+            p model.Status
+            button {
+                onClick (fun () -> dispatch CheckAvailability)
+                "Check WebGPU"
+            }
+            when' model.IsAvailable (
+                div {
+                    canvas { id "webgpu-canvas"; width' 400; height' 300 }
+                    p "WebGPU canvas ready for rendering"
+                })
+        }
+    }
 
 let start () =
     run "webgpu-root" { Init = init; Update = update; View = view }

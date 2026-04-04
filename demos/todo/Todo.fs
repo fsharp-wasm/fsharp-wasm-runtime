@@ -1,8 +1,7 @@
 module Demos.Todo
 
 open Browser.Elmish.Core
-open Browser.Html.Elements
-open Browser.Html.Attrs
+open Browser.Html
 
 type Todo = { Id: int; Text: string; Done: bool }
 
@@ -39,38 +38,50 @@ let update msg model =
         { model with Todos = model.Todos |> List.filter (fun t -> t.Id <> id) }, Cmd.none
 
 let viewTodo dispatch (todo: Todo) =
-    li [class_ (if todo.Done then "done" else "")] [
-        span [onClick_ (fun () -> dispatch (ToggleTodo todo.Id))] [
-            text (if todo.Done then "☑ " else "☐ ")
-            text todo.Text
-        ]
-        button [class_ "secondary"; onClick_ (fun () -> dispatch (RemoveTodo todo.Id))] [
-            text "×"
-        ]
-    ]
+    li {
+        class' (if todo.Done then "done" else "")
+        span {
+            onClick (fun () -> dispatch (ToggleTodo todo.Id))
+            if todo.Done then "☑ " else "☐ "
+            todo.Text
+        }
+        button {
+            class' "secondary"
+            onClick (fun () -> dispatch (RemoveTodo todo.Id))
+            "×"
+        }
+    }
 
 let view model dispatch =
-    article [class_ "todo-demo"] [
-        header [] [h2 [] [text "Todo List"]]
-        section [] [
-            div [class_ "input-group"] [
-                input [
-                    type_ "text"
-                    value_ model.Input
+    article {
+        class' "todo-demo"
+        header { h2 "Todo List" }
+        section {
+            div {
+                class' "input-group"
+                input {
+                    type' "text"
+                    value' model.Input
                     placeholder "Add a todo..."
-                    onInput_ (fun s -> dispatch (InputChanged s))
-                ]
-                button [onClick_ (fun () -> dispatch AddTodo)] [text "Add"]
-            ]
-            ul [] (model.Todos |> List.map (viewTodo dispatch))
-            p [class_ "hint"] [
-                text (
-                    sprintf "%d of %d completed"
-                        (model.Todos |> List.filter (fun t -> t.Done) |> List.length)
-                        (model.Todos |> List.length))
-            ]
-        ]
-    ]
+                    onInput (fun s -> dispatch (InputChanged s))
+                }
+                button {
+                    onClick (fun () -> dispatch AddTodo)
+                    "Add"
+                }
+            }
+            ul {
+                for todo in model.Todos do
+                    viewTodo dispatch todo
+            }
+            el "p" {
+                class' "hint"
+                sprintf "%d of %d completed"
+                    (model.Todos |> List.filter (fun t -> t.Done) |> List.length)
+                    (model.Todos |> List.length)
+            }
+        }
+    }
 
 let start () =
     run "todo-root" { Init = init; Update = update; View = view }

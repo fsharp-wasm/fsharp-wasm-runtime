@@ -1,10 +1,7 @@
 module Demos.RealtimePubSub
 
-open Browser.Dom
-open Browser.Events
 open Browser.PubSub
-open Browser.Html.Elements
-open Browser.Html.Attrs
+open Browser.Html
 open Browser.Elmish.Core
 
 type Model = { Messages: string list; Input: string }
@@ -30,26 +27,30 @@ let update msg model =
         { model with Messages = model.Messages @ [s] }, Cmd.none
 
 let view model dispatch =
-    article [class_ "pubsub-demo"] [
-        header [] [h2 [] [text "Realtime Pub/Sub"]]
-        section [] [
-            div [class_ "input-group"] [
-                input [
-                    type_ "text"
-                    value_ model.Input
+    article {
+        class' "pubsub-demo"
+        header { h2 "Realtime Pub/Sub" }
+        section {
+            div {
+                class' "input-group"
+                input {
+                    type' "text"
+                    value' model.Input
                     placeholder "Type a message..."
-                    onInput_ (fun s -> dispatch (InputChanged s))
-                ]
-                button [onClick_ (fun () -> dispatch SendMessage)] [text "Send"]
-            ]
-            ul [] (model.Messages |> List.map (fun m -> li [] [text m]))
-        ]
-    ]
+                    onInput (fun s -> dispatch (InputChanged s))
+                }
+                button {
+                    onClick (fun () -> dispatch SendMessage)
+                    "Send"
+                }
+            }
+            ul {
+                for m in model.Messages do
+                    li { m }
+            }
+        }
+    }
 
 let start () =
-    let program = { Init = init; Update = update; View = view }
-    subscribe "chat" (fun msg ->
-        // In a real app, dispatch would be captured; this is a demo placeholder
-        ()
-    )
-    run "pubsub-root" program
+    subscribe "chat" (fun _ -> ())
+    run "pubsub-root" { Init = init; Update = update; View = view }
