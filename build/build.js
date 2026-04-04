@@ -42,10 +42,20 @@ function copyGlue() {
 }
 
 function compileFs() {
-    run(
-        `dotnet fable ${SRC}/FSharpWasmRuntime.fsproj --lang wasmgc --output ${DIST}/wasm/`,
-        "Compiling F# → WasmGC"
-    );
+    console.log("\n▸ Compiling F# → WasmGC");
+    try {
+        execSync(
+            `dotnet fable ${SRC}/FSharpWasmRuntime.fsproj --lang wasmgc --output ${DIST}/wasm/`,
+            { cwd: ROOT, stdio: "inherit" }
+        );
+    } catch {
+        console.log(
+            "\n⚠  F# compilation skipped (fsharp-wasm compiler not available)."
+        );
+        console.log(
+            "   Download from: https://github.com/fsharp-wasm/fsharp-wasm/releases"
+        );
+    }
 }
 
 function copyAssets() {
@@ -66,18 +76,7 @@ function build() {
 
     clean();
     copyGlue();
-
-    try {
-        compileFs();
-    } catch {
-        console.log(
-            "\n⚠  F# compilation skipped (fsharp-wasm compiler not available)."
-        );
-        console.log(
-            "   Download from: https://github.com/fsharp-wasm/fsharp-wasm/releases"
-        );
-    }
-
+    compileFs();
     copyAssets();
     console.log("\n✔ Build complete → dist/");
 }
