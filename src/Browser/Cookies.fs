@@ -32,4 +32,4 @@ let has (name: string) : bool = jsHas name
 let allNames () : string list =
     let raw = jsAllNames ()
     if raw = "" then []
-    else raw.Split('\n') |> Array.toList
+    else raw.Split('\n') |> Array.filter (fun s -> s <> "") |> Array.toList

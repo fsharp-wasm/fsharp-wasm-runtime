@@ -21,7 +21,6 @@ export const onPointer = (id, event, cb) => {
     const el = get(id);
     if (!el) return;
     const handler = (e) => {
-        e.preventDefault();
         cb(e.clientX, e.clientY, e.pointerId);
     };
     el.addEventListener(event, handler);

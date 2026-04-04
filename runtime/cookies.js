@@ -67,9 +67,11 @@ export const hasCookie = (name) => getCookie(name) !== "";
  * (suitable for splitting in F#).
  * @returns {string}
  */
-export const getAllCookieNames = () =>
-    document.cookie
+export const getAllCookieNames = () => {
+    if (!document.cookie) return "";
+    return document.cookie
         .split(";")
         .map((c) => decodeURIComponent(c.trimStart().split("=")[0]))
         .filter(Boolean)
         .join("\n");
+};
