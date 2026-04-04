@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <RootNamespace>Browser</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Browser core modules -->
+    <Compile Include="Browser/Core.fs" />
+    <Compile Include="Browser/Dom.fs" />
+    <Compile Include="Browser/Events.fs" />
+    <Compile Include="Browser/Canvas.fs" />
+    <Compile Include="Browser/Components.fs" />
+    <Compile Include="Browser/Net.fs" />
+    <Compile Include="Browser/PubSub.fs" />
+    <Compile Include="Browser/Storage.fs" />
+    <Compile Include="Browser/IndexedDb.fs" />
+    <Compile Include="Browser/Workers.fs" />
+    <Compile Include="Browser/Timing.fs" />
+    <Compile Include="Browser/Gpu.fs" />
+    <Compile Include="Browser/Css.fs" />
+    <Compile Include="Browser/Quotations.fs" />
+
+    <!-- HTML DSL -->
+    <Compile Include="Html/Elements.fs" />
+    <Compile Include="Html/Attrs.fs" />
+    <Compile Include="Html/Events.fs" />
+    <Compile Include="Html/CeBuilder.fs" />
+
+    <!-- Elmish MVU -->
+    <Compile Include="Elmish/Core.fs" />
+  </ItemGroup>
+
+</Project>
