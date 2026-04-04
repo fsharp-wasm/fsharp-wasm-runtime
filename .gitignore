@@ -1,0 +1,17 @@
+node_modules/
+dist/
+release/
+dist-tests/
+*.js.map
+.playwright/
+test-results/
+playwright-report/
+bin/
+obj/
+.fable/
+*.user
+.vs/
+.idea/
+*.swp
+*.swo
+*~

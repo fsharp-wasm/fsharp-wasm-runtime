@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F# → WebAssembly GC — Live Demo</title>
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+    .count-display {
+      font-size: 3rem;
+      text-align: center;
+      font-weight: bold;
+    }
+    .button-group {
+      display: flex;
+      gap: .5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .input-group {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: 1rem;
+    }
+    .input-group input {
+      flex: 1;
+    }
+    .done {
+      text-decoration: line-through;
+      opacity: .6;
+    }
+    .done span {
+      cursor: pointer;
+    }
+    canvas {
+      width: 100%;
+      border-radius: var(--pico-border-radius);
+    }
+    header nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      font-size: .75rem;
+      background: var(--pico-primary);
+      color: white;
+      padding: .2em .6em;
+      border-radius: 1em;
+    }
+    .hint {
+      font-size: .85rem;
+      opacity: .7;
+    }
+    fs-counter {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <strong>F# → WasmGC</strong>
+      <span class="badge">Live Demo</span>
+    </nav>
+    <hgroup>
+      <h1>F# compiled to WebAssembly GC</h1>
+      <p>These demos run entirely in WASM. No JavaScript application code.
+         Only thin JS glue for browser APIs (&lt; 400 LOC).</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <!-- Core demos -->
+    <h2>Core Demos</h2>
+    <div class="demo-grid">
+      <div id="counter-root"></div>
+      <div id="todo-root"></div>
+      <div id="canvas-root">
+        <article>
+          <header><h2>Mandelbrot (WASM compute)</h2></header>
+          <canvas id="mandelbrot" width="400" height="300"></canvas>
+          <footer><button id="render-btn">Render</button></footer>
+        </article>
+      </div>
+    </div>
+
+    <!-- Web Components -->
+    <section>
+      <h2>Web Components</h2>
+      <p>These are native <code>&lt;custom-elements&gt;</code> defined from F#:</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <fs-counter></fs-counter>
+        <fs-counter></fs-counter>
+      </div>
+    </section>
+
+    <!-- Advanced demos -->
+    <h2>Advanced Demos</h2>
+    <div class="demo-grid">
+      <div id="pubsub-root"></div>
+      <div id="indexeddb-root"></div>
+      <div id="worker-root"></div>
+      <div id="webgpu-root"></div>
+    </div>
+
+    <!-- Full Dashboard -->
+    <section>
+      <h2>Full Dashboard</h2>
+      <div id="dashboard-root"></div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <small>
+      Source: <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime">fsharp-wasm-runtime</a>
+      · Compiler: <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a>
+      · Styled with <a href="https://picocss.com">PicoCSS</a>
+    </small>
+  </footer>
+
+  <script type="module">
+    // Boot: instantiate the WASM module, then call F# entry points.
+    // This requires the fsharp-wasm compiler output in dist/.
+    // For development, you can also serve the demos statically.
+
+    try {
+      const { instantiate } = await import("./dist/runtime.js");
+      const wasm = await instantiate("./dist/wasm/app.wasm");
+
+      // F# entry points — exported functions from compiled WASM
+      if (wasm.exports.Counter_start) wasm.exports.Counter_start();
+      if (wasm.exports.Todo_start) wasm.exports.Todo_start();
+      if (wasm.exports.Mandelbrot_setup) wasm.exports.Mandelbrot_setup();
+      if (wasm.exports.MyCounter_register) wasm.exports.MyCounter_register();
+      if (wasm.exports.RealtimePubSub_start) wasm.exports.RealtimePubSub_start();
+      if (wasm.exports.IndexedDbCrud_start) wasm.exports.IndexedDbCrud_start();
+      if (wasm.exports.WorkerActor_start) wasm.exports.WorkerActor_start();
+      if (wasm.exports.WebGpuBasic_start) wasm.exports.WebGpuBasic_start();
+      if (wasm.exports.Dashboard_start) wasm.exports.Dashboard_start();
+
+      document.getElementById("render-btn")
+        ?.addEventListener("click", () => wasm.exports.Mandelbrot_render?.());
+    } catch (e) {
+      console.warn("WASM module not available. Build with fsharp-wasm compiler first.", e);
+      document.querySelectorAll("[id$='-root']").forEach(el => {
+        if (!el.children.length) {
+          el.innerHTML = '<article><p>⚠ WASM module not loaded. Run <code>npm run build</code> with the fsharp-wasm compiler.</p></article>';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

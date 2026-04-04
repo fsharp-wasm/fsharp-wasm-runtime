@@ -1,0 +1,29 @@
+{
+  "name": "fsharp-wasm-runtime",
+  "version": "0.1.0",
+  "description": "Browser runtime for F# compiled to WebAssembly GC",
+  "type": "module",
+  "scripts": {
+    "build:wasm": "dotnet fable src/FSharpWasmRuntime.fsproj --lang wasmgc --output dist/wasm/",
+    "build:glue": "cp -r runtime/*.js dist/",
+    "build": "node build/build.js",
+    "serve": "npx serve . -l 8080",
+    "test": "echo 'Unit tests require fsharp-wasm compiler — see docs/GettingStarted.md'",
+    "test:e2e": "npx playwright test",
+    "clean": "rm -rf dist release"
+  },
+  "keywords": [
+    "fsharp",
+    "wasm",
+    "wasmgc",
+    "webassembly",
+    "browser",
+    "runtime"
+  ],
+  "author": "fsharp-wasm contributors",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "serve": "^14.2.0"
+  }
+}
