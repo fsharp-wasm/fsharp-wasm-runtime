@@ -16,10 +16,14 @@
     <Compile Include="Browser/Net.fs" />
     <Compile Include="Browser/PubSub.fs" />
     <Compile Include="Browser/Storage.fs" />
+    <Compile Include="Browser/Cookies.fs" />
     <Compile Include="Browser/IndexedDb.fs" />
     <Compile Include="Browser/Workers.fs" />
     <Compile Include="Browser/Timing.fs" />
     <Compile Include="Browser/Gpu.fs" />
+    <Compile Include="Browser/Pointer.fs" />
+    <Compile Include="Browser/Clipboard.fs" />
+    <Compile Include="Browser/Location.fs" />
     <Compile Include="Browser/Css.fs" />
     <Compile Include="Browser/Quotations.fs" />
 

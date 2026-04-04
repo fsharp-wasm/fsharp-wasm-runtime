@@ -50,20 +50,94 @@ val scrollIntoView : Element -> unit
 Event listener management.
 
 ```fsharp
-val onClick : Element -> (unit -> unit) -> unit
-val onSubmit : Element -> (unit -> unit) -> unit
-val onInput : Element -> (string -> unit) -> unit
-val onChange : Element -> (string -> unit) -> unit
-val onKeyDown : Element -> (unit -> unit) -> unit
-val onKeyUp : Element -> (unit -> unit) -> unit
-val onMouseOver : Element -> (unit -> unit) -> unit
-val onMouseOut : Element -> (unit -> unit) -> unit
-val off : Element -> string -> unit
+val onClick      : Element -> (unit -> unit) -> unit
+val onDblClick   : Element -> (unit -> unit) -> unit
+val onFocus      : Element -> (unit -> unit) -> unit
+val onBlur       : Element -> (unit -> unit) -> unit
+val onSubmit     : Element -> (unit -> unit) -> unit
+val onInput      : Element -> (string -> unit) -> unit
+val onChange     : Element -> (string -> unit) -> unit
+val onKeyDown    : Element -> (unit -> unit) -> unit
+val onKeyUp      : Element -> (unit -> unit) -> unit
+val onKeyPress   : Element -> (unit -> unit) -> unit
+val onMouseDown  : Element -> (unit -> unit) -> unit
+val onMouseUp    : Element -> (unit -> unit) -> unit
+val onMouseMove  : Element -> (unit -> unit) -> unit
+val onMouseOver  : Element -> (unit -> unit) -> unit
+val onMouseOut   : Element -> (unit -> unit) -> unit
+val onMouseEnter : Element -> (unit -> unit) -> unit
+val onMouseLeave : Element -> (unit -> unit) -> unit
+val onScroll     : Element -> (unit -> unit) -> unit
+val onContextMenu: Element -> (unit -> unit) -> unit
+val onDragStart  : Element -> (unit -> unit) -> unit
+val onDragEnd    : Element -> (unit -> unit) -> unit
+val onDrop       : Element -> (unit -> unit) -> unit
+val off          : Element -> string -> unit
+```
+
+## Browser.Pointer
+
+Pointer events — unified mouse, touch, and stylus input.
+
+```fsharp
+type PointerArgs = { X: float; Y: float; PointerId: int }
+
+val onPointerDown   : Element -> (PointerArgs -> unit) -> unit
+val onPointerMove   : Element -> (PointerArgs -> unit) -> unit
+val onPointerUp     : Element -> (PointerArgs -> unit) -> unit
+val onPointerCancel : Element -> (PointerArgs -> unit) -> unit
+val onPointerEnter  : Element -> (PointerArgs -> unit) -> unit
+val onPointerLeave  : Element -> (PointerArgs -> unit) -> unit
+val offPointerDown  : Element -> unit
+val offPointerMove  : Element -> unit
+val offPointerUp    : Element -> unit
+val setCapture      : Element -> int -> unit
+val releaseCapture  : Element -> int -> unit
+```
+
+## Browser.Cookies
+
+`document.cookie` read/write helpers.
+
+```fsharp
+val get      : string -> string         // read cookie (returns "" if missing)
+val set      : string -> string -> int -> unit  // name, value, days
+val setAtPath: string -> string -> int -> string -> unit
+val delete   : string -> unit
+val has      : string -> bool
+val allNames : unit -> string list
+```
+
+## Browser.Clipboard
+
+Async Clipboard API (text copy/paste).
+
+```fsharp
+val writeText : string -> (unit -> unit) -> (string -> unit) -> unit
+val readText  : (string -> unit) -> (string -> unit) -> unit
+```
+
+## Browser.Location
+
+Browser URL and History API.
+
+```fsharp
+val href        : unit -> string
+val pathname    : unit -> string
+val hash        : unit -> string
+val search      : unit -> string
+val origin      : unit -> string
+val queryParam  : string -> string
+val navigateTo  : string -> unit
+val pushState   : string -> unit
+val replaceState: string -> unit
+val back        : unit -> unit
+val forward     : unit -> unit
+val reload      : unit -> unit
+val onPopState  : (string -> unit) -> unit
 ```
 
 ## Browser.Canvas
-
-Canvas 2D drawing API.
 
 ```fsharp
 type Context2D                          // Typed 2D context wrapper
