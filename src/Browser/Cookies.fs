@@ -4,11 +4,18 @@
 /// an expiry date; without one they are session cookies (cleared on tab close).
 module Browser.Cookies
 
-[<Import("getCookie",         "runtime/cookies.js")>] extern string jsGet(string name)
-[<Import("setCookie",         "runtime/cookies.js")>] extern unit   jsSet(string name, string value, int days, string path)
-[<Import("deleteCookie",      "runtime/cookies.js")>] extern unit   jsDelete(string name, string path)
-[<Import("hasCookie",         "runtime/cookies.js")>] extern bool   jsHas(string name)
-[<Import("getAllCookieNames",  "runtime/cookies.js")>] extern string jsAllNames()
+open Fable.Core
+
+[<Import("getCookie",        "runtime/cookies.js")>]
+let jsGet (name: string) : string = nativeOnly
+[<Import("setCookie",        "runtime/cookies.js")>]
+let jsSet (name: string) (value: string) (days: int) (path: string) : unit = nativeOnly
+[<Import("deleteCookie",     "runtime/cookies.js")>]
+let jsDelete (name: string) (path: string) : unit = nativeOnly
+[<Import("hasCookie",        "runtime/cookies.js")>]
+let jsHas (name: string) : bool = nativeOnly
+[<Import("getAllCookieNames", "runtime/cookies.js")>]
+let jsAllNames () : string = nativeOnly
 
 /// Read the value of a cookie by name. Returns "" if not found.
 let get (name: string) : string = jsGet name
@@ -32,4 +39,4 @@ let has (name: string) : bool = jsHas name
 let allNames () : string list =
     let raw = jsAllNames ()
     if raw = "" then []
-    else raw.Split('\n') |> Array.filter (fun s -> s <> "") |> Array.toList
+    else raw.Split('\n') |> Array.toList

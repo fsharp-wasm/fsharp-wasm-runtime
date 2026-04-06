@@ -1,12 +1,18 @@
 module Browser.Gpu
 
+open Fable.Core
 open Browser.Core
 
-[<Import("isGpuAvailable",    "runtime/gpu.js")>] extern bool   jsIsGpuAvailable()
-[<Import("requestAdapter",    "runtime/gpu.js")>] extern Handle jsRequestAdapter()
-[<Import("requestDevice",     "runtime/gpu.js")>] extern Handle jsRequestDevice(Handle adapterId)
-[<Import("configureContext",  "runtime/gpu.js")>] extern Handle jsConfigureContext(Handle canvasId, Handle deviceId, string format)
-[<Import("getPreferredFormat","runtime/gpu.js")>] extern string jsGetPreferredFormat()
+[<Import("isGpuAvailable",   "runtime/gpu.js")>]
+let jsIsGpuAvailable () : bool = nativeOnly
+[<Import("requestAdapter",   "runtime/gpu.js")>]
+let jsRequestAdapter () : Handle = nativeOnly
+[<Import("requestDevice",    "runtime/gpu.js")>]
+let jsRequestDevice (adapterId: Handle) : Handle = nativeOnly
+[<Import("configureContext", "runtime/gpu.js")>]
+let jsConfigureContext (canvasId: Handle) (deviceId: Handle) (fmt: string) : Handle = nativeOnly
+[<Import("getPreferredFormat","runtime/gpu.js")>]
+let jsGetPreferredFormat () : string = nativeOnly
 
 /// Typed wrappers for WebGPU resources.
 type Adapter = private Adapter of Handle
@@ -16,7 +22,6 @@ type GpuContext = private GpuCtx of Handle
 let isAvailable () = jsIsGpuAvailable ()
 let requestAdapter () = Adapter (jsRequestAdapter ())
 let requestDevice (Adapter id) = Device (jsRequestDevice id)
-let configureContext canvasEl (Device deviceId) format =
-    let (Browser.Dom.El canvasHandle) = canvasEl
-    GpuCtx (jsConfigureContext canvasHandle deviceId format)
+let configureContext (canvasEl: Browser.Dom.Element) (Device deviceId) format =
+    GpuCtx (jsConfigureContext canvasEl.Handle deviceId format)
 let getPreferredFormat () = jsGetPreferredFormat ()

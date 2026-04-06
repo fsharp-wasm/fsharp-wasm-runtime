@@ -1,32 +1,51 @@
 module Browser.Dom
 
+open Fable.Core
 open Browser.Core
 
 // ─── Raw JS imports ───────────────────────────────────────────────────────────
 
-[<Import("createElement",    "runtime/dom.js")>] extern Handle jsCreateElement(string tag)
-[<Import("createTextNode",   "runtime/dom.js")>] extern Handle jsCreateTextNode(string text)
-[<Import("setTextContent",   "runtime/dom.js")>] extern unit   jsSetTextContent(Handle id, string text)
-[<Import("setInnerHtml",     "runtime/dom.js")>] extern unit   jsSetInnerHtml(Handle id, string html)
-[<Import("appendChild",      "runtime/dom.js")>] extern unit   jsAppendChild(Handle parent, Handle child)
-[<Import("removeChild",      "runtime/dom.js")>] extern unit   jsRemoveChild(Handle parent, Handle child)
-[<Import("removeElement",    "runtime/dom.js")>] extern unit   jsRemoveElement(Handle id)
-[<Import("setAttribute",     "runtime/dom.js")>] extern unit   jsSetAttribute(Handle id, string key, string value)
-[<Import("removeAttribute",  "runtime/dom.js")>] extern unit   jsRemoveAttribute(Handle id, string key)
-[<Import("setClassName",     "runtime/dom.js")>] extern unit   jsSetClassName(Handle id, string cls)
-[<Import("setStyle",         "runtime/dom.js")>] extern unit   jsSetStyle(Handle id, string prop, string value)
-[<Import("clearInnerHtml",   "runtime/dom.js")>] extern unit   jsClearInnerHtml(Handle id)
-[<Import("querySelector",    "runtime/dom.js")>] extern Handle jsQuerySelector(Handle id, string sel)
-[<Import("getById",          "runtime/dom.js")>] extern Handle jsGetById(string id)
-[<Import("getValue",         "runtime/dom.js")>] extern string jsGetValue(Handle id)
-[<Import("setValue",         "runtime/dom.js")>] extern unit   jsSetValue(Handle id, string value)
-[<Import("focus",            "runtime/dom.js")>] extern unit   jsFocus(Handle id)
-[<Import("scrollIntoView",   "runtime/dom.js")>] extern unit   jsScrollIntoView(Handle id)
+[<Import("createElement",   "runtime/dom.js")>]
+let jsCreateElement (tag: string) : Handle = nativeOnly
+[<Import("createTextNode",  "runtime/dom.js")>]
+let jsCreateTextNode (text: string) : Handle = nativeOnly
+[<Import("setTextContent",  "runtime/dom.js")>]
+let jsSetTextContent (id: Handle) (text: string) : unit = nativeOnly
+[<Import("setInnerHtml",    "runtime/dom.js")>]
+let jsSetInnerHtml (id: Handle) (html: string) : unit = nativeOnly
+[<Import("appendChild",     "runtime/dom.js")>]
+let jsAppendChild (parent: Handle) (child: Handle) : unit = nativeOnly
+[<Import("removeChild",     "runtime/dom.js")>]
+let jsRemoveChild (parent: Handle) (child: Handle) : unit = nativeOnly
+[<Import("removeElement",   "runtime/dom.js")>]
+let jsRemoveElement (id: Handle) : unit = nativeOnly
+[<Import("setAttribute",    "runtime/dom.js")>]
+let jsSetAttribute (id: Handle) (key: string) (v: string) : unit = nativeOnly
+[<Import("removeAttribute", "runtime/dom.js")>]
+let jsRemoveAttribute (id: Handle) (key: string) : unit = nativeOnly
+[<Import("setClassName",    "runtime/dom.js")>]
+let jsSetClassName (id: Handle) (cls: string) : unit = nativeOnly
+[<Import("setStyle",        "runtime/dom.js")>]
+let jsSetStyle (id: Handle) (prop: string) (v: string) : unit = nativeOnly
+[<Import("clearInnerHtml",  "runtime/dom.js")>]
+let jsClearInnerHtml (id: Handle) : unit = nativeOnly
+[<Import("querySelector",   "runtime/dom.js")>]
+let jsQuerySelector (id: Handle) (sel: string) : Handle = nativeOnly
+[<Import("getById",         "runtime/dom.js")>]
+let jsGetById (id: string) : Handle = nativeOnly
+[<Import("getValue",        "runtime/dom.js")>]
+let jsGetValue (id: Handle) : string = nativeOnly
+[<Import("setValue",        "runtime/dom.js")>]
+let jsSetValue (id: Handle) (value: string) : unit = nativeOnly
+[<Import("focus",           "runtime/dom.js")>]
+let jsFocus (id: Handle) : unit = nativeOnly
+[<Import("scrollIntoView",  "runtime/dom.js")>]
+let jsScrollIntoView (id: Handle) : unit = nativeOnly
 
 // ─── Typed Element wrapper ────────────────────────────────────────────────────
 
 /// Typed wrapper around a DOM element handle.
-type Element = private El of Handle with
+type Element = El of Handle with
     member e.Handle = let (El h) = e in h
 
 module Element =
@@ -36,7 +55,7 @@ module Element =
     let ofHandle h       = El h
     let nil              = El 0
     let isValid (El h)   = h <> 0
-    let body             = El Browser.Core.body
+    let body ()          = El Browser.Core.body
 
 // ─── DOM operations ───────────────────────────────────────────────────────────
 
@@ -58,5 +77,3 @@ let getValue (El id)              = jsGetValue id
 let setValue (El id) value        = jsSetValue id value
 let focus    (El id)              = jsFocus id
 let scrollIntoView (El id)        = jsScrollIntoView id
-
-let body = Element.body

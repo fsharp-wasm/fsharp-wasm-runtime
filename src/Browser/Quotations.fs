@@ -1,20 +1,10 @@
+/// Browser.Quotations — placeholder module.
+/// F# Quotations (FSharp.Quotations) are not supported by the Fable WasmGC backend.
+/// This module is reserved for future meta-programming support once the backend matures.
 module Browser.Quotations
 
-open FSharp.Quotations
-open FSharp.Quotations.Patterns
+/// Not yet implemented — Quotations are unsupported under WasmGC.
+let describe (_expr: string) : string = "Quotations not supported in WasmGC"
 
-/// Inspect a quoted expression and return its string representation.
-/// This enables AI-driven UI generation where quoted F# fragments can be
-/// analyzed, transformed, or compiled to DOM nodes.
-let describe (expr: Expr) : string =
-    match expr with
-    | Call(_, mi, _) -> sprintf "Call: %s" mi.Name
-    | Lambda(v, body) -> sprintf "Lambda: %s -> ..." v.Name
-    | Value(v, t) -> sprintf "Value: %A (%s)" v t.Name
-    | _ -> sprintf "Expr: %A" expr
-
-/// Placeholder for future compile-to-Node functionality.
-/// When fully implemented, this will take a quoted F# expression
-/// and produce a Browser.Html.Node tree.
-let compileToNode (expr: Expr) : string =
-    sprintf "Compiled from: %s" (describe expr)
+/// Not yet implemented — Quotations are unsupported under WasmGC.
+let compileToNode (_expr: string) : string = "Quotations not supported in WasmGC"

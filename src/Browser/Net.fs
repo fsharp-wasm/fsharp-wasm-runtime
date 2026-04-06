@@ -1,16 +1,29 @@
 module Browser.Net
 
+open Fable.Core
 open Browser.Core
 
-[<Import("fetchText",    "runtime/net.js")>] extern string jsFetchText(string url)
-[<Import("fetchJson",    "runtime/net.js")>] extern Handle jsFetchJson(string url)
-[<Import("postJson",     "runtime/net.js")>] extern Handle jsPostJson(string url, obj body)
-[<Import("wsOpen",       "runtime/net.js")>] extern Handle jsWsOpen(string url)
-[<Import("wsSend",       "runtime/net.js")>] extern unit   jsWsSend(Handle id, string msg)
-[<Import("wsOnMessage",  "runtime/net.js")>] extern unit   jsWsOnMessage(Handle id, (string -> unit) cb)
-[<Import("wsOnOpen",     "runtime/net.js")>] extern unit   jsWsOnOpen(Handle id, (Handle -> unit) cb)
-[<Import("wsOnClose",    "runtime/net.js")>] extern unit   jsWsOnClose(Handle id, (Handle -> unit) cb)
-[<Import("wsClose",      "runtime/net.js")>] extern unit   jsWsClose(Handle id)
+[<Import("fetchText", "runtime/net.js")>]
+let jsFetchText (url: string) : string = nativeOnly
+[<Import("fetchJson", "runtime/net.js")>]
+let jsFetchJson (url: string) : Handle = nativeOnly
+[<Import("postJson",  "runtime/net.js")>]
+let jsPostJson (url: string) (body: string) : Handle = nativeOnly
+[<Import("wsOpen",    "runtime/net.js")>]
+let jsWsOpen (url: string) : Handle = nativeOnly
+[<Import("wsSend",    "runtime/net.js")>]
+let jsWsSend (id: Handle) (msg: string) : unit = nativeOnly
+[<Import("wsClose",   "runtime/net.js")>]
+let jsWsClose (id: Handle) : unit = nativeOnly
+
+[<Import("wsOnMessage",  "runtime/net.js")>]
+let jsWsOnMessage (id: Handle) (cb: string -> unit) : unit = nativeOnly
+
+[<Import("wsOnOpen",     "runtime/net.js")>]
+let jsWsOnOpen (id: Handle) (cb: Handle -> unit) : unit = nativeOnly
+
+[<Import("wsOnClose",    "runtime/net.js")>]
+let jsWsOnClose (id: Handle) (cb: Handle -> unit) : unit = nativeOnly
 
 /// Typed wrapper for a WebSocket connection.
 type WebSocket = private WS of Handle

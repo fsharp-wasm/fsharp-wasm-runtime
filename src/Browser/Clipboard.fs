@@ -5,8 +5,13 @@
 /// yet support async/await in the same way as the .NET runtime.
 module Browser.Clipboard
 
-[<Import("writeText", "runtime/clipboard.js")>] extern unit jsWriteText(string text, (unit -> unit) onOk, (string -> unit) onErr)
-[<Import("readText",  "runtime/clipboard.js")>] extern unit jsReadText((string -> unit) onOk, (string -> unit) onErr)
+open Fable.Core
+
+[<Import("writeText", "runtime/clipboard.js")>]
+let jsWriteText (text: string) (onOk: unit -> unit) (onErr: string -> unit) : unit = nativeOnly
+
+[<Import("readText",  "runtime/clipboard.js")>]
+let jsReadText (onOk: string -> unit) (onErr: string -> unit) : unit = nativeOnly
 
 /// Write `text` to the system clipboard.
 /// `onSuccess` is called if the write succeeds; `onError` receives the error message.

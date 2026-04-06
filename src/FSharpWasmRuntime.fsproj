@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Fable.Core stubs (Import attribute, nativeOnly) — no NuGet needed -->
+    <Compile Include="Interop.fs" />
+
     <!-- Browser core modules -->
     <Compile Include="Browser/Core.fs" />
     <Compile Include="Browser/Dom.fs" />

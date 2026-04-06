@@ -1,24 +1,41 @@
 module Browser.Canvas
 
+open Fable.Core
 open Browser.Core
 open Browser.Dom
 
-[<Import("getContext2D",   "runtime/canvas.js")>] extern Handle jsGetContext2D(Handle canvasId)
-[<Import("fillRect",      "runtime/canvas.js")>] extern unit   jsFillRect(Handle ctx, float x, float y, float w, float h)
-[<Import("strokeRect",    "runtime/canvas.js")>] extern unit   jsStrokeRect(Handle ctx, float x, float y, float w, float h)
-[<Import("clearRect",     "runtime/canvas.js")>] extern unit   jsClearRect(Handle ctx, float x, float y, float w, float h)
-[<Import("setFillStyle",  "runtime/canvas.js")>] extern unit   jsSetFillStyle(Handle ctx, string style)
-[<Import("setStrokeStyle","runtime/canvas.js")>] extern unit   jsSetStrokeStyle(Handle ctx, string style)
-[<Import("setLineWidth",  "runtime/canvas.js")>] extern unit   jsSetLineWidth(Handle ctx, float width)
-[<Import("beginPath",     "runtime/canvas.js")>] extern unit   jsBeginPath(Handle ctx)
-[<Import("closePath",     "runtime/canvas.js")>] extern unit   jsClosePath(Handle ctx)
-[<Import("moveTo",        "runtime/canvas.js")>] extern unit   jsMoveTo(Handle ctx, float x, float y)
-[<Import("lineTo",        "runtime/canvas.js")>] extern unit   jsLineTo(Handle ctx, float x, float y)
-[<Import("arc",           "runtime/canvas.js")>] extern unit   jsArc(Handle ctx, float x, float y, float r, float startAngle, float endAngle)
-[<Import("fill",          "runtime/canvas.js")>] extern unit   jsFill(Handle ctx)
-[<Import("stroke",        "runtime/canvas.js")>] extern unit   jsStroke(Handle ctx)
-[<Import("fillText",      "runtime/canvas.js")>] extern unit   jsFillText(Handle ctx, string text, float x, float y)
-[<Import("setFont",       "runtime/canvas.js")>] extern unit   jsSetFont(Handle ctx, string font)
+[<Import("getContext2D",   "runtime/canvas.js")>]
+let jsGetContext2D (canvasId: Handle) : Handle = nativeOnly
+[<Import("fillRect",      "runtime/canvas.js")>]
+let jsFillRect (ctx: Handle) (x: float) (y: float) (w: float) (h: float) : unit = nativeOnly
+[<Import("strokeRect",    "runtime/canvas.js")>]
+let jsStrokeRect (ctx: Handle) (x: float) (y: float) (w: float) (h: float) : unit = nativeOnly
+[<Import("clearRect",     "runtime/canvas.js")>]
+let jsClearRect (ctx: Handle) (x: float) (y: float) (w: float) (h: float) : unit = nativeOnly
+[<Import("setFillStyle",  "runtime/canvas.js")>]
+let jsSetFillStyle (ctx: Handle) (style: string) : unit = nativeOnly
+[<Import("setStrokeStyle","runtime/canvas.js")>]
+let jsSetStrokeStyle (ctx: Handle) (style: string) : unit = nativeOnly
+[<Import("setLineWidth",  "runtime/canvas.js")>]
+let jsSetLineWidth (ctx: Handle) (width: float) : unit = nativeOnly
+[<Import("beginPath",     "runtime/canvas.js")>]
+let jsBeginPath (ctx: Handle) : unit = nativeOnly
+[<Import("closePath",     "runtime/canvas.js")>]
+let jsClosePath (ctx: Handle) : unit = nativeOnly
+[<Import("moveTo",        "runtime/canvas.js")>]
+let jsMoveTo (ctx: Handle) (x: float) (y: float) : unit = nativeOnly
+[<Import("lineTo",        "runtime/canvas.js")>]
+let jsLineTo (ctx: Handle) (x: float) (y: float) : unit = nativeOnly
+[<Import("arc",           "runtime/canvas.js")>]
+let jsArc (ctx: Handle) (x: float) (y: float) (r: float) (s: float) (e: float) : unit = nativeOnly
+[<Import("fill",          "runtime/canvas.js")>]
+let jsFill (ctx: Handle) : unit = nativeOnly
+[<Import("stroke",        "runtime/canvas.js")>]
+let jsStroke (ctx: Handle) : unit = nativeOnly
+[<Import("fillText",      "runtime/canvas.js")>]
+let jsFillText (ctx: Handle) (text: string) (x: float) (y: float) : unit = nativeOnly
+[<Import("setFont",       "runtime/canvas.js")>]
+let jsSetFont (ctx: Handle) (font: string) : unit = nativeOnly
 
 /// Typed wrapper for a Canvas 2D context.
 type Context2D = private Ctx of Handle

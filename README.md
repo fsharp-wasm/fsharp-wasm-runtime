@@ -50,8 +50,31 @@ The JS glue layer is the correct architecture. This runtime makes it **thin, typ
 ### Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 20+](https://nodejs.org/)
-- [fsharp-wasm compiler](https://github.com/fsharp-wasm/fsharp-wasm/releases/tag/v0.1-experimental)
+- [Node.js 22+](https://nodejs.org/)
+- **fsharp-wasm compiler** — our patched Fable CLI with WasmGC backend
+
+> **Important:** this is _not_ the standard `fable` dotnet global tool from NuGet.
+> The upstream Fable 4.x only targets JavaScript. You need the compiler from this org.
+
+#### Install fsharp-wasm compiler
+
+**Linux / macOS — one-liner:**
+
+```bash
+bash prerequisites.sh
+```
+
+Then follow the printed instruction to add `~/.local/bin` to your `PATH` (if not already there).
+
+**Windows:**
+
+Download `fsharp-wasm-win-x64.zip` from the [releases page](https://github.com/fsharp-wasm/fsharp-wasm/releases), extract it, and add the folder to your `PATH`.
+
+Verify the install:
+
+```bash
+fable --version   # should print 5.x.x
+```
 
 ### Setup
 

@@ -1,12 +1,20 @@
 module Browser.Workers
 
+open Fable.Core
 open Browser.Core
 
-[<Import("createWorker",     "runtime/workers.js")>] extern Handle jsCreateWorker(string url)
-[<Import("postMessage",      "runtime/workers.js")>] extern unit   jsPostMessage(Handle id, string msg)
-[<Import("onMessage",        "runtime/workers.js")>] extern unit   jsOnMessage(Handle id, (string -> unit) cb)
-[<Import("onError",          "runtime/workers.js")>] extern unit   jsOnError(Handle id, (string -> unit) cb)
-[<Import("terminateWorker",  "runtime/workers.js")>] extern unit   jsTerminateWorker(Handle id)
+[<Import("createWorker",     "runtime/workers.js")>]
+let jsCreateWorker (url: string) : Handle = nativeOnly
+[<Import("postMessage",      "runtime/workers.js")>]
+let jsPostMessage (id: Handle) (msg: string) : unit = nativeOnly
+[<Import("terminateWorker",  "runtime/workers.js")>]
+let jsTerminateWorker (id: Handle) : unit = nativeOnly
+
+[<Import("onMessage",        "runtime/workers.js")>]
+let jsOnMessage (id: Handle) (cb: string -> unit) : unit = nativeOnly
+
+[<Import("onError",          "runtime/workers.js")>]
+let jsOnError (id: Handle) (cb: string -> unit) : unit = nativeOnly
 
 /// Typed wrapper for a Web Worker.
 type Worker = private Wk of Handle

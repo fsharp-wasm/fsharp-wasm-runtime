@@ -4,11 +4,9 @@
   "description": "Browser runtime for F# compiled to WebAssembly GC",
   "type": "module",
   "scripts": {
-    "build:wasm": "dotnet fable src/FSharpWasmRuntime.fsproj --lang wasmgc --output dist/wasm/",
-    "build:glue": "cp -r runtime/*.js dist/",
     "build": "node build/build.js",
     "serve": "npx serve . -l 8080",
-    "test": "echo 'Unit tests require fsharp-wasm compiler — see docs/GettingStarted.md'",
+    "test": "fable tests/Unit --lang wasmgc -o dist/test/ && node dist/test/run.js",
     "test:e2e": "npx playwright test",
     "clean": "rm -rf dist release"
   },

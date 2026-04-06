@@ -4,19 +4,35 @@
 /// SPA-style navigation without page reloads via the History API.
 module Browser.Location
 
-[<Import("getHref",       "runtime/location.js")>] extern string jsGetHref()
-[<Import("getPathname",   "runtime/location.js")>] extern string jsGetPathname()
-[<Import("getHash",       "runtime/location.js")>] extern string jsGetHash()
-[<Import("getSearch",     "runtime/location.js")>] extern string jsGetSearch()
-[<Import("getOrigin",     "runtime/location.js")>] extern string jsGetOrigin()
-[<Import("navigateTo",    "runtime/location.js")>] extern unit   jsNavigateTo(string url)
-[<Import("pushState",     "runtime/location.js")>] extern unit   jsPushState(string path, string title)
-[<Import("replaceState",  "runtime/location.js")>] extern unit   jsReplaceState(string path, string title)
-[<Import("goBack",        "runtime/location.js")>] extern unit   jsGoBack()
-[<Import("goForward",     "runtime/location.js")>] extern unit   jsGoForward()
-[<Import("onPopState",    "runtime/location.js")>] extern unit   jsOnPopState((string -> unit) cb)
-[<Import("reload",        "runtime/location.js")>] extern unit   jsReload()
-[<Import("getQueryParam", "runtime/location.js")>] extern string jsGetQueryParam(string key)
+open Fable.Core
+open Browser.Core
+
+[<Import("getHref",       "runtime/location.js")>]
+let jsGetHref () : string = nativeOnly
+[<Import("getPathname",   "runtime/location.js")>]
+let jsGetPathname () : string = nativeOnly
+[<Import("getHash",       "runtime/location.js")>]
+let jsGetHash () : string = nativeOnly
+[<Import("getSearch",     "runtime/location.js")>]
+let jsGetSearch () : string = nativeOnly
+[<Import("getOrigin",     "runtime/location.js")>]
+let jsGetOrigin () : string = nativeOnly
+[<Import("navigateTo",    "runtime/location.js")>]
+let jsNavigateTo (url: string) : unit = nativeOnly
+[<Import("pushState",     "runtime/location.js")>]
+let jsPushState (path: string) (title: string) : unit = nativeOnly
+[<Import("replaceState",  "runtime/location.js")>]
+let jsReplaceState (path: string) (title: string) : unit = nativeOnly
+[<Import("goBack",        "runtime/location.js")>]
+let jsGoBack () : unit = nativeOnly
+[<Import("goForward",     "runtime/location.js")>]
+let jsGoForward () : unit = nativeOnly
+[<Import("reload",        "runtime/location.js")>]
+let jsReload () : unit = nativeOnly
+[<Import("getQueryParam", "runtime/location.js")>]
+let jsGetQueryParam (key: string) : string = nativeOnly
+[<Import("onPopState",    "runtime/location.js")>]
+let jsOnPopState (cb: string -> unit) : unit = nativeOnly
 
 // ─── Current URL components ───────────────────────────────────────────────────
 

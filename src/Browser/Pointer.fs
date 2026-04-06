@@ -4,13 +4,21 @@
 /// Use these instead of separate mouse and touch handlers.
 module Browser.Pointer
 
+open Fable.Core
 open Browser.Core
 open Browser.Dom
 
-[<Import("onPointer",             "runtime/pointer.js")>] extern unit jsOnPointer(Handle id, string event, (float -> float -> int -> unit) cb)
-[<Import("offPointer",            "runtime/pointer.js")>] extern unit jsOffPointer(Handle id, string event)
-[<Import("setPointerCapture",     "runtime/pointer.js")>] extern unit jsSetPointerCapture(Handle id, int pointerId)
-[<Import("releasePointerCapture", "runtime/pointer.js")>] extern unit jsReleasePointerCapture(Handle id, int pointerId)
+[<Import("onPointer",             "runtime/pointer.js")>]
+let jsOnPointer (id: Handle) (event: string) (cb: float -> float -> int -> unit) : unit = nativeOnly
+
+[<Import("offPointer",            "runtime/pointer.js")>]
+let jsOffPointer (id: Handle) (event: string) : unit = nativeOnly
+
+[<Import("setPointerCapture",     "runtime/pointer.js")>]
+let jsSetPointerCapture (id: Handle) (pointerId: int) : unit = nativeOnly
+
+[<Import("releasePointerCapture", "runtime/pointer.js")>]
+let jsReleasePointerCapture (id: Handle) (pointerId: int) : unit = nativeOnly
 
 /// Payload delivered to every pointer callback.
 type PointerArgs = { X: float; Y: float; PointerId: int }

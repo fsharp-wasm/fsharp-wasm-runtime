@@ -1,9 +1,17 @@
 module Browser.PubSub
 
-[<Import("subscribe",   "runtime/pubsub.js")>] extern unit jsSubscribe(string topic, (string -> unit) cb)
-[<Import("unsubscribe", "runtime/pubsub.js")>] extern unit jsUnsubscribe(string topic, (string -> unit) cb)
-[<Import("publish",     "runtime/pubsub.js")>] extern unit jsPublish(string topic, string msg)
-[<Import("clearTopic",  "runtime/pubsub.js")>] extern unit jsClearTopic(string topic)
+open Fable.Core
+
+[<Import("subscribe",   "runtime/pubsub.js")>]
+let jsSubscribe (topic: string) (cb: string -> unit) : unit = nativeOnly
+
+[<Import("unsubscribe", "runtime/pubsub.js")>]
+let jsUnsubscribe (topic: string) (cb: string -> unit) : unit = nativeOnly
+
+[<Import("publish",    "runtime/pubsub.js")>]
+let jsPublish (topic: string) (msg: string) : unit = nativeOnly
+[<Import("clearTopic", "runtime/pubsub.js")>]
+let jsClearTopic (topic: string) : unit = nativeOnly
 
 let subscribe topic cb = jsSubscribe topic cb
 let unsubscribe topic cb = jsUnsubscribe topic cb

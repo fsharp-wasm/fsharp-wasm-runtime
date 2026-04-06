@@ -1,13 +1,23 @@
 module Browser.Storage
 
-[<Import("getLocal",      "runtime/storage.js")>] extern string jsGetLocal(string key)
-[<Import("setLocal",      "runtime/storage.js")>] extern unit   jsSetLocal(string key, string value)
-[<Import("removeLocal",   "runtime/storage.js")>] extern unit   jsRemoveLocal(string key)
-[<Import("clearLocal",    "runtime/storage.js")>] extern unit   jsClearLocal()
-[<Import("getSession",    "runtime/storage.js")>] extern string jsGetSession(string key)
-[<Import("setSession",    "runtime/storage.js")>] extern unit   jsSetSession(string key, string value)
-[<Import("removeSession", "runtime/storage.js")>] extern unit   jsRemoveSession(string key)
-[<Import("clearSession",  "runtime/storage.js")>] extern unit   jsClearSession()
+open Fable.Core
+
+[<Import("getLocal",      "runtime/storage.js")>]
+let jsGetLocal (key: string) : string = nativeOnly
+[<Import("setLocal",      "runtime/storage.js")>]
+let jsSetLocal (key: string) (value: string) : unit = nativeOnly
+[<Import("removeLocal",   "runtime/storage.js")>]
+let jsRemoveLocal (key: string) : unit = nativeOnly
+[<Import("clearLocal",    "runtime/storage.js")>]
+let jsClearLocal () : unit = nativeOnly
+[<Import("getSession",    "runtime/storage.js")>]
+let jsGetSession (key: string) : string = nativeOnly
+[<Import("setSession",    "runtime/storage.js")>]
+let jsSetSession (key: string) (value: string) : unit = nativeOnly
+[<Import("removeSession", "runtime/storage.js")>]
+let jsRemoveSession (key: string) : unit = nativeOnly
+[<Import("clearSession",  "runtime/storage.js")>]
+let jsClearSession () : unit = nativeOnly
 
 module Local =
     let get key = jsGetLocal key

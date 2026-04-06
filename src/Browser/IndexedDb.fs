@@ -1,12 +1,18 @@
 module Browser.IndexedDb
 
+open Fable.Core
 open Browser.Core
 
-[<Import("openDb",     "runtime/indexeddb.js")>] extern Handle jsOpenDb(string name, int version)
-[<Import("put",        "runtime/indexeddb.js")>] extern unit   jsPut(Handle db, string key, string value)
-[<Import("getItem",    "runtime/indexeddb.js")>] extern string jsGetItem(Handle db, string key)
-[<Import("deleteItem", "runtime/indexeddb.js")>] extern unit   jsDeleteItem(Handle db, string key)
-[<Import("getAllKeys",  "runtime/indexeddb.js")>] extern string[] jsGetAllKeys(Handle db)
+[<Import("openDb",     "runtime/indexeddb.js")>]
+let jsOpenDb (name: string) (version: int) : Handle = nativeOnly
+[<Import("put",        "runtime/indexeddb.js")>]
+let jsPut (db: Handle) (key: string) (v: string) : unit = nativeOnly
+[<Import("getItem",    "runtime/indexeddb.js")>]
+let jsGetItem (db: Handle) (key: string) : string = nativeOnly
+[<Import("deleteItem", "runtime/indexeddb.js")>]
+let jsDeleteItem (db: Handle) (key: string) : unit = nativeOnly
+[<Import("getAllKeys",  "runtime/indexeddb.js")>]
+let jsGetAllKeys (db: Handle) : string = nativeOnly
 
 /// Typed wrapper for an IndexedDB database.
 type Database = private DB of Handle
