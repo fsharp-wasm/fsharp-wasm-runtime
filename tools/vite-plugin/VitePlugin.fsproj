@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <!-- Fable compiles this to JS/TS — the .NET output is irrelevant -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="4.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src/VitePlugin.fs" />
+  </ItemGroup>
+
+</Project>

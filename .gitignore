@@ -16,3 +16,4 @@ obj/
 *.swp
 *.swo
 *~
+*.bak.fs

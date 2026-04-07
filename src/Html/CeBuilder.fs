@@ -1,11 +1,14 @@
 /// Browser.Html — The primary public API for building HTML in F#.
 ///
+/// Feliz-style CE DSL: standalone attribute/event functions yield HtmlItem values
+/// inside CE blocks; no [<CustomOperation>] members on the builder.
+///
 /// Usage:
 ///   open Browser.Html
 ///
 ///   let view model dispatch =
 ///       div {
-///           id "app"
+///           id' "app"
 ///           class' "container"
 ///
 ///           h1 "Hello from F# + WasmGC"
@@ -34,13 +37,14 @@ type HtmlItem =
 // ─── Element CE builder ───────────────────────────────────────────────────────
 
 /// Computation expression builder for a single HTML element.
-/// Attributes are set via custom operations; text and child nodes are yielded.
+/// Uses the Feliz pattern: standalone let-functions produce HtmlItem values
+/// that are yielded via Yield(HtmlItem) — no [<CustomOperation>] needed.
 ///
 ///   div {
 ///       class' "card"
-///       id "my-card"
-///       h1 "Title"           ← implicitly yielded (h1 : string -> Node)
-///       p  "Body text"       ← implicitly yielded
+///       id' "my-card"
+///       h1 "Title"           ← Yield(Node)
+///       p  "Body text"       ← Yield(Node)
 ///       button { onClick f; "Click me" }
 ///   }
 type ElementBuilder(tag: string) =
@@ -53,98 +57,17 @@ type ElementBuilder(tag: string) =
     /// Yield a Node as a child (enables `h1 "text"`, `p "text"`, etc.).
     member _.Yield(n: Node) : HtmlItem list = [KidItem n]
 
+    /// Yield a pre-built HtmlItem (attribute, event, or child) directly.
+    /// This allows standalone attribute/event functions to be used in CE blocks:
+    ///   button { class' "btn"; onClick (fun () -> f()); "Click" }
+    member _.Yield(item: HtmlItem) : HtmlItem list = [item]
+
     member _.Combine(a: HtmlItem list, b: HtmlItem list) : HtmlItem list = a @ b
 
     member _.Delay(f: unit -> HtmlItem list) : HtmlItem list = f ()
 
     member _.For(xs: 'a seq, f: 'a -> HtmlItem list) : HtmlItem list =
         xs |> Seq.toList |> List.collect f
-
-    // ─── Attribute custom operations ──────────────────────────────────────────
-
-    [<CustomOperation("id")>]
-    member _.Id(state, v: string) = AttrItem("id", v) :: state
-
-    [<CustomOperation("class'")>]
-    member _.Class'(state, v: string) = AttrItem("class", v) :: state
-
-    [<CustomOperation("type'")>]
-    member _.Type'(state, v: string) = AttrItem("type", v) :: state
-
-    [<CustomOperation("placeholder")>]
-    member _.Placeholder(state, v: string) = AttrItem("placeholder", v) :: state
-
-    [<CustomOperation("value'")>]
-    member _.Value'(state, v: string) = AttrItem("value", v) :: state
-
-    [<CustomOperation("href")>]
-    member _.Href(state, v: string) = AttrItem("href", v) :: state
-
-    [<CustomOperation("src")>]
-    member _.Src(state, v: string) = AttrItem("src", v) :: state
-
-    [<CustomOperation("name'")>]
-    member _.Name'(state, v: string) = AttrItem("name", v) :: state
-
-    [<CustomOperation("target")>]
-    member _.Target(state, v: string) = AttrItem("target", v) :: state
-
-    [<CustomOperation("rel")>]
-    member _.Rel(state, v: string) = AttrItem("rel", v) :: state
-
-    [<CustomOperation("attr")>]
-    member _.Attr(state, k: string, v: string) = AttrItem(k, v) :: state
-
-    [<CustomOperation("style'")>]
-    member _.Style'(state, prop: string, value: string) = AttrItem("style", prop + ":" + value) :: state
-
-    [<CustomOperation("disabled")>]
-    member _.Disabled(state, v: bool) =
-        if v then AttrItem("disabled", "") :: state else state
-
-    [<CustomOperation("checked'")>]
-    member _.Checked'(state, v: bool) =
-        if v then AttrItem("checked", "") :: state else state
-
-    [<CustomOperation("readonly'")>]
-    member _.Readonly'(state, v: bool) =
-        if v then AttrItem("readonly", "") :: state else state
-
-    [<CustomOperation("hidden")>]
-    member _.Hidden(state, v: bool) =
-        if v then AttrItem("hidden", "") :: state else state
-
-    [<CustomOperation("width'")>]
-    member _.Width'(state, v: int) = AttrItem("width", string v) :: state
-
-    [<CustomOperation("height'")>]
-    member _.Height'(state, v: int) = AttrItem("height", string v) :: state
-
-    [<CustomOperation("tabindex")>]
-    member _.Tabindex(state, v: int) = AttrItem("tabindex", string v) :: state
-
-    [<CustomOperation("role")>]
-    member _.Role(state, v: string) = AttrItem("role", v) :: state
-
-    [<CustomOperation("ariaLabel")>]
-    member _.AriaLabel(state, v: string) = AttrItem("aria-label", v) :: state
-
-    [<CustomOperation("data'")>]
-    member _.Data'(state, k: string, v: string) = AttrItem("data-" + k, v) :: state
-
-    // ─── Event custom operations ──────────────────────────────────────────────
-
-    [<CustomOperation("onClick")>]
-    member _.OnClick(state, f: unit -> unit) = EventItem f :: state
-
-    [<CustomOperation("onInput")>]
-    member _.OnInput(state, f: string -> unit) = InputItem f :: state
-
-    [<CustomOperation("onChange")>]
-    member _.OnChange(state, f: string -> unit) = ChangeItem f :: state
-
-    [<CustomOperation("onSubmit")>]
-    member _.OnSubmit(state, f: unit -> unit) = EventItem f :: state
 
     // ─── Run: convert accumulated items → Node ────────────────────────────────
 
@@ -206,8 +129,46 @@ let option     = ElementBuilder "option"
 let progress   = ElementBuilder "progress"
 let img        = ElementBuilder "img"
 
+// ─── Attribute helpers (return HtmlItem — yield-able in CE blocks) ────────────
+// Usage:
+//   button { class' "btn"; id' "submit-btn"; onClick (fun () -> f()); "Click" }
+//
+// These are standalone functions (not CE custom-operations) so they work equally
+// with newline syntax AND semicolons, and don't conflict with Browser.Events.onClick.
+
+let class'     (v: string)            : HtmlItem = AttrItem("class", v)
+let id'        (v: string)            : HtmlItem = AttrItem("id", v)
+let type'      (v: string)            : HtmlItem = AttrItem("type", v)
+let placeholder(v: string)            : HtmlItem = AttrItem("placeholder", v)
+let value'     (v: string)            : HtmlItem = AttrItem("value", v)
+let href       (v: string)            : HtmlItem = AttrItem("href", v)
+let src        (v: string)            : HtmlItem = AttrItem("src", v)
+let name'      (v: string)            : HtmlItem = AttrItem("name", v)
+let target     (v: string)            : HtmlItem = AttrItem("target", v)
+let rel        (v: string)            : HtmlItem = AttrItem("rel", v)
+let role       (v: string)            : HtmlItem = AttrItem("role", v)
+let ariaLabel  (v: string)            : HtmlItem = AttrItem("aria-label", v)
+let attr       (k: string) (v: string): HtmlItem = AttrItem(k, v)
+let style'     (p: string) (v: string): HtmlItem = AttrItem("style", p + ":" + v)
+let width'     (v: int)               : HtmlItem = AttrItem("width", string v)
+let height'    (v: int)               : HtmlItem = AttrItem("height", string v)
+let tabindex   (v: int)               : HtmlItem = AttrItem("tabindex", string v)
+let data'      (k: string) (v: string): HtmlItem = AttrItem("data-" + k, v)
+let disabled   (v: bool)              : HtmlItem = if v then AttrItem("disabled", "") else AttrItem("", "")
+let checked'   (v: bool)              : HtmlItem = if v then AttrItem("checked", "")  else AttrItem("", "")
+let readonly'  (v: bool)              : HtmlItem = if v then AttrItem("readonly", "") else AttrItem("", "")
+let hidden     (v: bool)              : HtmlItem = if v then AttrItem("hidden", "")   else AttrItem("", "")
+
+// ─── Event helpers (return HtmlItem — yield-able in CE blocks) ─────────────────
+// These shadow Browser.Events.onClick / onInput / onChange inside open Browser.Html,
+// so `onClick (fun () -> dispatch Msg)` inside a CE block correctly produces HtmlItem.
+
+let onClick   (f: unit -> unit)   : HtmlItem = EventItem f
+let onSubmit  (f: unit -> unit)   : HtmlItem = EventItem f
+let onInput   (f: string -> unit) : HtmlItem = InputItem f
+let onChange  (f: string -> unit) : HtmlItem = ChangeItem f
+
 // ─── Text shorthand functions ──────────────────────────────────────────────────
-// These return Node directly. Inside a CE block they are implicitly yielded
 // via Yield(Node), enabling the `h1 "Hello"` / `p "text"` syntax without braces.
 
 let h1 (s: string) : Node = El("h1", [], [Text s])

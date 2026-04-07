@@ -2,8 +2,12 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Playwright configuration for fsharp-wasm-runtime integration tests.
- * The `webServer` option starts a static file server before any test runs,
- * so Playwright tests can connect to http://localhost:8080.
+ *
+ * The `webServer` option starts a static file server on dist/ before any
+ * test run so Playwright tests can connect to http://localhost:4000.
+ *
+ * Before running tests, compile demos first:
+ *   node build/build.js && npx playwright test
  */
 export default defineConfig({
   testDir: "./tests/Integration",
@@ -12,7 +16,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   use: {
-    baseURL: "http://localhost:8080",
+    baseURL: "http://localhost:4000",
     trace: "on-first-retry",
   },
 
@@ -23,11 +27,12 @@ export default defineConfig({
     },
   ],
 
-  /** Start a local static server that serves the project root. */
+  /** Start a static file server on dist/ before any test runs. */
   webServer: {
-    command: "npx serve . -l 8080",
-    url: "http://localhost:8080",
+    command: "npx serve dist -p 4000",
+    url: "http://localhost:4000",
     reuseExistingServer: !process.env.CI,
-    timeout: 30_000,
+    timeout: 60_000,
   },
 });
+

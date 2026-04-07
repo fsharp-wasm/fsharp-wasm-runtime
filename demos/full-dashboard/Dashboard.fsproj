@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Demo.FullDashboard</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/FSharpWasmRuntime.fsproj" />
+    <Compile Include="Dashboard.fs" />
+  </ItemGroup>
+
+</Project>

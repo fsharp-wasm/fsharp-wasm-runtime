@@ -23,6 +23,13 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.fsproj', '**/global.json') }}
           restore-keys: nuget-${{ runner.os }}-
 
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
+
       - name: Install fsharp-wasm compiler
         run: |
           curl -L https://github.com/fsharp-wasm/fsharp-wasm/releases/latest/download/fsharp-wasm-linux-x64.tar.gz \
@@ -31,16 +38,40 @@ jobs:
           fable --version
 
       - name: Install Node.js dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build
-        run: npm run build
+      - name: Restore .NET packages
+        run: dotnet restore src/FSharpWasmRuntime.fsproj
 
-      - name: Run unit tests
-        run: npm test
+      - name: Build (compile all demos)
+        run: node build/build.js
+
+      - name: Run F# unit tests
+        run: dotnet test tests/ --logger "github::" --blame-hang-timeout 60s
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
-      - name: Run integration tests
-        run: npm run test:e2e
+      - name: Run Playwright integration tests
+        run: npx playwright test
+        env:
+          CI: "true"
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Verify NuGet pack
+        run: dotnet pack src/FSharpWasmRuntime.fsproj -o nupkg/ --no-build
+
+      - name: Upload .wasm artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-demos
+          path: dist/demos/**/*.wasm
+          retention-days: 14
+

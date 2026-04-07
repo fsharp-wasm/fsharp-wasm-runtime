@@ -4,7 +4,22 @@
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <RootNamespace>Browser</RootNamespace>
+
+    <!-- NuGet package metadata -->
+    <PackageId>FSharpWasmRuntime</PackageId>
+    <Version>0.1.0-experimental</Version>
+    <Authors>FSharpWasmRuntime contributors</Authors>
+    <Description>F# browser runtime for WebAssembly GC — typed DOM, Canvas, Fetch, Elmish MVU, HTML DSL and more. Requires the fsharp-wasm (WasmGC) compiler.</Description>
+    <PackageTags>fsharp;wasm;wasmgc;browser;elmish;dom</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Fable.Core stubs (Import attribute, nativeOnly) — no NuGet needed -->

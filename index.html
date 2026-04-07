@@ -3,160 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>F# → WebAssembly GC — Live Demo</title>
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <title>F# → WebAssembly GC — Demos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
   <style>
     .demo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
     }
-    .count-display {
-      font-size: 3rem;
-      text-align: center;
-      font-weight: bold;
-    }
-    .button-group {
+    .demo-card {
+      text-decoration: none;
+      color: inherit;
       display: flex;
-      gap: .5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .input-group {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: 1rem;
-    }
-    .input-group input {
-      flex: 1;
-    }
-    .done {
-      text-decoration: line-through;
-      opacity: .6;
-    }
-    .done span {
-      cursor: pointer;
-    }
-    canvas {
-      width: 100%;
+      flex-direction: column;
+      border: 1px solid var(--pico-muted-border-color);
       border-radius: var(--pico-border-radius);
+      padding: 1.25rem 1.5rem;
+      transition: box-shadow .15s ease, border-color .15s ease;
     }
-    header nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .demo-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,.1);
+      border-color: var(--pico-primary);
+      text-decoration: none;
     }
-    .badge {
-      font-size: .75rem;
-      background: var(--pico-primary);
-      color: white;
-      padding: .2em .6em;
-      border-radius: 1em;
-    }
-    .hint {
-      font-size: .85rem;
-      opacity: .7;
-    }
-    fs-counter {
+    .demo-card h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+    .demo-card p  { margin: 0; font-size: .875rem; opacity: .75; flex: 1; }
+    .tag {
       display: inline-block;
-      min-width: 110px;
-      min-height: 36px;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: .15em .55em;
+      border-radius: 1em;
+      margin-bottom: .6rem;
     }
+    .tag-math    { background: #e0f2fe; color: #0369a1; }
+    .tag-elmish  { background: #ede9fe; color: #6d28d9; }
+    .tag-api     { background: #d1fae5; color: #065f46; }
+    .tag-gpu     { background: #fef3c7; color: #92400e; }
+    .section-title { margin-top: 3rem; margin-bottom: .5rem; }
+    code { font-size: .85em; }
+    .hint { font-size: .85rem; opacity: .7; }
   </style>
 </head>
 <body>
   <header class="container">
-    <nav>
-      <strong>F# → WasmGC</strong>
-      <span class="badge">Live Demo</span>
+    <nav style="display:flex;justify-content:space-between;align-items:center">
+      <strong>fsharp-wasm-runtime</strong>
+      <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime" target="_blank">GitHub</a>
     </nav>
     <hgroup>
       <h1>F# compiled to WebAssembly GC</h1>
-      <p>These demos run entirely in WASM. No JavaScript application code.
-         Only thin JS glue for browser APIs (&lt; 400 LOC).</p>
+      <p>Real F# application code compiled to native WasmGC binary by
+         <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a>.
+         No JavaScript application logic — only a thin JS glue layer (&lt;500 LOC)
+         for browser APIs.</p>
     </hgroup>
   </header>
 
   <main class="container">
-    <!-- Core demos -->
-    <h2>Core Demos</h2>
+
+    <h2 class="section-title">Demos</h2>
+    <p class="hint">Each demo is a separate F# project compiled to its own <code>.wasm</code> module.
+       Click a card to open the live demo.</p>
+
     <div class="demo-grid">
-      <div id="counter-root"></div>
-      <div id="todo-root"></div>
-      <div id="canvas-root">
-        <article>
-          <header><h2>Mandelbrot (WASM compute)</h2></header>
-          <canvas id="mandelbrot" width="400" height="300"></canvas>
-          <footer><button id="render-btn">Render</button></footer>
-        </article>
-      </div>
+
+      <a class="demo-card" href="dist/demos/canvas-mandelbrot/index.html">
+        <span class="tag tag-math">Math · Canvas</span>
+        <h3>Mandelbrot</h3>
+        <p>Pure F# escape-time algorithm compiled to WasmGC. Every pixel calculation
+           is a native WebAssembly call — compare speed against plain JavaScript.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/counter/index.html">
+        <span class="tag tag-elmish">Elmish MVU</span>
+        <h3>Counter</h3>
+        <p>Classic increment / decrement counter. Model, update and view all in F#.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/todo/index.html">
+        <span class="tag tag-elmish">Elmish MVU</span>
+        <h3>Todo List</h3>
+        <p>Add, complete and remove todos. Full model-update-view cycle in F#.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/realtime-pubsub/index.html">
+        <span class="tag tag-api">PubSub · Workers</span>
+        <h3>Realtime PubSub</h3>
+        <p>Publish/subscribe over BroadcastChannel. Open in two tabs to see
+           messages appear across browser contexts in real time.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/indexeddb-crud/index.html">
+        <span class="tag tag-api">IndexedDB</span>
+        <h3>IndexedDB CRUD</h3>
+        <p>Create, read, update and delete records in the browser's IndexedDB
+           — all operations called from F# via <code>Browser.IndexedDb</code>.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/worker-actor/index.html">
+        <span class="tag tag-api">Web Worker</span>
+        <h3>Worker Actor</h3>
+        <p>F# actor pattern running inside a Web Worker. The main thread sends
+           messages; the worker processes and replies — all in F#.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/web-component/index.html">
+        <span class="tag tag-api">Custom Elements</span>
+        <h3>Web Component — &lt;fs-counter&gt;</h3>
+        <p>A custom element defined entirely in F# via
+           <code>Browser.Components.define</code>. Drop
+           <code>&lt;fs-counter&gt;</code> anywhere on the page.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/webgpu-basic/index.html">
+        <span class="tag tag-gpu">WebGPU</span>
+        <h3>WebGPU Basic</h3>
+        <p>GPU compute pipeline set up from F# using the
+           <code>Browser.Gpu</code> bindings. Requires Chrome 113+ or Firefox Nightly.</p>
+      </a>
+
+      <a class="demo-card" href="dist/demos/full-dashboard/index.html">
+        <span class="tag tag-elmish">All Features</span>
+        <h3>Full Dashboard</h3>
+        <p>Counter, Todo, Canvas, PubSub and Storage combined in one tabbed layout.
+           Full stress-test of the runtime.</p>
+      </a>
+
     </div>
 
-    <!-- Web Components -->
-    <section>
-      <h2>Web Components</h2>
-      <p>These are native <code>&lt;custom-elements&gt;</code> defined from F#:</p>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap">
-        <fs-counter></fs-counter>
-        <fs-counter></fs-counter>
-      </div>
-    </section>
+    <h2 class="section-title">How it works</h2>
+    <p>Each demo is a plain F# project:</p>
+    <pre><code>&lt;!-- demos/counter/Counter.fsproj --&gt;
+&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+  &lt;ItemGroup&gt;
+    &lt;ProjectReference Include="../../src/FSharpWasmRuntime.fsproj" /&gt;
+    &lt;Compile Include="Counter.fs" /&gt;
+  &lt;/ItemGroup&gt;
+&lt;/Project&gt;</code></pre>
+    <p>Compiled with:</p>
+    <pre><code>fable demos/counter/Counter.fsproj --lang wasmgc -o dist/demos/counter/</code></pre>
+    <p>Run <code>node build/build.js</code> to build all demos at once.</p>
 
-    <!-- Advanced demos -->
-    <h2>Advanced Demos</h2>
-    <div class="demo-grid">
-      <div id="pubsub-root"></div>
-      <div id="indexeddb-root"></div>
-      <div id="worker-root"></div>
-      <div id="webgpu-root"></div>
-    </div>
+    <h2 class="section-title">Compiler status</h2>
+    <p>The <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a> compiler
+       is under active development. Features confirmed working:</p>
+    <ul>
+      <li>Pure F# numeric / math code (loops, recursion, pattern matching)</li>
+      <li>Direct JS FFI via <code>[&lt;Import&gt;]</code> / <code>nativeOnly</code></li>
+      <li>Discriminated unions, records, lists</li>
+      <li>Canvas 2D rendering</li>
+    </ul>
+    <p>Features in progress (demos compile; full interactivity pending):</p>
+    <ul>
+      <li>Mutable local capture in closures → Elmish event dispatch loop</li>
+      <li><code>call_indirect</code> / <code>call_ref</code> in binary emitter → event handler callbacks</li>
+      <li>Cross-file function calls for non-library modules</li>
+    </ul>
 
-    <!-- Full Dashboard -->
-    <section>
-      <h2>Full Dashboard</h2>
-      <div id="dashboard-root"></div>
-    </section>
   </main>
 
   <footer class="container">
     <small>
-      Source: <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime">fsharp-wasm-runtime</a>
-      · Compiler: <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a>
+      <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime">fsharp-wasm-runtime</a>
+      · <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm compiler</a>
       · Styled with <a href="https://picocss.com">PicoCSS</a>
     </small>
   </footer>
-
-  <script type="module">
-    // Boot: instantiate the WASM module, then call F# entry points.
-    // This requires the fsharp-wasm compiler output in dist/.
-    // For development, you can also serve the demos statically.
-
-    try {
-      const { instantiate } = await import("./dist/runtime.js");
-      const wasm = await instantiate("./dist/wasm/app.wasm");
-
-      // F# entry points — exported functions from compiled WASM
-      if (wasm.exports.Counter_start) wasm.exports.Counter_start();
-      if (wasm.exports.Todo_start) wasm.exports.Todo_start();
-      if (wasm.exports.Mandelbrot_setup) wasm.exports.Mandelbrot_setup();
-      if (wasm.exports.MyCounter_register) wasm.exports.MyCounter_register();
-      if (wasm.exports.RealtimePubSub_start) wasm.exports.RealtimePubSub_start();
-      if (wasm.exports.IndexedDbCrud_start) wasm.exports.IndexedDbCrud_start();
-      if (wasm.exports.WorkerActor_start) wasm.exports.WorkerActor_start();
-      if (wasm.exports.WebGpuBasic_start) wasm.exports.WebGpuBasic_start();
-      if (wasm.exports.Dashboard_start) wasm.exports.Dashboard_start();
-
-      document.getElementById("render-btn")
-        ?.addEventListener("click", () => wasm.exports.Mandelbrot_render?.());
-    } catch (e) {
-      console.warn("WASM module not available. Build with fsharp-wasm compiler first.", e);
-      document.querySelectorAll("[id$='-root']").forEach(el => {
-        if (!el.children.length) {
-          el.innerHTML = '<article><p>⚠ WASM module not loaded. Run <code>npm run build</code> with the fsharp-wasm compiler.</p></article>';
-        }
-      });
-    }
-  </script>
 </body>
 </html>
