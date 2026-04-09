@@ -12,7 +12,7 @@ let jsGetItem (db: Handle) (key: string) : string = nativeOnly
 [<Import("deleteItem", "runtime/indexeddb.js")>]
 let jsDeleteItem (db: Handle) (key: string) : unit = nativeOnly
 [<Import("getAllKeys",  "runtime/indexeddb.js")>]
-let jsGetAllKeys (db: Handle) : string = nativeOnly
+let jsGetAllKeys (db: Handle) : string array = nativeOnly
 
 /// Typed wrapper for an IndexedDB database.
 type Database = private DB of Handle

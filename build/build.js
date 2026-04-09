@@ -38,17 +38,49 @@ const DEMOS   = resolve(ROOT, "demos");
 
 const HOME = process.env.HOME || process.env.USERPROFILE || "";
 
+/**
+ * Resolve the fsharp-wasm compiler (our patched Fable with WasmGC backend).
+ *
+ * Resolution order:
+ *  1. FSHARP_WASM_FABLE env var — path to a prebuilt fable binary
+ *  2. FSHARP_WASM_DIR env var   — path to fsharp-wasm source tree (dev mode)
+ *     → uses: dotnet run --project $FSHARP_WASM_DIR/vendor/Fable/src/Fable.Cli
+ *  3. fable on PATH (must be version 5+)
+ *  4. ~/.local/bin/fable
+ *
+ * For local development: set FSHARP_WASM_DIR to the fsharp-wasm repo root.
+ * For CI: set FSHARP_WASM_FABLE to the path of the built executable.
+ */
+
 function tryFable(bin) {
     try {
         const ver = execSync(`"${bin}" --version`, { cwd: ROOT, timeout: 10000 })
             .toString().replace(/\x1b\[[0-9;]*m/g, "").trim();
         const major = parseInt(ver.split(".")[0], 10);
-        if (!isNaN(major) && major >= 5) return { bin, ver };
+        if (!isNaN(major) && major >= 5) return { mode: "binary", bin, ver };
     } catch { /* not available */ }
     return null;
 }
 
 function resolveFable() {
+    // 1. FSHARP_WASM_DIR — dev mode: use source tree via dotnet run
+    const wasmDir = process.env.FSHARP_WASM_DIR;
+    if (wasmDir) {
+        const cliProj = join(wasmDir, "vendor", "Fable", "src", "Fable.Cli");
+        if (existsSync(join(cliProj, "Fable.Cli.fsproj"))) {
+            console.log(`  fsharp-wasm source (dotnet run)  [${cliProj}]`);
+            return { mode: "dotnet", cliProj };
+        }
+        // Also accept the fsharp-wasm-cli tool project
+        const cliTool = join(wasmDir, "tools", "fsharp-wasm-cli");
+        if (existsSync(join(cliTool, "FSharpWasmCli.fsproj"))) {
+            console.log(`  fsharp-wasm CLI tool (dotnet run)  [${cliTool}]`);
+            return { mode: "dotnet", cliProj: cliTool };
+        }
+        console.error(`  ⚠  FSHARP_WASM_DIR set to "${wasmDir}" but no Fable.Cli project found.`);
+    }
+
+    // 2. FSHARP_WASM_FABLE / PATH / ~/.local/bin/fable
     const candidates = [
         process.env.FSHARP_WASM_FABLE,
         "fable",
@@ -57,11 +89,12 @@ function resolveFable() {
 
     for (const c of candidates) {
         const r = tryFable(c);
-        if (r) { console.log(`  fable ${r.ver}  [${c}]`); return r.bin; }
+        if (r) { console.log(`  fable ${r.ver}  [${r.bin}]`); return r; }
     }
 
     console.error("\n✗ fsharp-wasm compiler not found.");
-    console.error("  Run:  bash prerequisites.sh");
+    console.error("  For local dev, set:  export FSHARP_WASM_DIR=/path/to/fsharp-wasm");
+    console.error("  For releases, run:   bash prerequisites.sh");
     process.exit(1);
 }
 
@@ -155,17 +188,18 @@ function copyGlue() {
     cpSync(RUNTIME, join(DIST, "runtime"), { recursive: true });
 }
 
-function compileDemos(fable, demos) {
+function compileDemos(compiler, demos) {
     const failed = [];
     for (const demo of demos) {
         const outDir = join(DIST, "demos", demo.name);
         mkdirSync(outDir, { recursive: true });
         console.log(`\n▸ F# → WasmGC  [${demo.name}]`);
+        const fsproj = join(ROOT, demo.fsproj);
+        const cmd = compiler.mode === "dotnet"
+            ? `dotnet run --project "${compiler.cliProj}" -- "${fsproj}" --lang wasmgc -o "${outDir}" --noCache`
+            : `"${compiler.bin}" "${fsproj}" --lang wasmgc -o "${outDir}"`;
         try {
-            execSync(
-                `"${fable}" "${join(ROOT, demo.fsproj)}" --lang wasmgc -o "${outDir}"`,
-                { cwd: ROOT, stdio: "inherit" }
-            );
+            execSync(cmd, { cwd: ROOT, stdio: "inherit" });
         } catch {
             console.error(`  ✗ ${demo.name} failed (compiler limitation — see above)`);
             failed.push(demo.name);
@@ -217,11 +251,11 @@ console.log("  fsharp-wasm-runtime — Build");
 if (selectedName) console.log(`  (demo filter: ${selectedName})`);
 console.log("═══════════════════════════════════════════════════");
 
-const fable = resolveFable();
+const compiler = resolveFable();
 
 if (!selectedName) clean();
 copyGlue();
-compileDemos(fable, demos);
+compileDemos(compiler, demos);
 copyDemoPages(demos);
 if (!selectedName) copyGallery();
 

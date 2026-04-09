@@ -21,7 +21,7 @@ Everything is written in F#; the JS is minimal glue (< 10 LOC per module on aver
 
 ---
 
-## 2. How users consume it
+## 2. How to use?
 
 ### 2a. F# side — NuGet package
 
