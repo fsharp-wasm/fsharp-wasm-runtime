@@ -1,15 +1,19 @@
 [submodule "lib/Fable"]
 	path = lib/Fable
 	url = ../Fable
+        branch = feature/wasmgc-backend
 [submodule "lib/fsharp"]
-	path = lib/fsharp
-	url = ../fsharp
+        path = lib/fsharp
+        url = ../fsharp
 [submodule "lib/fsharp-wasm-core"]
-	path = lib/fsharp-wasm-core
-	url = ../fsharp-wasm-core
+        path = lib/fsharp-wasm-core
+        url = ../fsharp-wasm-core
+        branch = develop
 [submodule "lib/fsharp-wasmecto"]
-	path = lib/fsharp-wasmecto
-	url = ../fsharp-wasmecto
+        path = lib/fsharp-wasmecto
+        url = ../fsharp-wasmecto
+        branch = develop
 [submodule "lib/fsharp-wasm"]
-	path = lib/fsharp-wasm
-	url = ../fsharp-wasm
+        path = lib/fsharp-wasm
+        url = ../fsharp-wasm
+        branch = develop

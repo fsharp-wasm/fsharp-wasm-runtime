@@ -19,6 +19,8 @@ type Database = private DB of Handle
 
 let openDb name version = DB (jsOpenDb name version)
 let put (DB db) key value = jsPut db key value
+[<CompiledName("indexedDbGet")>]
 let get (DB db) key = jsGetItem db key
+[<CompiledName("indexedDbDelete")>]
 let delete (DB db) key = jsDeleteItem db key
 let getAllKeys (DB db) = jsGetAllKeys db

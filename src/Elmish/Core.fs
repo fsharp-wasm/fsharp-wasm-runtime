@@ -17,25 +17,40 @@ type Program<'Model, 'Msg> = {
     View   : 'Model -> Dispatch<'Msg> -> Node
 }
 
+type RuntimeState<'Model, 'Msg> = {
+    mutable Model: 'Model
+    mutable Dispatch: Dispatch<'Msg>
+}
+
 /// Run an Elmish program mounted at the given DOM element ID.
 ///
 /// Implements the standard MVU loop: Init → View → Update → View → …
-/// The model is updated in place; the dispatch closure is stable across renders.
-///
-/// NOTE: Mutable captures shared between `dispatch` and `render` (via `let mutable model`)
-/// and mutual recursion (`let rec … and …`) require call_ref / func_ref support in the
-/// WasmGC binary emitter.  The F# source is production-correct; full interactivity
-/// activates once the compiler supports these patterns end-to-end.
-let run (mountId: string) (program: Program<'Model, 'Msg>) =
+/// The dispatch function is stable across renders; the model is kept in a
+/// mutable record so closures can share state without ref-cell boxing.
+let runWith
+    (mountId: string)
+    (init: unit -> 'Model * Cmd<'Msg>)
+    (update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>)
+    (view: 'Model -> Dispatch<'Msg> -> Node) =
     let container = Element.ofId mountId
-    let mutable model = fst (program.Init ())
-    let mutable cmds  = snd (program.Init ())
-    let rec dispatch (msg: 'Msg) =
-        let newModel, newCmds = program.Update msg model
-        model <- newModel
-        render ()
-        newCmds |> List.iter (fun cmd -> cmd dispatch)
-    and render () =
-        clearAndRender container [program.View model dispatch]
-    render ()
-    cmds |> List.iter (fun cmd -> cmd dispatch)
+    let initialModel, initialCmds = init ()
+    let state = {
+        Model = initialModel
+        Dispatch = fun _ -> ()
+    }
+
+    let render (model: 'Model) (dispatch: Dispatch<'Msg>) =
+        clearAndRender container [view model dispatch]
+
+    let dispatchImpl (msg: 'Msg) =
+        let newModel, newCmds = update msg state.Model
+        state.Model <- newModel
+        render state.Model state.Dispatch
+        newCmds |> List.iter (fun cmd -> cmd state.Dispatch)
+
+    state.Dispatch <- dispatchImpl
+    render state.Model state.Dispatch
+    initialCmds |> List.iter (fun cmd -> cmd state.Dispatch)
+
+let run (mountId: string) (program: Program<'Model, 'Msg>) =
+    runWith mountId program.Init program.Update program.View

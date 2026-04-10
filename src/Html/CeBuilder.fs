@@ -90,6 +90,7 @@ type ElementBuilder(tag: string) =
 
 let html       = ElementBuilder "html"
 let head       = ElementBuilder "head"
+[<CompiledName("htmlBody")>]
 let body       = ElementBuilder "body"
 let div        = ElementBuilder "div"
 let nav        = ElementBuilder "nav"
@@ -139,9 +140,12 @@ let img        = ElementBuilder "img"
 let class'     (v: string)            : HtmlItem = AttrItem("class", v)
 let id'        (v: string)            : HtmlItem = AttrItem("id", v)
 let type'      (v: string)            : HtmlItem = AttrItem("type", v)
+[<CompiledName("htmlPlaceholder")>]
 let placeholder(v: string)            : HtmlItem = AttrItem("placeholder", v)
 let value'     (v: string)            : HtmlItem = AttrItem("value", v)
+[<CompiledName("htmlHref")>]
 let href       (v: string)            : HtmlItem = AttrItem("href", v)
+[<CompiledName("htmlSrc")>]
 let src        (v: string)            : HtmlItem = AttrItem("src", v)
 let name'      (v: string)            : HtmlItem = AttrItem("name", v)
 let target     (v: string)            : HtmlItem = AttrItem("target", v)
@@ -163,9 +167,13 @@ let hidden     (v: bool)              : HtmlItem = if v then AttrItem("hidden", 
 // These shadow Browser.Events.onClick / onInput / onChange inside open Browser.Html,
 // so `onClick (fun () -> dispatch Msg)` inside a CE block correctly produces HtmlItem.
 
+[<CompiledName("htmlOnClick")>]
 let onClick   (f: unit -> unit)   : HtmlItem = EventItem f
+[<CompiledName("htmlOnSubmit")>]
 let onSubmit  (f: unit -> unit)   : HtmlItem = EventItem f
+[<CompiledName("htmlOnInput")>]
 let onInput   (f: string -> unit) : HtmlItem = InputItem f
+[<CompiledName("htmlOnChange")>]
 let onChange  (f: string -> unit) : HtmlItem = ChangeItem f
 
 // ─── Text shorthand functions ──────────────────────────────────────────────────

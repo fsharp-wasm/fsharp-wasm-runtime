@@ -12,9 +12,12 @@ let attr_       k v = Attribute(k, v)
 let onClick_    f   = OnClick f
 let onInput_    f   = OnInput f
 let onChange_   f   = OnChange f
+[<CompiledName("htmlAttrHref")>]
 let href        url = Attribute("href", url)
+[<CompiledName("htmlAttrSrc")>]
 let src         url = Attribute("src", url)
 let type_       t   = Attribute("type", t)
+[<CompiledName("htmlAttrPlaceholder")>]
 let placeholder t   = Attribute("placeholder", t)
 let value_      v   = Attribute("value", v)
 let disabled_   b   = if b then Attribute("disabled", "") else Attribute("data-enabled", "")
