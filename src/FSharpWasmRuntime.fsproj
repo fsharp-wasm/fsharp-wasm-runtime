@@ -45,6 +45,7 @@
     <Compile Include="Browser/Clipboard.fs" />
     <Compile Include="Browser/Location.fs" />
     <Compile Include="Browser/Css.fs" />
+    <Compile Include="Browser/WasmMemory.fs" />
     <Compile Include="Browser/Quotations.fs" />
 
     <!-- HTML DSL -->
