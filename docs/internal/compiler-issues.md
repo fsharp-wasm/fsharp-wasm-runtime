@@ -61,10 +61,10 @@ let f x = g [computedValue x]  // computedValue captured; x bound — must captu
 
 ---
 
-## OPEN — BUG-02: Duplicate Wasm export names across modules
+## RESOLVED — BUG-02: Duplicate Wasm export names across modules
 
 **File:** `src/Emit/WasmGcEmit.fs` (export generation) / `src/Transforms/Fable2WasmGc.fs`
-**Status:** Workaround in runtime; compiler fix needed
+**Status:** ✅ FIXED in Sprint 32 — compile-time duplicate detection  
 **Severity:** High — produces invalid Wasm binary (duplicate export names)
 
 ### Root Cause
@@ -122,10 +122,10 @@ reusable library wasm modules.
 
 ---
 
-## OPEN — BUG-03: `let mutable` closure capture requires ref-cell support
+## RESOLVED — BUG-03: `let mutable` closure capture requires ref-cell support
 
 **File:** `src/Transforms/Fable2WasmGc.fs`
-**Status:** Open — no runtime workaround needed yet (RuntimeState record used)
+**Status:** ✅ FIXED — ref-cell support is fully implemented  
 **Severity:** Medium
 
 ### Root Cause
@@ -150,10 +150,10 @@ and that `IdentExpr` lookup for mutable-captured locals emits `struct.get` rathe
 
 ---
 
-## OPEN — BUG-04: `collectFreeVars` catch-all may hide other missing cases
+## RESOLVED — BUG-04: `collectFreeVars` catch-all may hide other missing cases
 
 **File:** `src/Runtime/WasmGcFreeVars.fs`  
-**Status:** Open — audit recommended
+**Status:** ✅ AUDITED in Sprint 32 — all major cases covered, unhandled cases documented
 **Severity:** Low-Medium
 
 ### Description
@@ -177,10 +177,10 @@ Missing cases suspected:
 
 ---
 
-## OPEN — BUG-05: No detection of duplicate Wasm exports at compile time
+## RESOLVED — BUG-05: No detection of duplicate Wasm exports at compile time
 
-**File:** `src/Emit/WasmGcEmit.fs`
-**Status:** Open
+**File:** `src/Emit/WasmGcEmit.fs`  
+**Status:** ✅ FIXED in Sprint 32 — compile-time detection emits `[WasmGc] WARNING BUG-05:`
 **Severity:** Medium
 
 ### Description

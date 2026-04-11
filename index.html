@@ -71,47 +71,47 @@
 
     <div class="demo-grid">
 
-      <a class="demo-card" href="dist/demos/canvas-mandelbrot/index.html">
+      <a class="demo-card" href="demos/canvas-mandelbrot/index.html">
         <span class="tag tag-math">Math · Canvas</span>
         <h3>Mandelbrot</h3>
         <p>Pure F# escape-time algorithm compiled to WasmGC. Every pixel calculation
            is a native WebAssembly call — compare speed against plain JavaScript.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/counter/index.html">
+      <a class="demo-card" href="demos/counter/index.html">
         <span class="tag tag-elmish">Elmish MVU</span>
         <h3>Counter</h3>
         <p>Classic increment / decrement counter. Model, update and view all in F#.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/todo/index.html">
+      <a class="demo-card" href="demos/todo/index.html">
         <span class="tag tag-elmish">Elmish MVU</span>
         <h3>Todo List</h3>
         <p>Add, complete and remove todos. Full model-update-view cycle in F#.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/realtime-pubsub/index.html">
+      <a class="demo-card" href="demos/realtime-pubsub/index.html">
         <span class="tag tag-api">PubSub · Workers</span>
         <h3>Realtime PubSub</h3>
         <p>Publish/subscribe over BroadcastChannel. Open in two tabs to see
            messages appear across browser contexts in real time.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/indexeddb-crud/index.html">
+      <a class="demo-card" href="demos/indexeddb-crud/index.html">
         <span class="tag tag-api">IndexedDB</span>
         <h3>IndexedDB CRUD</h3>
         <p>Create, read, update and delete records in the browser's IndexedDB
            — all operations called from F# via <code>Browser.IndexedDb</code>.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/worker-actor/index.html">
+      <a class="demo-card" href="demos/worker-actor/index.html">
         <span class="tag tag-api">Web Worker</span>
         <h3>Worker Actor</h3>
         <p>F# actor pattern running inside a Web Worker. The main thread sends
            messages; the worker processes and replies — all in F#.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/web-component/index.html">
+      <a class="demo-card" href="demos/web-component/index.html">
         <span class="tag tag-api">Custom Elements</span>
         <h3>Web Component — &lt;fs-counter&gt;</h3>
         <p>A custom element defined entirely in F# via
@@ -119,14 +119,14 @@
            <code>&lt;fs-counter&gt;</code> anywhere on the page.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/webgpu-basic/index.html">
+      <a class="demo-card" href="demos/webgpu-basic/index.html">
         <span class="tag tag-gpu">WebGPU</span>
         <h3>WebGPU Basic</h3>
         <p>GPU compute pipeline set up from F# using the
            <code>Browser.Gpu</code> bindings. Requires Chrome 113+ or Firefox Nightly.</p>
       </a>
 
-      <a class="demo-card" href="dist/demos/full-dashboard/index.html">
+      <a class="demo-card" href="demos/full-dashboard/index.html">
         <span class="tag tag-elmish">All Features</span>
         <h3>Full Dashboard</h3>
         <p>Counter, Todo, Canvas, PubSub and Storage combined in one tabbed layout.
@@ -145,7 +145,7 @@
   &lt;/ItemGroup&gt;
 &lt;/Project&gt;</code></pre>
     <p>Compiled with:</p>
-    <pre><code>fable demos/counter/Counter.fsproj --lang wasmgc -o dist/demos/counter/</code></pre>
+    <pre><code>fable demos/counter/Counter.fsproj --lang wasmgc -o demos/counter/</code></pre>
     <p>Run <code>node build/build.js</code> to build all demos at once.</p>
 
     <h2 class="section-title">Compiler status</h2>
