@@ -20,7 +20,9 @@
 ///               button { onClick (fun () -> dispatch Decrement); "−" }
 ///           }
 ///       }
-module Browser.Html
+namespace Browser
+
+module Html =
 
 open Browser.Html.Elements
 

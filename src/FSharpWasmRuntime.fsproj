@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <!-- <LangVersion>10.0</LangVersion> -->
+    <LangVersion>preview</LangVersion>
     <RootNamespace>Browser</RootNamespace>
 
     <!-- NuGet package metadata -->
