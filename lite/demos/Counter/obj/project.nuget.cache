@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "gD/oNkH7pCk=",
+  "success": true,
+  "projectFilePath": "/home/user/fsharp-wasm-runtime/lite/demos/Counter/Counter.fsproj",
+  "expectedPackageFiles": [
+    "/root/.nuget/packages/fsharp.core/10.1.303/fsharp.core.10.1.303.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,10 @@
+Warning: fable-library-wasmgc not found — LibraryDir will default to '.'
+[37mParsing lite/demos/Bench/Bench.fsproj...
+[39m[22m[37mProject and references (2 source files) parsed in 3378ms
+
+[39m[22m[37mStarted Fable compilation...
+[39m[22m    ⚠️  wasm-tools component new failed — embedded.wasm kept
+[37m
+Fable compilation finished in 1608ms
+
+[39m[22m

@@ -1,0 +1,8 @@
+package bench:bench@0.1.0;
+
+world bench {
+  export mandelbrot: func(n: s32) -> s32;
+  export primes: func(n: s32) -> s32;
+  export collatz: func(n: s32) -> s32;
+  export pipeline: func(n: s32) -> s32;
+}

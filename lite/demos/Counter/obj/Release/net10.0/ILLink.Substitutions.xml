@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="Counter">
+    <resource name="FSharpSignatureData.Counter" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.Counter" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.Counter" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.Counter" action="remove"></resource>
+    <resource name="FSharpOptimizationData.Counter" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.Counter" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.Counter" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.Counter" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.Counter" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.Counter" action="remove"></resource>
+  </assembly>
+</linker>

@@ -1,0 +1,10 @@
+Warning: fable-library-wasmgc not found — LibraryDir will default to '.'
+[37mParsing lite/demos/Todo/Todo.fsproj...
+[39m[22m[37mProject and references (6 source files) parsed in 3862ms
+
+[39m[22m[37mStarted Fable compilation...
+[39m[22m    ℹ️  wasm-tools not found or embed failed — WIT written to /home/user/fsharp-wasm-runtime/lite/demos/Todo/out/./wit/todo.wit
+[37m
+Fable compilation finished in 1543ms
+
+[39m[22m

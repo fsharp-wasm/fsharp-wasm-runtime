@@ -1,0 +1,10 @@
+Warning: fable-library-wasmgc not found — LibraryDir will default to '.'
+[37mParsing lite/demos/Counter/Counter.fsproj...
+[39m[22m[37mProject and references (6 source files) parsed in 2673ms
+
+[39m[22m[37mStarted Fable compilation...
+[39m[22m    ℹ️  wasm-tools not found or embed failed — WIT written to /home/user/fsharp-wasm-runtime/lite/demos/Counter/out/./wit/counter.wit
+[37m
+Fable compilation finished in 1540ms
+
+[39m[22m

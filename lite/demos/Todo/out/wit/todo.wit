@@ -1,0 +1,9 @@
+package todo:todo@0.1.0;
+
+world todo {
+  export tick: func();
+  export %"inboxClear": func();
+  export %"inboxPut": func(c: s32);
+  export dispatch: func(id: s32);
+  export main: func();
+}

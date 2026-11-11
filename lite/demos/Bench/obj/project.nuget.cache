@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "aCtLKvUH6NQ=",
+  "success": true,
+  "projectFilePath": "/home/user/fsharp-wasm-runtime/lite/demos/Bench/Bench.fsproj",
+  "expectedPackageFiles": [
+    "/root/.nuget/packages/fsharp.core/10.1.303/fsharp.core.10.1.303.nupkg.sha512"
+  ],
+  "logs": []
+}

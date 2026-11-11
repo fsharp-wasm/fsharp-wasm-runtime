@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="Todo">
+    <resource name="FSharpSignatureData.Todo" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.Todo" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.Todo" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.Todo" action="remove"></resource>
+    <resource name="FSharpOptimizationData.Todo" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.Todo" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.Todo" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.Todo" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.Todo" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.Todo" action="remove"></resource>
+  </assembly>
+</linker>

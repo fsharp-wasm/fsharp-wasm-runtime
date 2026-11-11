@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="Life">
+    <resource name="FSharpSignatureData.Life" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.Life" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.Life" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.Life" action="remove"></resource>
+    <resource name="FSharpOptimizationData.Life" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.Life" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.Life" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.Life" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.Life" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.Life" action="remove"></resource>
+  </assembly>
+</linker>
