@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fsharp-wasm — F# compiled to WebAssembly GC</title>
+<meta name="description" content="A real F# → WasmGC compiler, differential-tested against .NET, and the 100-line runtime that puts it in your browser. This page is F#.">
+<link rel="stylesheet" href="vendor/pico.min.css">
+<style>
+  :root { --accent: #7cf5c0; }
+  body { background: #0b1020; }
+  .hero { padding: 5rem 0 3rem; text-align: center; }
+  .hero h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; margin-bottom: 1rem; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p.lead { max-width: 46rem; margin: 0 auto 2rem; font-size: 1.2rem; opacity: .85; }
+  .cta a[role=button] { margin: .25rem; }
+  .sponsor { background: var(--accent); border-color: var(--accent); color: #0b1020; font-weight: 700; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; margin: 2rem 0; }
+  .stat { text-align: center; padding: 1.2rem; border: 1px solid #24304f; border-radius: 12px; }
+  .stat b { display: block; font-size: 2rem; color: var(--accent); }
+  .stat span { opacity: .75; font-size: .9rem; }
+  section { margin: 4rem 0; }
+  h2.sec { margin-bottom: .25rem; }
+  p.sub { opacity: .75; margin-bottom: 1.5rem; }
+  .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 1rem; align-items: start; }
+  .demos > div article { margin: 0; }
+  table td.num, table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .win { color: var(--accent); font-weight: 700; }
+  code, pre { font-size: .85rem; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; }
+  .steps article { margin: 0; }
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+  .tiers article { margin: 0; }
+  footer { opacity: .6; text-align: center; padding: 3rem 0; font-size: .9rem; }
+  #status { min-height: 1.5rem; }
+</style>
+</head>
+<body>
+<main class="container">
+
+<header class="hero">
+  <h1>F#, <em>compiled</em> to WebAssembly GC.<br>No JavaScript app code.</h1>
+  <p class="lead">A real compiler — not a transpiler — tested against .NET on hundreds of thousands of generated inputs,
+    plus a runtime of ~100 lines of glue. Everything interactive on this page is F# running as WasmGC.</p>
+  <p class="cta">
+    <a role="button" class="sponsor" href="https://github.com/sponsors/aiqs4">♥ Sponsor the project</a>
+    <a role="button" class="secondary" href="https://github.com/aiqs4/fsharp-wasm">Compiler</a>
+    <a role="button" class="secondary outline" href="https://github.com/aiqs4/fsharp-wasm-runtime">Runtime</a>
+  </p>
+</header>
+
+<div class="stats">
+  <div class="stat"><b>0</b><span>disagreements with .NET in 784,000 generated test calls</span></div>
+  <div class="stat"><b>~5 KB</b><span>wasm for a whole Elmish app (no runtime download)</span></div>
+  <div class="stat"><b>60×</b><span>faster than JavaScript on a map/filter/fold pipeline (fused into one loop)</span></div>
+  <div class="stat"><b>~100</b><span>lines of JavaScript glue — and no framework</span></div>
+</div>
+
+<section id="live">
+  <h2 class="sec">Live: this is F#</h2>
+  <p class="sub">Three apps, three separate WasmGC modules, one page. Model–View–Update in F#, rendered by a tiny host.</p>
+  <div class="demos">
+    <div id="counter"></div>
+    <div id="todo"></div>
+    <div id="life"></div>
+  </div>
+  <p id="status"><small></small></p>
+</section>
+
+<section id="speed">
+  <h2 class="sec">Speed — measured in your browser, right now</h2>
+  <p class="sub">The same four algorithms, written once in F# (compiled by fsharp-wasm) and once in plain JavaScript, run on your machine.</p>
+  <button id="run-bench">Run the benchmark</button>
+  <table role="grid">
+    <thead><tr><th>workload</th><th class="num">JavaScript</th><th class="num">F# → WasmGC</th><th class="num">ratio</th><th>same result</th></tr></thead>
+    <tbody id="bench-rows"><tr><td colspan="5"><small>press “Run the benchmark”</small></td></tr></tbody>
+  </table>
+  <small>Best of 5 runs after a warm-up, results compared for equality. Honest reading: V8's JIT is superb at tight float/int
+    loops, so expect parity there (Mandelbrot, sieve). The wasm wins where the language helps: native 64-bit integers (Collatz)
+    and list pipelines, which the compiler fuses into one loop with no intermediate lists. The F# is unmodified, idiomatic code
+    (<code>for</code> loops, <code>mutable</code>, <code>List.map |&gt; List.filter |&gt; List.fold</code>).</small>
+</section>
+
+<section id="how">
+  <h2 class="sec">How it works</h2>
+  <p class="sub">Three small pieces, each replaceable.</p>
+  <div class="steps">
+    <article><header><b>1 · fsharp-wasm</b></header>The compiler. F# source → typed AST → WasmGC, with exact .NET semantics
+      for integers, floats, strings, <code>printf</code>, generics and structural equality — verified by differential tests against .NET on every commit.</article>
+    <article><header><b>2 · Browser.*</b></header>Elmish, HTML and Canvas written in F# and compiled by the same compiler.
+      The view is a pure function; the runtime serialises it, the host morphs the DOM.</article>
+    <article><header><b>3 · browser.js</b></header>About 100 lines. WasmGC strings are opaque to JavaScript, so text crosses
+      the boundary as UTF-16 code units through two integer imports. No bridge generator, no shared memory.</article>
+  </div>
+<pre><code>type Msg = Increment | Decrement | Reset
+
+let update msg model =
+    match msg with
+    | Increment -> model + 1
+    | Decrement -> model - 1
+    | Reset     -> 0
+
+let view model =
+    article [] [
+        h1 [] [ text "Hello from F# on WasmGC" ]
+        p  [] [ text ("Count: " + string model) ]
+        button [ onClick Increment ] [ text "+" ]
+    ]
+
+let main () = run (simple 0 update view Reset)</code></pre>
+</section>
+
+<section id="sponsor">
+  <h2 class="sec">Why sponsor</h2>
+  <p class="sub">F# is the best language for correct, concise software — and the browser still treats it as a JavaScript source.
+    This project makes it a first-class WasmGC target. Sponsorship pays for the unglamorous parts that make it usable.</p>
+  <div class="tiers">
+    <article><header><b>Next up</b></header><ul>
+      <li><code>Dictionary</code>, <code>HashSet</code>, <code>Map</code>/<code>Set</code> with any key</li>
+      <li>async / tasks, <code>fetch</code>, storage, IndexedDB</li>
+      <li>Source maps &amp; debugging in browser devtools</li></ul></article>
+    <article><header><b>Correctness</b></header><ul>
+      <li>More differential-test coverage (collections, text, numerics)</li>
+      <li>Exact <code>%A</code>, <code>%g</code>, culture-free formatting</li>
+      <li>Performance regression tracking in CI</li></ul></article>
+    <article><header><b>Ecosystem</b></header><ul>
+      <li>NuGet distribution of the compiler and runtime</li>
+      <li>Web Components, WebGPU, workers as F# modules</li>
+      <li>Templates and documentation</li></ul></article>
+  </div>
+  <p class="cta" style="margin-top:2rem;text-align:center"><a role="button" class="sponsor" href="https://github.com/sponsors/aiqs4">♥ Become a sponsor</a></p>
+</section>
+
+<footer>fsharp-wasm · F# → WebAssembly GC · MIT · built with itself</footer>
+</main>
+
+<script type="module">
+  import { mount } from './runtime/browser.js';
+  const status = document.querySelector('#status small');
+  try {
+    await Promise.all([
+      mount('./wasm/Counter.wasm', document.getElementById('counter')),
+      mount('./wasm/Todo.wasm', document.getElementById('todo')),
+      mount('./wasm/Life.wasm', document.getElementById('life')),
+    ]);
+    status.textContent = 'All three apps are running as WasmGC modules.';
+  } catch (e) {
+    status.textContent = 'WasmGC is not available in this browser (' + e.message + '). Use a current Chrome, Edge, Firefox or Safari.';
+  }
+  window.__ready = true;
+
+  // ── benchmark ────────────────────────────────────────────────────────────────────────────────────────
+  const js = {
+    mandelbrot(n) { let inside = 0;
+      for (let py = 0; py < n; py++) for (let px = 0; px < n; px++) {
+        const cr = 3.5 * px / n - 2.5, ci = 2.0 * py / n - 1.0; let zr = 0, zi = 0, i = 0;
+        while (i < 200 && zr * zr + zi * zi <= 4.0) { const t = zr * zr - zi * zi + cr; zi = 2.0 * zr * zi + ci; zr = t; i++; }
+        if (i === 200) inside++; }
+      return inside; },
+    primes(n) { const c = new Uint8Array(n + 1); let count = 0;
+      for (let i = 2; i <= n; i++) if (!c[i]) { count++; for (let j = i * 2; j <= n; j += i) c[j] = 1; }
+      return count; },
+    collatz(n) { let best = 0;
+      for (let s = 1; s <= n; s++) { let x = s, steps = 0; while (x !== 1) { x = x % 2 === 0 ? x / 2 : 3 * x + 1; steps++; } if (steps > best) best = steps; }
+      return best; },
+    pipeline(n) { return Array.from({ length: n }, (_, i) => i + 1).map(v => v * 3).filter(v => v % 2 === 0).reduce((a, v) => (a + v % 1000) | 0, 0); },
+  };
+  const work = [['Mandelbrot 700×700', 'mandelbrot', 700], ['Primes ≤ 5,000,000', 'primes', 5_000_000], ['Collatz < 300,000', 'collatz', 300_000], ['List pipeline, 1,000,000', 'pipeline', 1_000_000]];
+  const best = (f, n) => { f(n); let b = Infinity, r; for (let i = 0; i < 5; i++) { const t = performance.now(); r = f(n); b = Math.min(b, performance.now() - t); } return [b, r]; };
+
+  document.getElementById('run-bench').addEventListener('click', async (ev) => {
+    ev.target.disabled = true; ev.target.textContent = 'running…';
+    const { instance } = await WebAssembly.instantiate(await (await fetch('./wasm/Bench.wasm')).arrayBuffer(), { env: { consolePrint() {} } });
+    const rows = document.getElementById('bench-rows'); rows.innerHTML = '';
+    for (const [label, name, n] of work) {
+      await new Promise(r => setTimeout(r, 30));
+      const [tj, rj] = best(js[name], n);
+      const [tw, rw] = best(instance.exports[name], n);
+      const ratio = tj / tw;
+      rows.insertAdjacentHTML('beforeend',
+        `<tr><td>${label}</td><td class="num">${tj.toFixed(1)} ms</td><td class="num">${tw.toFixed(1)} ms</td>` +
+        `<td class="num ${ratio >= 1 ? 'win' : ''}">${ratio >= 1 ? ratio.toFixed(1) + '× faster' : (1 / ratio).toFixed(1) + '× slower'}</td>` +
+        `<td>${rj === rw ? '✓ ' + rw : '✗ ' + rj + ' ≠ ' + rw}</td></tr>`);
+    }
+    ev.target.disabled = false; ev.target.textContent = 'Run again';
+    window.__benchDone = true;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Compiled to WasmGC by fsharp-wasm (tools/FSharp.Wasm.Cli); FSHARP_WASM points at its checkout. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <FSharpWasm Condition="'$(FSHARP_WASM)' != ''">$(FSHARP_WASM)</FSharpWasm>
+    <FSharpWasm Condition="'$(FSharpWasm)' == ''">$(MSBuildThisFileDirectory)../../../fsharp-wasm</FSharpWasm>
+    <NoWarn>$(NoWarn);NU1900;NETSDK1188;FS0988;FS3370</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(FSharpWasm)/fable-library-wasmgc/Core/Interop.fs" />
+    <Compile Include="../../src/Browser/Core.fs" />
+    <Compile Include="../../src/Browser/Timing.fs" />
+    <Compile Include="../../src/Browser/Elmish.fs" />
+    <Compile Include="../../src/Browser/Html.fs" />
+    <Compile Include="Counter.fs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,5 @@
+demos/*/out/
+demos/*/bin/
+demos/*/obj/
+demos/*/build.log
+node_modules/

@@ -1,0 +1,9 @@
+[37mParsing ../fsharp-wasm-runtime/demos/Counter/Counter.fsproj...
+[39m[22m[37mProject and references (5 source files) parsed in 2250ms
+
+[39m[22m[37mStarted Fable compilation...
+[39m[22m    ℹ️  wasm-tools not found or embed failed — WIT written to /home/user/fsharp-wasm-runtime/demos/Counter/out/./wit/counter.wit
+[37m
+Fable compilation finished in 1372ms
+
+[39m[22m

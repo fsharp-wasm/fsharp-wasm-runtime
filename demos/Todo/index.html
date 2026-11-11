@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Todo — F# on WasmGC</title>
+<link rel="stylesheet" href="../../site/vendor/pico.min.css">
+<main class="container"><div id="app"></div></main>
+<script type="module">
+  import { mount } from '../../runtime/browser.js';
+  await mount('./out/Todo.wasm', document.getElementById('app'));
+  window.__ready = true;
+</script>
