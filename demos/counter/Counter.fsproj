@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Demo.Counter</AssemblyName>
+    <NoWarn>$(NoWarn);NU1900</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/FSharpWasmRuntime.fsproj" />
+    <Compile Include="Counter.fs" />
+  </ItemGroup>
+
+</Project>

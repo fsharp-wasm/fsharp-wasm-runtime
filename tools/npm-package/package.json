@@ -1,0 +1,34 @@
+{
+  "name": "@fsharp-wasm/runtime",
+  "version": "0.1.0-experimental",
+  "description": "JavaScript runtime glue modules for F# WasmGC browser apps",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".":          "./index.js",
+    "./boot":     "./runtime/boot.js",
+    "./core":     "./runtime/core.js",
+    "./dom":      "./runtime/dom.js",
+    "./canvas":   "./runtime/canvas.js",
+    "./net":      "./runtime/net.js",
+    "./storage":  "./runtime/storage.js",
+    "./indexeddb":"./runtime/indexeddb.js",
+    "./workers":  "./runtime/workers.js",
+    "./pubsub":   "./runtime/pubsub.js",
+    "./timing":   "./runtime/timing.js",
+    "./gpu":      "./runtime/gpu.js",
+    "./components":"./runtime/components.js",
+    "./clipboard":"./runtime/clipboard.js",
+    "./cookies":  "./runtime/cookies.js",
+    "./location": "./runtime/location.js",
+    "./pointer":  "./runtime/pointer.js",
+    "./events":   "./runtime/events.js"
+  },
+  "files": ["index.js", "runtime/"],
+  "keywords": ["fsharp", "wasm", "wasmgc", "browser", "runtime"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fsharp-wasm/fsharp-wasm-runtime"
+  }
+}

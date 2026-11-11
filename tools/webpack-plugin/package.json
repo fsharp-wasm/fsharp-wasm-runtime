@@ -1,0 +1,27 @@
+{
+  "name": "@fsharp-wasm/webpack-plugin",
+  "version": "0.1.0-experimental",
+  "description": "Webpack 5 plugin for F# WasmGC projects — auto-compile .fsproj, emit runtime/*.js assets",
+  "type": "commonjs",
+  "main": "./dist/WebpackPlugin.js",
+  "exports": {
+    ".": {
+      "require": "./dist/WebpackPlugin.js",
+      "types":   "./dist/WebpackPlugin.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "fable src/WebpackPlugin.fs --lang javascript -o dist/ && tsc --emitDeclarationOnly --declaration --outDir dist/",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["webpack", "fsharp", "wasm", "wasmgc"],
+  "license": "MIT",
+  "peerDependencies": {
+    "webpack": ">=5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "webpack": "^5.0.0"
+  }
+}

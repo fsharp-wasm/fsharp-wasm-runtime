@@ -1,0 +1,42 @@
+/// Browser.Cookies — document.cookie read/write/delete helpers.
+///
+/// Cookies are simple key/value pairs stored per origin. They can carry
+/// an expiry date; without one they are session cookies (cleared on tab close).
+module Browser.Cookies
+
+open Fable.Core
+
+[<Import("getCookie",        "runtime/cookies.js")>]
+let jsGet (name: string) : string = nativeOnly
+[<Import("setCookie",        "runtime/cookies.js")>]
+let jsSet (name: string) (value: string) (days: int) (path: string) : unit = nativeOnly
+[<Import("deleteCookie",     "runtime/cookies.js")>]
+let jsDelete (name: string) (path: string) : unit = nativeOnly
+[<Import("hasCookie",        "runtime/cookies.js")>]
+let jsHas (name: string) : bool = nativeOnly
+[<Import("getAllCookieNames", "runtime/cookies.js")>]
+let jsAllNames () : string = nativeOnly
+
+/// Read the value of a cookie by name. Returns "" if not found.
+let get (name: string) : string = jsGet name
+
+/// Write a cookie.
+/// `days = 0` creates a session cookie (expires when the browser tab closes).
+let set (name: string) (value: string) (days: int) : unit =
+    jsSet name value days "/"
+
+/// Write a cookie with a custom path.
+let setAtPath (name: string) (value: string) (days: int) (path: string) : unit =
+    jsSet name value days path
+
+/// Delete a cookie. The path must match the one used when it was written.
+let delete (name: string) : unit = jsDelete name "/"
+
+/// Check whether a cookie with the given name exists.
+let has (name: string) : bool = jsHas name
+
+/// Return all cookie names visible to this page.
+let allNames () : string list =
+    let raw = jsAllNames ()
+    if raw = "" then []
+    else raw.Split('\n') |> Array.toList

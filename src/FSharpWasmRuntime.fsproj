@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- <LangVersion>10.0</LangVersion> -->
+    <LangVersion>preview</LangVersion>
+    <RootNamespace>Browser</RootNamespace>
+
+    <!-- NuGet package metadata -->
+    <PackageId>FSharpWasmRuntime</PackageId>
+    <Version>0.1.0-experimental</Version>
+    <Authors>FSharpWasmRuntime contributors</Authors>
+    <Description>F# browser runtime for WebAssembly GC — typed DOM, Canvas, Fetch, Elmish MVU, HTML DSL and more. Requires the fsharp-wasm (WasmGC) compiler.</Description>
+    <PackageTags>fsharp;wasm;wasmgc;browser;elmish;dom</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    
+    <NoWarn>$(NoWarn);NU1900</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Fable.Core stubs (Import attribute, nativeOnly) — no NuGet needed -->
+    <Compile Include="Interop.fs" />
+
+    <!-- Browser core modules -->
+    <Compile Include="Browser/Core.fs" />
+    <Compile Include="Browser/Dom.fs" />
+    <Compile Include="Browser/Events.fs" />
+    <Compile Include="Browser/Canvas.fs" />
+    <Compile Include="Browser/Components.fs" />
+    <Compile Include="Browser/Net.fs" />
+    <Compile Include="Browser/PubSub.fs" />
+    <Compile Include="Browser/Storage.fs" />
+    <Compile Include="Browser/Cookies.fs" />
+    <Compile Include="Browser/IndexedDb.fs" />
+    <Compile Include="Browser/Workers.fs" />
+    <Compile Include="Browser/Timing.fs" />
+    <Compile Include="Browser/Gpu.fs" />
+    <Compile Include="Browser/Pointer.fs" />
+    <Compile Include="Browser/Clipboard.fs" />
+    <Compile Include="Browser/Location.fs" />
+    <Compile Include="Browser/Css.fs" />
+    <Compile Include="Browser/WasmMemory.fs" />
+    <Compile Include="Browser/Quotations.fs" />
+
+    <!-- HTML DSL -->
+    <Compile Include="Html/Elements.fs" />
+    <Compile Include="Html/Attrs.fs" />
+    <Compile Include="Html/Events.fs" />
+    <Compile Include="Html/CeBuilder.fs" />
+
+    <!-- Elmish MVU -->
+    <Compile Include="Elmish/Core.fs" />
+  </ItemGroup>
+
+</Project>

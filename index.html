@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F# → WebAssembly GC — Demos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .demo-card {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--pico-muted-border-color);
+      border-radius: var(--pico-border-radius);
+      padding: 1.25rem 1.5rem;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    .demo-card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,.1);
+      border-color: var(--pico-primary);
+      text-decoration: none;
+    }
+    .demo-card h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+    .demo-card p  { margin: 0; font-size: .875rem; opacity: .75; flex: 1; }
+    .tag {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: .15em .55em;
+      border-radius: 1em;
+      margin-bottom: .6rem;
+    }
+    .tag-math    { background: #e0f2fe; color: #0369a1; }
+    .tag-elmish  { background: #ede9fe; color: #6d28d9; }
+    .tag-api     { background: #d1fae5; color: #065f46; }
+    .tag-gpu     { background: #fef3c7; color: #92400e; }
+    .section-title { margin-top: 3rem; margin-bottom: .5rem; }
+    code { font-size: .85em; }
+    .hint { font-size: .85rem; opacity: .7; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav style="display:flex;justify-content:space-between;align-items:center">
+      <strong>fsharp-wasm-runtime</strong>
+      <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime" target="_blank">GitHub</a>
+    </nav>
+    <hgroup>
+      <h1>F# compiled to WebAssembly GC</h1>
+      <p>Real F# application code compiled to native WasmGC binary by
+         <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a>.
+         No JavaScript application logic — only a thin JS glue layer (&lt;500 LOC)
+         for browser APIs.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+
+    <h2 class="section-title">Demos</h2>
+    <p class="hint">Each demo is a separate F# project compiled to its own <code>.wasm</code> module.
+       Click a card to open the live demo.</p>
+
+    <div class="demo-grid">
+
+      <a class="demo-card" href="demos/canvas-mandelbrot/index.html">
+        <span class="tag tag-math">Math · Canvas</span>
+        <h3>Mandelbrot</h3>
+        <p>Pure F# escape-time algorithm compiled to WasmGC. Every pixel calculation
+           is a native WebAssembly call — compare speed against plain JavaScript.</p>
+      </a>
+
+      <a class="demo-card" href="demos/counter/index.html">
+        <span class="tag tag-elmish">Elmish MVU</span>
+        <h3>Counter</h3>
+        <p>Classic increment / decrement counter. Model, update and view all in F#.</p>
+      </a>
+
+      <a class="demo-card" href="demos/todo/index.html">
+        <span class="tag tag-elmish">Elmish MVU</span>
+        <h3>Todo List</h3>
+        <p>Add, complete and remove todos. Full model-update-view cycle in F#.</p>
+      </a>
+
+      <a class="demo-card" href="demos/realtime-pubsub/index.html">
+        <span class="tag tag-api">PubSub · Workers</span>
+        <h3>Realtime PubSub</h3>
+        <p>Publish/subscribe over BroadcastChannel. Open in two tabs to see
+           messages appear across browser contexts in real time.</p>
+      </a>
+
+      <a class="demo-card" href="demos/indexeddb-crud/index.html">
+        <span class="tag tag-api">IndexedDB</span>
+        <h3>IndexedDB CRUD</h3>
+        <p>Create, read, update and delete records in the browser's IndexedDB
+           — all operations called from F# via <code>Browser.IndexedDb</code>.</p>
+      </a>
+
+      <a class="demo-card" href="demos/worker-actor/index.html">
+        <span class="tag tag-api">Web Worker</span>
+        <h3>Worker Actor</h3>
+        <p>F# actor pattern running inside a Web Worker. The main thread sends
+           messages; the worker processes and replies — all in F#.</p>
+      </a>
+
+      <a class="demo-card" href="demos/web-component/index.html">
+        <span class="tag tag-api">Custom Elements</span>
+        <h3>Web Component — &lt;fs-counter&gt;</h3>
+        <p>A custom element defined entirely in F# via
+           <code>Browser.Components.define</code>. Drop
+           <code>&lt;fs-counter&gt;</code> anywhere on the page.</p>
+      </a>
+
+      <a class="demo-card" href="demos/webgpu-basic/index.html">
+        <span class="tag tag-gpu">WebGPU</span>
+        <h3>WebGPU Basic</h3>
+        <p>GPU compute pipeline set up from F# using the
+           <code>Browser.Gpu</code> bindings. Requires Chrome 113+ or Firefox Nightly.</p>
+      </a>
+
+      <a class="demo-card" href="demos/full-dashboard/index.html">
+        <span class="tag tag-elmish">All Features</span>
+        <h3>Full Dashboard</h3>
+        <p>Counter, Todo, Canvas, PubSub and Storage combined in one tabbed layout.
+           Full stress-test of the runtime.</p>
+      </a>
+
+    </div>
+
+    <h2 class="section-title">How it works</h2>
+    <p>Each demo is a plain F# project:</p>
+    <pre><code>&lt;!-- demos/counter/Counter.fsproj --&gt;
+&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+  &lt;ItemGroup&gt;
+    &lt;ProjectReference Include="../../src/FSharpWasmRuntime.fsproj" /&gt;
+    &lt;Compile Include="Counter.fs" /&gt;
+  &lt;/ItemGroup&gt;
+&lt;/Project&gt;</code></pre>
+    <p>Compiled with:</p>
+    <pre><code>fable demos/counter/Counter.fsproj --lang wasmgc -o demos/counter/</code></pre>
+    <p>Run <code>node build/build.js</code> to build all demos at once.</p>
+
+    <h2 class="section-title">Compiler status</h2>
+    <p>The <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a> compiler
+       is under active development. Features confirmed working:</p>
+    <ul>
+      <li>Pure F# numeric / math code (loops, recursion, pattern matching)</li>
+      <li>Direct JS FFI via <code>[&lt;Import&gt;]</code> / <code>nativeOnly</code></li>
+      <li>Discriminated unions, records, lists</li>
+      <li>Canvas 2D rendering</li>
+    </ul>
+    <p>Features in progress (demos compile; full interactivity pending):</p>
+    <ul>
+      <li>Mutable local capture in closures → Elmish event dispatch loop</li>
+      <li><code>call_indirect</code> / <code>call_ref</code> in binary emitter → event handler callbacks</li>
+      <li>Cross-file function calls for non-library modules</li>
+    </ul>
+
+  </main>
+
+  <footer class="container">
+    <small>
+      <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime">fsharp-wasm-runtime</a>
+      · <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm compiler</a>
+      · Styled with <a href="https://picocss.com">PicoCSS</a>
+    </small>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .count-display { font-size: 3rem; text-align: center; font-weight: bold; }
+    .button-group  { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>Counter — Elmish MVU</h1>
+      <p>Classic increment / decrement counter. Model, update and view all written in F#,
+         compiled to WebAssembly GC.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <div id="counter-root"></div>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    boot({ wasm: new URL("counter/Counter.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

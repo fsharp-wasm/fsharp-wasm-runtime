@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Component — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    fs-counter {
+      display: inline-block;
+      min-width: 110px;
+      min-height: 36px;
+    }
+    .button-group { display: flex; gap: .5rem; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>Web Component — &lt;fs-counter&gt;</h1>
+      <p>A custom element defined entirely in F# via <code>Browser.Components.define</code>.
+         Embed it anywhere with <code>&lt;fs-counter&gt;&lt;/fs-counter&gt;</code>.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+
+    <article>
+      <header><h3>Live instances</h3></header>
+      <p>Three independent counters — each is a separate custom element instance:</p>
+      <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap">
+        <fs-counter></fs-counter>
+        <fs-counter></fs-counter>
+        <fs-counter></fs-counter>
+      </div>
+    </article>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    boot({ wasm: new URL("web-component/MyCounter.wasm", import.meta.url), entry: "register" });
+  </script>
+</body>
+</html>

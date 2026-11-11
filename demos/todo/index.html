@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .input-group       { display: flex; gap: .5rem; margin-bottom: 1rem; }
+    .input-group input { flex: 1; }
+    .done              { text-decoration: line-through; opacity: .6; }
+    .hint              { font-size: .85rem; opacity: .7; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>Todo List — Elmish MVU</h1>
+      <p>Add, complete and remove todos. Full model-update-view cycle in F#, compiled to WasmGC.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <div id="todo-root"></div>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    boot({ wasm: new URL("todo/Todo.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

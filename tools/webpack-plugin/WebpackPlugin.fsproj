@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="11.0.100" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="src/WebpackPlugin.fs" />
+  </ItemGroup>
+
+</Project>
