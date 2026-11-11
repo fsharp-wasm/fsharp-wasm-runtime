@@ -8,10 +8,10 @@ test.describe("Gallery", () => {
     await expect(page).toHaveTitle(/F# .* WebAssembly/i);
   });
 
-  test("gallery shows 9 demo cards", async ({ page }) => {
+  test("gallery shows 10 demo cards", async ({ page }) => {
     await page.goto("/");
-    const cards = page.locator(".demo-card, article");
-    await expect(cards).toHaveCount(9);
+    const cards = page.locator(".demo-card");
+    await expect(cards).toHaveCount(10);
   });
 
   test("gallery links to all demo pages", async ({ page }) => {
@@ -25,6 +25,7 @@ test.describe("Gallery", () => {
       "worker-actor",
       "web-component",
       "webgpu-basic",
+      "bench",
       "full-dashboard",
     ]) {
       const link = page.locator(`a[href*="${demo}"]`);
@@ -66,7 +67,7 @@ test.describe("Counter demo", () => {
 
   test("mount point exists", async ({ page }) => {
     await page.goto("/demos/counter/");
-    const el = page.locator("#app");
+    const el = page.locator("#counter-root");
     await expect(el).toBeAttached();
   });
 });
@@ -81,7 +82,7 @@ test.describe("Todo demo", () => {
 
   test("mount point exists", async ({ page }) => {
     await page.goto("/demos/todo/");
-    await expect(page.locator("#app")).toBeAttached();
+    await expect(page.locator("#todo-root")).toBeAttached();
   });
 });
 

@@ -4,6 +4,7 @@ open Browser.Elmish.Core
 open Browser.Html
 open Browser.Storage
 open Browser.PubSub
+open Browser.Timing
 
 type Tab = Counter | Todo | Canvas | PubSub | Storage
 
@@ -50,7 +51,16 @@ let init () =
       StorageKey = ""
       StorageValue = ""
       StorageResult = ""
-      Clock = "" }, Cmd.none
+      Clock = "" },
+    [ // messages published on the bus arrive as `PubSubReceived`
+      fun dispatch -> subscribe "dashboard" (fun s -> dispatch (PubSubReceived s))
+      // a clock in the header
+      fun dispatch ->
+          let mutable seconds = 0
+          setInterval 1000 (fun () ->
+              seconds <- seconds + 1
+              dispatch (ClockTick (sprintf "Uptime: %d s" seconds)))
+          |> ignore ]
 
 let update msg model =
     match msg with
@@ -72,8 +82,7 @@ let update msg model =
         { model with Todos = model.Todos |> List.filter (fun (i, _, _) -> i <> id) }, Cmd.none
     | PubSubInputChanged s -> { model with MessageInput = s }, Cmd.none
     | SendPubSubMessage when model.MessageInput.Trim() <> "" ->
-        publish "dashboard" model.MessageInput
-        { model with MessageInput = "" }, Cmd.none
+        { model with MessageInput = "" }, [ fun _ -> publish "dashboard" model.MessageInput ]
     | SendPubSubMessage -> model, Cmd.none
     | PubSubReceived s -> { model with Messages = model.Messages @ [s] }, Cmd.none
     | StorageKeyChanged s -> { model with StorageKey = s }, Cmd.none
@@ -84,7 +93,7 @@ let update msg model =
     | LoadFromStorage ->
         if model.StorageKey <> "" then
             let v = Local.get model.StorageKey
-            { model with StorageResult = sprintf "Loaded: %s = %s" model.StorageKey (if v = null then "(not found)" else v) }, Cmd.none
+            { model with StorageResult = sprintf "Loaded: %s = %s" model.StorageKey (if System.String.IsNullOrEmpty v then "(not found)" else v) }, Cmd.none
         else model, Cmd.none
     | ClockTick s -> { model with Clock = s }, Cmd.none
 

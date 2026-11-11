@@ -24,8 +24,10 @@ type Msg =
     | InitDb of Database
 
 let init () =
-    { DbHandle = None; Key = ""; Value = ""; Result = ""; Keys = [] }, Cmd.none
+    { DbHandle = None; Key = ""; Value = ""; Result = ""; Keys = [] },
+    [ fun dispatch -> openDb "fsharp-wasm-demo" 1 (fun db -> dispatch (InitDb db)) ]
 
+/// Every database operation is asynchronous: the command starts it, its callback dispatches the outcome.
 let update msg model =
     match msg with
     | KeyChanged s -> { model with Key = s }, Cmd.none
@@ -34,26 +36,21 @@ let update msg model =
     | Save ->
         match model.DbHandle with
         | Some db when model.Key <> "" ->
-            put db model.Key model.Value
-            { model with Result = sprintf "Saved: %s = %s" model.Key model.Value }, Cmd.none
+            model, [ fun dispatch -> put db model.Key model.Value (fun () -> dispatch (SetResult (sprintf "Saved: %s = %s" model.Key model.Value))) ]
         | _ -> model, Cmd.none
     | Load ->
         match model.DbHandle with
         | Some db when model.Key <> "" ->
-            let v = get db model.Key
-            { model with Result = sprintf "Loaded: %s = %s" model.Key v }, Cmd.none
+            model, [ fun dispatch -> get db model.Key (fun v -> dispatch (SetResult (sprintf "Loaded: %s = %s" model.Key v))) ]
         | _ -> model, Cmd.none
     | Delete ->
         match model.DbHandle with
         | Some db when model.Key <> "" ->
-            delete db model.Key
-            { model with Result = sprintf "Deleted: %s" model.Key }, Cmd.none
+            model, [ fun dispatch -> delete db model.Key (fun () -> dispatch (SetResult (sprintf "Deleted: %s" model.Key))) ]
         | _ -> model, Cmd.none
     | ListKeys ->
         match model.DbHandle with
-        | Some db ->
-            let keys = getAllKeys db |> Array.toList
-            { model with Keys = keys }, Cmd.none
+        | Some db -> model, [ fun dispatch -> getAllKeys db (fun keys -> dispatch (SetKeys (Array.toList keys))) ]
         | None -> model, Cmd.none
     | SetResult s -> { model with Result = s }, Cmd.none
     | SetKeys keys -> { model with Keys = keys }, Cmd.none

@@ -10,6 +10,7 @@
     .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
     .hint { font-size: .85rem; opacity: .7; }
   </style>
+  <script src="../../runtime/embed.js"></script>
 </head>
 <body>
   <header class="container">
@@ -66,7 +67,7 @@
       return new Proxy({}, { get: (_,k) => typeof k === "string" ? stub : undefined });
     }
 
-    const WASM = new URL("canvas-mandelbrot/Mandelbrot.wasm", import.meta.url);
+    const WASM = new URL("Mandelbrot.wasm", import.meta.url);
 
     async function boot() {
       const statusEl  = document.getElementById("status");
@@ -147,6 +148,8 @@
           timingEl.textContent = `WasmGC: ${twasm.toFixed(1)} ms  |  JS: ${tjs.toFixed(1)} ms`;
           renderBtn.disabled = false;
         });
+        // embedded in another page there is nobody to press the button
+        if (new URLSearchParams(location.search).has("embed")) renderBtn.click();
 
       } catch (err) {
         statusEl.textContent = `✗ ${err.message}  (run: npm run build)`;

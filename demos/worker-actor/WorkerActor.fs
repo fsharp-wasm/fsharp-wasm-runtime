@@ -16,14 +16,24 @@ type Msg =
     | WorkerResult of string
     | StatusChanged of string
 
+/// The worker lives for the whole page: created by the startup command, used by every `SendToWorker`.
+let mutable private worker : Worker = create "worker.js"
+
 let init () =
-    { Input = ""; Results = []; WorkerStatus = "Ready" }, Cmd.none
+    { Input = ""; Results = []; WorkerStatus = "Ready" },
+    [ fun dispatch ->
+        worker <- create "worker.js"
+        onMessage worker (fun s -> dispatch (WorkerResult s))
+        onError worker (fun e -> dispatch (StatusChanged ("Error: " + e))) ]
 
 let update msg model =
     match msg with
     | InputChanged s -> { model with Input = s }, Cmd.none
+    | SendToWorker when model.Input.Trim() <> "" ->
+        { model with WorkerStatus = "Processing..."; Input = "" },
+        [ fun _ -> postMessage worker model.Input ]
     | SendToWorker ->
-        { model with WorkerStatus = "Processing..." }, Cmd.none
+        model, Cmd.none
     | WorkerResult s ->
         { model with
             Results = model.Results @ [s]

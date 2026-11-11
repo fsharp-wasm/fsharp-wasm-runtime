@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mandelbrot — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    canvas { width: 100%; border-radius: var(--pico-border-radius); }
+    .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .hint { font-size: .85rem; opacity: .7; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <a href="../../index.html">← All Demos</a>
+      <span>F# → WasmGC</span>
+    </nav>
+    <hgroup>
+      <h1>Mandelbrot — Canvas</h1>
+      <p>Pure F# escape-time algorithm compiled to WebAssembly GC. JavaScript drives the
+         pixel loop and canvas API; every escape-time calculation is a native WasmGC call.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+
+    <div class="demo-grid">
+      <article>
+        <header><h3>F# → WasmGC</h3><small>compiled by fsharp-wasm</small></header>
+        <canvas id="mandelbrot"></canvas>
+      </article>
+      <article>
+        <header><h3>Plain JavaScript</h3><small>reference implementation</small></header>
+        <canvas id="mandelbrot-js"></canvas>
+      </article>
+    </div>
+
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:1rem">
+      <button id="render-btn" disabled>Render both</button>
+      <span id="timing" class="hint"></span>
+    </div>
+
+    <details style="margin-top:2rem">
+      <summary>F# source</summary>
+      <pre><code>let iterate (cx: float) (cy: float) (maxIter: int) : int =
+    let mutable x = 0.0
+    let mutable y = 0.0
+    let mutable i = 0
+    while i &lt; maxIter &amp;&amp; x * x + y * y &lt; 4.0 do
+        let xn = x * x - y * y + cx
+        y &lt;- 2.0 * x * y + cy
+        x &lt;- xn
+        i &lt;- i + 1
+    i</code></pre>
+    </details>
+  </main>
+
+  <script type="module">
+    // The Mandelbrot WASM module imports many runtime functions.
+    // We satisfy them with a transparent stub Proxy — only iterate() is called.
+    function makeStubImports() {
+      const stub = new Proxy({}, { get: (_,k) => typeof k === "string" ? (() => 0) : undefined });
+      return new Proxy({}, { get: (_,k) => typeof k === "string" ? stub : undefined });
+    }
+
+    const WASM = new URL("Mandelbrot.wasm", import.meta.url);
+
+    async function boot() {
+      const statusEl  = document.getElementById("status");
+      const timingEl  = document.getElementById("timing");
+      const renderBtn = document.getElementById("render-btn");
+
+      try {
+        const { instance } = await WebAssembly.instantiateStreaming(fetch(WASM), makeStubImports());
+        const { iterate } = instance.exports;
+
+        statusEl.innerHTML = "<strong>✓ WasmGC module loaded.</strong> Click <em>Render both</em> to compare.";
+        renderBtn.disabled = false;
+
+        const W = 640, H = 480, MAX = 150;
+
+        function renderWasm() {
+          const canvas = document.getElementById("mandelbrot");
+          canvas.width = W; canvas.height = H;
+          const ctx = canvas.getContext("2d");
+          const img = ctx.createImageData(W, H);
+          const t0  = performance.now();
+          for (let py = 0; py < H; py++) {
+            for (let px = 0; px < W; px++) {
+              const cx = px / W * 3.5 - 2.5, cy = py / H * 2.0 - 1.0;
+              const n  = iterate(cx, cy, MAX);           // ← F# WasmGC call
+              const i  = (py * W + px) * 4;
+              if (n === MAX) { img.data[i] = img.data[i+1] = img.data[i+2] = 0; }
+              else {
+                const t = n / MAX;
+                img.data[i]   = Math.round(9   * (1-t)*t*t*t     * 255);
+                img.data[i+1] = Math.round(15  * (1-t)*(1-t)*t*t * 255);
+                img.data[i+2] = Math.round(8.5 * (1-t)*(1-t)*(1-t)*t * 255);
+              }
+              img.data[i+3] = 255;
+            }
+          }
+          ctx.putImageData(img, 0, 0);
+          return performance.now() - t0;
+        }
+
+        function renderJs() {
+          function iterJs(cx, cy, max) {
+            let x = 0, y = 0;
+            for (let i = 0; i < max; i++) {
+              if (x*x + y*y >= 4) return i;
+              const xn = x*x - y*y + cx; y = 2*x*y + cy; x = xn;
+            }
+            return max;
+          }
+          const canvas = document.getElementById("mandelbrot-js");
+          canvas.width = W; canvas.height = H;
+          const ctx = canvas.getContext("2d");
+          const img = ctx.createImageData(W, H);
+          const t0  = performance.now();
+          for (let py = 0; py < H; py++) {
+            for (let px = 0; px < W; px++) {
+              const cx = px / W * 3.5 - 2.5, cy = py / H * 2.0 - 1.0;
+              const n  = iterJs(cx, cy, MAX);
+              const i  = (py * W + px) * 4;
+              if (n === MAX) { img.data[i] = img.data[i+1] = img.data[i+2] = 0; }
+              else {
+                const t = n / MAX;
+                img.data[i]   = Math.round(9   * (1-t)*t*t*t     * 255);
+                img.data[i+1] = Math.round(15  * (1-t)*(1-t)*t*t * 255);
+                img.data[i+2] = Math.round(8.5 * (1-t)*(1-t)*(1-t)*t * 255);
+              }
+              img.data[i+3] = 255;
+            }
+          }
+          ctx.putImageData(img, 0, 0);
+          return performance.now() - t0;
+        }
+
+        renderBtn.addEventListener("click", () => {
+          renderBtn.disabled = true;
+          const twasm = renderWasm();
+          const tjs   = renderJs();
+          timingEl.textContent = `WasmGC: ${twasm.toFixed(1)} ms  |  JS: ${tjs.toFixed(1)} ms`;
+          renderBtn.disabled = false;
+        });
+        // embedded in another page there is nobody to press the button
+        if (new URLSearchParams(location.search).has("embed")) renderBtn.click();
+
+      } catch (err) {
+        statusEl.textContent = `✗ ${err.message}  (run: npm run build)`;
+      }
+    }
+
+    boot();
+  </script>
+</body>
+</html>

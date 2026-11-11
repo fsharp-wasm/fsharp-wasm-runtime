@@ -54,16 +54,20 @@ if isAvailable () then
 
 ## IndexedDB Persistence
 
-Store and retrieve data that persists across page reloads:
+Store and retrieve data that persists across page reloads. Every operation is asynchronous: it takes the callback
+that continues the program (in an Elmish program, a callback that dispatches a message — see `demos/indexeddb-crud`).
 
 ```fsharp
 open Browser.IndexedDb
 
-let db = openDb "myapp" 1
-put db "user" "Alice"
-let user = get db "user"  // "Alice"
-let keys = getAllKeys db   // ["user"]
-delete db "user"
+// as commands of an Elmish program
+let init () = model, [ fun dispatch -> openDb "myapp" 1 (fun db -> dispatch (Opened db)) ]
+
+let update msg model =
+    match msg with
+    | Opened db -> { model with Db = Some db }, [ fun dispatch -> put db "user" "Alice" (fun () -> dispatch Saved) ]
+    | Saved -> model, [ fun dispatch -> get model.Db.Value "user" (fun v -> dispatch (Loaded v)) ]   // v = "Alice"
+    | Loaded v -> { model with User = v }, Cmd.none
 ```
 
 ## Custom Web Components

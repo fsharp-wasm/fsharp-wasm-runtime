@@ -13,6 +13,7 @@
     }
     .button-group { display: flex; gap: .5rem; }
   </style>
+  <script src="../../runtime/embed.js"></script>
 </head>
 <body>
   <header class="container">
@@ -40,7 +41,7 @@
 
   <script type="module">
     import { boot } from "../../runtime/boot.js";
-    boot({ wasm: new URL("web-component/MyCounter.wasm", import.meta.url), entry: "register" });
+    boot({ wasm: new URL("MyCounter.wasm", import.meta.url), entry: "register" });
   </script>
 </body>
 </html>

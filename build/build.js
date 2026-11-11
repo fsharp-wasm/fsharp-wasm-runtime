@@ -27,7 +27,7 @@
 
 import { execSync } from "child_process";
 import { cpSync, mkdirSync, existsSync, rmSync, readdirSync, copyFileSync } from "fs";
-import { resolve, join } from "path";
+import { resolve, join, dirname } from "path";
 
 const ROOT    = resolve(import.meta.dirname, "..");
 const DIST    = resolve(ROOT, "dist");
@@ -63,6 +63,13 @@ function tryFable(bin) {
 }
 
 function resolveFable() {
+    // 0. FSHARP_WASM_CLI — a built CLI (FSharp.Wasm.Cli.dll): no rebuild per demo
+    const cliDll = process.env.FSHARP_WASM_CLI;
+    if (cliDll && existsSync(cliDll)) {
+        console.log(`  fsharp-wasm CLI (prebuilt)  [${cliDll}]`);
+        return { mode: "dll", cliDll };
+    }
+
     // 1. FSHARP_WASM_DIR — dev mode: use source tree via dotnet run
     const wasmDir = process.env.FSHARP_WASM_DIR;
     if (wasmDir) {
@@ -71,10 +78,10 @@ function resolveFable() {
             console.log(`  fsharp-wasm source (dotnet run)  [${cliProj}]`);
             return { mode: "dotnet", cliProj };
         }
-        // Also accept the fsharp-wasm-cli tool project
-        const cliTool = join(wasmDir, "tools", "fsharp-wasm-cli");
-        if (existsSync(join(cliTool, "FSharpWasmCli.fsproj"))) {
-            console.log(`  fsharp-wasm CLI tool (dotnet run)  [${cliTool}]`);
+        // The fsharp-wasm CLI (tools/FSharp.Wasm.Cli) — what the repo ships and CI builds
+        const cliTool = join(wasmDir, "tools", "FSharp.Wasm.Cli");
+        if (existsSync(join(cliTool, "FSharp.Wasm.Cli.fsproj"))) {
+            console.log(`  fsharp-wasm CLI (dotnet run)  [${cliTool}]`);
             return { mode: "dotnet", cliProj: cliTool };
         }
         console.error(`  ⚠  FSHARP_WASM_DIR set to "${wasmDir}" but no Fable.Cli project found.`);
@@ -156,6 +163,12 @@ const ALL_DEMOS = [
         desc:   "GPU compute pipeline bootstrapped from F# using the Browser.Gpu bindings.",
     },
     {
+        name:   "bench",
+        fsproj: "demos/bench/Bench.fsproj",
+        title:  "Benchmark — F# vs JavaScript",
+        desc:   "Four compute kernels, once as F# compiled to WasmGC and once as JavaScript, timed in your browser.",
+    },
+    {
         name:   "full-dashboard",
         fsproj: "demos/full-dashboard/Dashboard.fsproj",
         title:  "Full Dashboard",
@@ -195,9 +208,10 @@ function compileDemos(compiler, demos) {
         mkdirSync(outDir, { recursive: true });
         console.log(`\n▸ F# → WasmGC  [${demo.name}]`);
         const fsproj = join(ROOT, demo.fsproj);
-        const cmd = compiler.mode === "dotnet"
-            ? `dotnet run --project "${compiler.cliProj}" -- "${fsproj}" --lang wasmgc -o "${outDir}" --noCache`
-            : `"${compiler.bin}" "${fsproj}" --lang wasmgc -o "${outDir}"`;
+        const cmd =
+            compiler.mode === "dll"    ? `dotnet "${compiler.cliDll}" "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
+          : compiler.mode === "dotnet" ? `dotnet run -c Release --project "${compiler.cliProj}" -- "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
+          :                              `"${compiler.bin}" "${fsproj}" --lang wasmgc -o "${outDir}"`;
         try {
             execSync(cmd, { cwd: ROOT, stdio: "inherit" });
         } catch {
@@ -218,6 +232,10 @@ function copyDemoPages(demos) {
         mkdirSync(dstDir, { recursive: true });
         if (existsSync(srcPage)) {
             copyFileSync(srcPage, join(dstDir, "index.html"));
+        }
+        // scripts that belong to the demo (a Web Worker's source) are served next to its page
+        for (const f of readdirSync(join(DEMOS, demo.name)).filter((f) => f.endsWith(".js"))) {
+            copyFileSync(join(DEMOS, demo.name, f), join(dstDir, f));
         }
     }
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGPU Basic — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    canvas { width: 100%; border-radius: var(--pico-border-radius); }
+    .hint  { font-size: .85rem; opacity: .7; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>WebGPU Basic</h1>
+      <p>GPU compute pipeline bootstrapped from F# using the <code>Browser.Gpu</code> bindings.
+         Requires a browser with WebGPU support (Chrome 113+, Firefox Nightly).</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <div id="webgpu-root"></div>
+    <canvas id="webgpu-canvas"></canvas>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    boot({ wasm: new URL("WebGpuBasic.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

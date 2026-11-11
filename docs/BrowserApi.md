@@ -225,16 +225,17 @@ module Session =
 
 ## Browser.IndexedDb
 
-Persistent key-value storage.
+Persistent key-value storage. IndexedDB is asynchronous and a WasmGC module cannot block on a promise, so every
+operation takes the callback that continues the program — in an Elmish program, a callback that dispatches a message.
 
 ```fsharp
 type Database                          // Typed DB wrapper
 
-val openDb : string -> int -> Database
-val put : Database -> string -> string -> unit
-val get : Database -> string -> string
-val delete : Database -> string -> unit
-val getAllKeys : Database -> string[]
+val openDb : string -> int -> (Database -> unit) -> unit
+val put : Database -> string -> string -> (unit -> unit) -> unit
+val get : Database -> string -> (string -> unit) -> unit      // "" when the key does not exist
+val delete : Database -> string -> (unit -> unit) -> unit
+val getAllKeys : Database -> (string[] -> unit) -> unit
 ```
 
 ## Browser.Workers

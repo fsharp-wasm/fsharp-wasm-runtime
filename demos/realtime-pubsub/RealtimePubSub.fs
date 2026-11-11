@@ -11,16 +11,19 @@ type Msg =
     | SendMessage
     | MessageReceived of string
 
+/// The bus delivers into the program: a startup command subscribes with the program's `dispatch`.
 let init () =
-    { Messages = []; Input = "" }, Cmd.none
+    { Messages = []; Input = "" },
+    [ fun dispatch -> subscribe "chat" (fun s -> dispatch (MessageReceived s)) ]
 
 let update msg model =
     match msg with
     | InputChanged s ->
         { model with Input = s }, Cmd.none
     | SendMessage when model.Input.Trim() <> "" ->
-        publish "chat" model.Input
-        { model with Input = "" }, Cmd.none
+        // publishing is an effect: it runs as a command, after this update has produced its model — the subscriber
+        // dispatches synchronously, and doing it from inside `update` would be overwritten by this update's result
+        { model with Input = "" }, [ fun _ -> publish "chat" model.Input ]
     | SendMessage ->
         model, Cmd.none
     | MessageReceived s ->
@@ -52,5 +55,4 @@ let view model dispatch =
     }
 
 let start () =
-    subscribe "chat" (fun _ -> ())
     run "pubsub-root" { Init = init; Update = update; View = view }

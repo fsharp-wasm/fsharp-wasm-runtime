@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benchmark — F# → WasmGC vs JavaScript</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .win { color: var(--pico-primary); font-weight: 700; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>Benchmark — measured in your browser</h1>
+      <p>The same four algorithms, once as F# compiled to WasmGC, once as hand-written JavaScript.
+         Best of five runs after a warm-up; both results must agree.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <button id="run">Run the benchmark</button>
+    <table>
+      <thead><tr><th>Kernel</th><th class="num">JavaScript</th><th class="num">F# → WasmGC</th><th class="num">Ratio</th><th>Result</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="5"><small>press “Run the benchmark”</small></td></tr></tbody>
+    </table>
+    <p><small>The F# source is <a href="https://github.com/aiqs4/fsharp-wasm-runtime/blob/main/demos/bench/Bench.fs"><code>Bench.fs</code></a>.</small></p>
+  </main>
+
+  <script type="module">
+    import { runBench } from "./bench.js";
+    const button = document.getElementById("run"), rows = document.getElementById("rows");
+    button.addEventListener("click", async () => {
+      button.disabled = true; button.textContent = "running…"; rows.innerHTML = "";
+      await runBench(new URL("Bench.wasm", import.meta.url), ({ label, jsMs, wasmMs, ratio, same, result }) =>
+        rows.insertAdjacentHTML("beforeend",
+          `<tr><td>${label}</td><td class="num">${jsMs.toFixed(1)} ms</td><td class="num">${wasmMs.toFixed(1)} ms</td>` +
+          `<td class="num ${ratio >= 1 ? "win" : ""}">${ratio >= 1 ? ratio.toFixed(1) + "× faster" : (1 / ratio).toFixed(1) + "× slower"}</td>` +
+          `<td>${same ? "✓ " + result : "✗ results differ"}</td></tr>`));
+      button.disabled = false; button.textContent = "Run again";
+      document.body.dataset.done = "true";
+    });
+  </script>
+</body>
+</html>

@@ -35,10 +35,16 @@ import * as componentsModule from "./components.js";
  *
  * The fsharp-wasm compiler generates imports keyed as:
  *   { "runtime/<module>.js": { "<functionName>": <fn>, … }, … }
+ * plus two modules of its own:
+ *   "wasm:js-string" — the JS String Builtins (provided by the engine, see `builtins` below), through which every
+ *                      F# string crosses the boundary as a native JS string;
+ *   "fsharp:host"    — the marshalling helpers of the compiler's extern ABI: a function-typed argument arrives as
+ *                      `callback(id)` (a JS function that re-enters the module through its `__cb` export), and
+ *                      numbers are boxed into `externref` for those calls.
  *
  * Each JS glue module is mapped to its canonical import path.
  */
-function buildImports() {
+function buildImports(getInstance) {
     return {
         "runtime/core.js":       coreModule,
         "runtime/dom.js":        domModule,
@@ -56,8 +62,29 @@ function buildImports() {
         "runtime/location.js":   locationModule,
         "runtime/pointer.js":    pointerModule,
         "runtime/components.js": componentsModule,
+        // `printfn`: the module passes an opaque string and exports `__str_len` / `__str_at` to read it
+        "env": {
+            consolePrint: (s) => {
+                const { __str_len: len, __str_at: at } = getInstance().exports;
+                let text = "";
+                for (let i = 0, n = len(s); i < n; i++) text += String.fromCharCode(at(s, i));
+                console.log(text);
+            },
+        },
+        "fsharp:host": {
+            callback: (id) => (...args) => getInstance().exports.__cb(id, ...args),
+            i2x: (n) => n,
+            f2x: (n) => n,
+            x2i: (x) => Number(x) | 0,
+            x2f: (x) => Number(x),
+            arrLen: (a) => a.length,
+            arrGet: (a, i) => a[i],
+        },
     };
 }
+
+/** Engine-provided string functions: `wasm:js-string` is imported by name from the module, no glue object needed. */
+const COMPILE_OPTIONS = { builtins: ["js-string"] };
 
 /**
  * Load and start a demo WASM module.
@@ -73,7 +100,8 @@ export async function boot({ wasm, entry }) {
     setStatus("Loading F# → WasmGC module…");
 
     try {
-        const imports  = buildImports();
+        let instance;
+        const imports  = buildImports(() => instance);
         const response = await fetch(wasm);
 
         if (!response.ok) {
@@ -82,7 +110,7 @@ export async function boot({ wasm, entry }) {
             );
         }
 
-        const { instance } = await WebAssembly.instantiateStreaming(response, imports);
+        ({ instance } = await WebAssembly.instantiateStreaming(response, imports, COMPILE_OPTIONS));
 
         const entryFn = instance.exports[entry];
         if (typeof entryFn !== "function") {
@@ -96,7 +124,10 @@ export async function boot({ wasm, entry }) {
         entryFn();
 
     } catch (err) {
-        setStatus(`<strong>✗ Error:</strong> ${err.message}`);
+        // an engine without WasmGC or without the JS String Builtins fails to compile the module
+        const unsupported = err instanceof WebAssembly.CompileError || err instanceof WebAssembly.LinkError;
+        setStatus(`<strong>✗ Error:</strong> ${err.message}` +
+            (unsupported ? "<br><small>This module needs WebAssembly GC and the JS String Builtins: Chrome / Edge 130+ or Firefox 134+.</small>" : ""));
         console.error("[fsharp-wasm-runtime] boot failed:", err);
     }
 }

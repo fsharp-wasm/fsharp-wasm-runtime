@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "node build/build.js",
-    "serve": "npx serve . -l 8080",
+    "serve": "npx serve site -l 8080",
     "test": "fable tests/Unit --lang wasmgc -o dist/test/ && node dist/test/run.js",
-    "test:e2e": "npx playwright test",
-    "clean": "rm -rf dist release"
+    "test:e2e": "node tests/e2e/demos.mjs && node tests/e2e/site.mjs",
+    "clean": "rm -rf dist release",
+    "site": "node build/build.js && node build/site.mjs"
   },
   "keywords": [
     "fsharp",

@@ -21,7 +21,3 @@ obj/
 *.swo
 *~
 *.bak.fs
-lite/demos/*/out/
-lite/demos/*/bin/
-lite/demos/*/obj/
-lite/demos/*/build.log

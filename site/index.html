@@ -23,9 +23,12 @@
   h2.sec { margin-bottom: .25rem; }
   p.sub { opacity: .75; margin-bottom: 1.5rem; }
   .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 1rem; align-items: start; }
-  .demos > div article { margin: 0; }
-  #life { grid-column: 1 / -1; }
-  #life .grid { margin-top: 1rem; }
+  .demos iframe { width: 100%; border: 1px solid #24304f; border-radius: 12px; background: #fff; }
+  .demos iframe.wide { grid-column: 1 / -1; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .75rem; }
+  .gallery a { display: block; padding: .9rem 1rem; border: 1px solid #24304f; border-radius: 12px; text-decoration: none; }
+  .gallery a:hover { border-color: var(--accent); }
+  .gallery b { display: block; } .gallery span { opacity: .7; font-size: .85rem; }
   table td.num, table th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .win { color: var(--accent); font-weight: 700; }
   code, pre { font-size: .85rem; }
@@ -34,7 +37,6 @@
   .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
   .tiers article { margin: 0; }
   footer { opacity: .6; text-align: center; padding: 3rem 0; font-size: .9rem; }
-  #status { min-height: 1.5rem; }
 </style>
 </head>
 <body>
@@ -43,7 +45,7 @@
 <header class="hero">
   <h1>F#, <em>compiled</em> to WebAssembly GC.<br>No JavaScript app code.</h1>
   <p class="lead">A real compiler — not a transpiler — tested against .NET on hundreds of thousands of generated inputs,
-    plus a runtime of ~100 lines of glue. Everything interactive on this page is F# running as WasmGC.</p>
+    plus a browser runtime written in F#. Everything interactive on this page is F# running as WasmGC.</p>
   <p class="cta">
     <a role="button" class="sponsor" href="https://github.com/sponsors/aiqs4">♥ Sponsor the project</a>
     <a role="button" class="secondary" href="https://github.com/aiqs4/fsharp-wasm">Compiler</a>
@@ -53,20 +55,22 @@
 
 <div class="stats">
   <div class="stat"><b>0</b><span>disagreements with .NET in 784,000 generated test calls</span></div>
-  <div class="stat"><b>~5 KB</b><span>wasm for a whole Elmish app (no runtime download)</span></div>
+  <div class="stat"><b>20 KB</b><span>wasm for a complete Elmish app, HTML DSL included — no runtime download</span></div>
   <div class="stat"><b>60×</b><span>faster than JavaScript on a map/filter/fold pipeline (fused into one loop)</span></div>
-  <div class="stat"><b>~100</b><span>lines of JavaScript glue — and no framework</span></div>
+  <div class="stat"><b>~600</b><span>lines of JavaScript glue for DOM, canvas, workers, storage, IndexedDB, WebGPU — and no framework</span></div>
 </div>
 
 <section id="live">
   <h2 class="sec">Live: this is F#</h2>
-  <p class="sub">Three apps, three separate WasmGC modules, one page. Model–View–Update in F#, rendered by a tiny host.</p>
+  <p class="sub">Four of the demos, running right here. Each one is an F# program compiled to its own WebAssembly module —
+    the page around it contains no application code.</p>
   <div class="demos">
-    <div id="counter"></div>
-    <div id="todo"></div>
-    <div id="life"></div>
+    <iframe title="Counter" src="demos/counter/?embed" loading="lazy" height="300"></iframe>
+    <iframe title="Todo list" src="demos/todo/?embed" loading="lazy" height="300"></iframe>
+    <iframe title="Mandelbrot: F# vs JavaScript" src="demos/canvas-mandelbrot/?embed" loading="lazy" height="620" class="wide"></iframe>
+    <iframe title="Dashboard" src="demos/full-dashboard/?embed" loading="lazy" height="420" class="wide"></iframe>
   </div>
-  <p id="status"><small></small></p>
+  <p><a href="#demos">All ten demos →</a></p>
 </section>
 
 <section id="speed">
@@ -89,27 +93,42 @@
   <div class="steps">
     <article><header><b>1 · fsharp-wasm</b></header>The compiler. F# source → typed AST → WasmGC, with exact .NET semantics
       for integers, floats, strings, <code>printf</code>, generics and structural equality — verified by differential tests against .NET on every commit.</article>
-    <article><header><b>2 · Browser.*</b></header>Elmish, HTML and Canvas written in F# and compiled by the same compiler.
-      The view is a pure function; the runtime serialises it, the host morphs the DOM.</article>
-    <article><header><b>3 · browser.js</b></header>About 100 lines. WasmGC strings are opaque to JavaScript, so text crosses
-      the boundary as UTF-16 code units through two integer imports. No bridge generator, no shared memory.</article>
+    <article><header><b>2 · Browser.*</b></header>Typed F# modules for the DOM, events, canvas, storage, IndexedDB, workers, WebGPU and more — plus an HTML
+      builder (<code>div { … }</code>) and an Elmish loop. A JS import is an F# function marked <code>nativeOnly</code>; the compiler does the marshalling.</article>
+    <article><header><b>3 · runtime/*.js</b></header>Thin glue, one small file per browser API. Strings cross as native JS strings
+      (the engine's string builtins), a closure passed to JS becomes a JS function that re-enters the module. No bridge generator, no shared memory.</article>
   </div>
-<pre><code>type Msg = Increment | Decrement | Reset
-
-let update msg model =
+<pre><code>let update msg model =
     match msg with
-    | Increment -> model + 1
-    | Decrement -> model - 1
-    | Reset     -> 0
+    | Increment -> { model with Count = model.Count + 1 }, Cmd.none
+    | Decrement -> { model with Count = model.Count - 1 }, Cmd.none
+    | Reset     -> { model with Count = 0 }, Cmd.none
 
-let view model =
-    article [] [
-        h1 [] [ text "Hello from F# on WasmGC" ]
-        p  [] [ text ("Count: " + string model) ]
-        button [ onClick Increment ] [ text "+" ]
-    ]
+let view model dispatch =
+    article {
+        h2 "Counter"
+        el "p" { class' "count-display"; string model.Count }
+        button { onClick (fun () -> dispatch Increment); "+" }
+    }
 
-let main () = run (simple 0 update view Reset)</code></pre>
+let start () = run "counter-root" { Init = init; Update = update; View = view }</code></pre>
+</section>
+
+<section id="demos">
+  <h2 class="sec">All demos</h2>
+  <p class="sub">Every one is a separate F# project compiled to its own <code>.wasm</code>; each has a Playwright test that drives it in Chromium.</p>
+  <div class="gallery">
+    <a href="demos/counter/"><b>Counter</b><span>Elmish model–update–view</span></a>
+    <a href="demos/todo/"><b>Todo list</b><span>add, complete, remove</span></a>
+    <a href="demos/canvas-mandelbrot/"><b>Mandelbrot</b><span>canvas; F# next to plain JS, same picture</span></a>
+    <a href="demos/bench/"><b>Benchmark</b><span>four kernels, F# vs JavaScript, measured live</span></a>
+    <a href="demos/realtime-pubsub/"><b>Pub/Sub</b><span>a message bus wired from F#</span></a>
+    <a href="demos/indexeddb-crud/"><b>IndexedDB</b><span>create, read, delete — asynchronous</span></a>
+    <a href="demos/worker-actor/"><b>Web Worker</b><span>an actor on another thread</span></a>
+    <a href="demos/web-component/"><b>Web Component</b><span>a custom element defined in F#</span></a>
+    <a href="demos/webgpu-basic/"><b>WebGPU</b><span>adapter and device from F#</span></a>
+    <a href="demos/full-dashboard/"><b>Dashboard</b><span>everything in one tabbed app</span></a>
+  </div>
 </section>
 
 <section id="sponsor">
@@ -133,58 +152,22 @@ let main () = run (simple 0 update view Reset)</code></pre>
   <p class="cta" style="margin-top:2rem;text-align:center"><a role="button" class="sponsor" href="https://github.com/sponsors/aiqs4">♥ Become a sponsor</a></p>
 </section>
 
-<footer>fsharp-wasm · F# → WebAssembly GC · MIT · built with itself</footer>
+<footer><p>Needs WebAssembly GC and the JS String Builtins: Chrome / Edge 130+, Firefox 134+.</p>fsharp-wasm · F# → WebAssembly GC · MIT · built with itself</footer>
 </main>
 
 <script type="module">
-  import { mount } from './runtime/browser.js';
-  const status = document.querySelector('#status small');
-  try {
-    await Promise.all([
-      mount('./wasm/Counter.wasm', document.getElementById('counter')),
-      mount('./wasm/Todo.wasm', document.getElementById('todo')),
-      mount('./wasm/Life.wasm', document.getElementById('life')),
-    ]);
-    status.textContent = 'All three apps are running as WasmGC modules.';
-  } catch (e) {
-    status.textContent = 'WasmGC is not available in this browser (' + e.message + '). Use a current Chrome, Edge, Firefox or Safari.';
-  }
+  import { runBench } from './demos/bench/bench.js';
   window.__ready = true;
 
-  // ── benchmark ────────────────────────────────────────────────────────────────────────────────────────
-  const js = {
-    mandelbrot(n) { let inside = 0;
-      for (let py = 0; py < n; py++) for (let px = 0; px < n; px++) {
-        const cr = 3.5 * px / n - 2.5, ci = 2.0 * py / n - 1.0; let zr = 0, zi = 0, i = 0;
-        while (i < 200 && zr * zr + zi * zi <= 4.0) { const t = zr * zr - zi * zi + cr; zi = 2.0 * zr * zi + ci; zr = t; i++; }
-        if (i === 200) inside++; }
-      return inside; },
-    primes(n) { const c = new Uint8Array(n + 1); let count = 0;
-      for (let i = 2; i <= n; i++) if (!c[i]) { count++; for (let j = i * 2; j <= n; j += i) c[j] = 1; }
-      return count; },
-    collatz(n) { let best = 0;
-      for (let s = 1; s <= n; s++) { let x = s, steps = 0; while (x !== 1) { x = x % 2 === 0 ? x / 2 : 3 * x + 1; steps++; } if (steps > best) best = steps; }
-      return best; },
-    pipeline(n) { return Array.from({ length: n }, (_, i) => i + 1).map(v => v * 3).filter(v => v % 2 === 0).reduce((a, v) => (a + v % 1000) | 0, 0); },
-  };
-  const work = [['Mandelbrot 700×700', 'mandelbrot', 700], ['Primes ≤ 5,000,000', 'primes', 5_000_000], ['Collatz < 300,000', 'collatz', 300_000], ['List pipeline, 1,000,000', 'pipeline', 1_000_000]];
-  const best = (f, n) => { f(n); let b = Infinity, r; for (let i = 0; i < 5; i++) { const t = performance.now(); r = f(n); b = Math.min(b, performance.now() - t); } return [b, r]; };
-
   document.getElementById('run-bench').addEventListener('click', async (ev) => {
-    ev.target.disabled = true; ev.target.textContent = 'running…';
-    const { instance } = await WebAssembly.instantiate(await (await fetch('./wasm/Bench.wasm')).arrayBuffer(), { env: { consolePrint() {} } });
-    const rows = document.getElementById('bench-rows'); rows.innerHTML = '';
-    for (const [label, name, n] of work) {
-      await new Promise(r => setTimeout(r, 30));
-      const [tj, rj] = best(js[name], n);
-      const [tw, rw] = best(instance.exports[name], n);
-      const ratio = tj / tw;
+    const button = ev.target, rows = document.getElementById('bench-rows');
+    button.disabled = true; button.textContent = 'running…'; rows.innerHTML = '';
+    await runBench('./demos/bench/Bench.wasm', ({ label, jsMs, wasmMs, ratio, same, result }) =>
       rows.insertAdjacentHTML('beforeend',
-        `<tr><td>${label}</td><td class="num">${tj.toFixed(1)} ms</td><td class="num">${tw.toFixed(1)} ms</td>` +
+        `<tr><td>${label}</td><td class="num">${jsMs.toFixed(1)} ms</td><td class="num">${wasmMs.toFixed(1)} ms</td>` +
         `<td class="num ${ratio >= 1 ? 'win' : ''}">${ratio >= 1 ? ratio.toFixed(1) + '× faster' : (1 / ratio).toFixed(1) + '× slower'}</td>` +
-        `<td>${rj === rw ? '✓ ' + rw : '✗ ' + rj + ' ≠ ' + rw}</td></tr>`);
-    }
-    ev.target.disabled = false; ev.target.textContent = 'Run again';
+        `<td>${same ? '✓ ' + result : '✗ results differ'}</td></tr>`));
+    button.disabled = false; button.textContent = 'Run again';
     window.__benchDone = true;
   });
 </script>

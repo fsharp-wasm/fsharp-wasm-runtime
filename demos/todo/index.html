@@ -11,6 +11,7 @@
     .done              { text-decoration: line-through; opacity: .6; }
     .hint              { font-size: .85rem; opacity: .7; }
   </style>
+  <script src="../../runtime/embed.js"></script>
 </head>
 <body>
   <header class="container">
@@ -28,7 +29,7 @@
 
   <script type="module">
     import { boot } from "../../runtime/boot.js";
-    boot({ wasm: new URL("todo/Todo.wasm", import.meta.url), entry: "start" });
+    boot({ wasm: new URL("Todo.wasm", import.meta.url), entry: "start" });
   </script>
 </body>
 </html>

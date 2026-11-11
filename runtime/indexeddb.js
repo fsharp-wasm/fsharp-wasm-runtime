@@ -1,63 +1,20 @@
 import { save, get } from "./core.js";
 
-export const openDb = (name, version) => {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open(name, version || 1);
-        req.onupgradeneeded = () => {
-            const db = req.result;
-            if (!db.objectStoreNames.contains("store")) {
-                db.createObjectStore("store");
-            }
-        };
-        req.onsuccess = () => resolve(save(req.result));
-        req.onerror = () => reject(req.error);
-    });
+// IndexedDB is asynchronous, a WasmGC module cannot block on it: every operation takes the callback that continues
+// the program (the F# side turns it into a message).
+
+const store = (dbId, mode) => get(dbId).transaction("store", mode).objectStore("store");
+const request = (req, ok) => { req.onsuccess = () => ok(req.result); req.onerror = () => console.error(req.error); };
+
+export const openDb = (name, version, cb) => {
+    const req = indexedDB.open(name, version || 1);
+    req.onupgradeneeded = () => {
+        if (!req.result.objectStoreNames.contains("store")) req.result.createObjectStore("store");
+    };
+    request(req, (db) => cb(save(db)));
 };
 
-export const put = (dbId, key, value) => {
-    return new Promise((resolve, reject) => {
-        const db = get(dbId);
-        if (!db) { reject(new Error("Invalid DB handle")); return; }
-        const tx = db.transaction("store", "readwrite");
-        const store = tx.objectStore("store");
-        const req = store.put(value, key);
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-    });
-};
-
-export const getItem = (dbId, key) => {
-    return new Promise((resolve, reject) => {
-        const db = get(dbId);
-        if (!db) { reject(new Error("Invalid DB handle")); return; }
-        const tx = db.transaction("store", "readonly");
-        const store = tx.objectStore("store");
-        const req = store.get(key);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-};
-
-export const deleteItem = (dbId, key) => {
-    return new Promise((resolve, reject) => {
-        const db = get(dbId);
-        if (!db) { reject(new Error("Invalid DB handle")); return; }
-        const tx = db.transaction("store", "readwrite");
-        const store = tx.objectStore("store");
-        const req = store.delete(key);
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-    });
-};
-
-export const getAllKeys = (dbId) => {
-    return new Promise((resolve, reject) => {
-        const db = get(dbId);
-        if (!db) { reject(new Error("Invalid DB handle")); return; }
-        const tx = db.transaction("store", "readonly");
-        const store = tx.objectStore("store");
-        const req = store.getAllKeys();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-};
+export const put        = (dbId, key, value, cb) => request(store(dbId, "readwrite").put(value, key), () => cb());
+export const getItem    = (dbId, key, cb)        => request(store(dbId, "readonly").get(key), (v) => cb(v ?? ""));
+export const deleteItem = (dbId, key, cb)        => request(store(dbId, "readwrite").delete(key), () => cb());
+export const getAllKeys = (dbId, cb)             => request(store(dbId, "readonly").getAllKeys(), (keys) => cb(keys.map(String)));

@@ -52,12 +52,12 @@
   <header class="container">
     <nav style="display:flex;justify-content:space-between;align-items:center">
       <strong>fsharp-wasm-runtime</strong>
-      <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime" target="_blank">GitHub</a>
+      <a href="https://github.com/aiqs4/fsharp-wasm-runtime" target="_blank">GitHub</a>
     </nav>
     <hgroup>
       <h1>F# compiled to WebAssembly GC</h1>
       <p>Real F# application code compiled to native WasmGC binary by
-         <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a>.
+         <a href="https://github.com/aiqs4/fsharp-wasm">fsharp-wasm</a>.
          No JavaScript application logic — only a thin JS glue layer (&lt;500 LOC)
          for browser APIs.</p>
     </hgroup>
@@ -126,6 +126,13 @@
            <code>Browser.Gpu</code> bindings. Requires Chrome 113+ or Firefox Nightly.</p>
       </a>
 
+      <a class="demo-card" href="demos/bench/index.html">
+        <span class="tag tag-math">Benchmark</span>
+        <h3>F# vs JavaScript</h3>
+        <p>Four compute kernels timed side by side in your browser. Both sides must
+           produce the same result.</p>
+      </a>
+
       <a class="demo-card" href="demos/full-dashboard/index.html">
         <span class="tag tag-elmish">All Features</span>
         <h3>Full Dashboard</h3>
@@ -149,7 +156,7 @@
     <p>Run <code>node build/build.js</code> to build all demos at once.</p>
 
     <h2 class="section-title">Compiler status</h2>
-    <p>The <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm</a> compiler
+    <p>The <a href="https://github.com/aiqs4/fsharp-wasm">fsharp-wasm</a> compiler
        is under active development. Features confirmed working:</p>
     <ul>
       <li>Pure F# numeric / math code (loops, recursion, pattern matching)</li>
@@ -168,8 +175,8 @@
 
   <footer class="container">
     <small>
-      <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime">fsharp-wasm-runtime</a>
-      · <a href="https://github.com/fsharp-wasm/fsharp-wasm">fsharp-wasm compiler</a>
+      <a href="https://github.com/aiqs4/fsharp-wasm-runtime">fsharp-wasm-runtime</a>
+      · <a href="https://github.com/aiqs4/fsharp-wasm">fsharp-wasm compiler</a>
       · Styled with <a href="https://picocss.com">PicoCSS</a>
     </small>
   </footer>
