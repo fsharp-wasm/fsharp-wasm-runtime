@@ -1,70 +1,51 @@
 name: Release
 
+# Push a tag `vX.Y.Z` (or `vX.Y.Z-experimental`) to publish a GitHub Release.
+# The committed site/ holds the prebuilt demos (.wasm) and runtime glue, so no compiler is needed here.
 on:
   push:
     tags: ["v*"]
 
+permissions:
+  contents: write
+
 jobs:
   release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "10.0.x"
+          fetch-depth: 0   # full history + tags for the generated notes
 
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
 
-      - name: Install fsharp-wasm compiler
+      - name: Package prebuilt runtime and demos
         run: |
-          curl -L https://github.com/fsharp-wasm/fsharp-wasm/releases/latest/download/fsharp-wasm-linux-x64.tar.gz \
-            | tar xz -C /usr/local/bin
-          chmod +x /usr/local/bin/fable
+          set -euo pipefail
+          name="fsharp-wasm-runtime-${GITHUB_REF_NAME}"
+          mkdir -p out
+          cp -r site "out/${name}"
+          cp -r runtime "out/${name}/runtime-src"
+          cp LICENSE README.md "out/${name}/"
+          (cd out && zip -qr "${name}.zip" "${name}" && sha256sum "${name}.zip" > "${name}.zip.sha256")
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build release
-        run: bash build/release.sh ${GITHUB_REF_NAME#v}
+      - name: Create GitHub Release with generated notes
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-
-      - name: Publish NuGet package
-        if: env.NUGET_API_KEY != ''
+          GH_TOKEN: ${{ github.token }}
         run: |
-          dotnet nuget push nupkg/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          set -euo pipefail
+          flags=(--verify-tag --generate-notes --title "${GITHUB_REF_NAME}")
+          # any tag with a hyphen (v0.2.0-experimental, -rc.1) is a prerelease
+          [[ "$GITHUB_REF_NAME" == *-* ]] && flags+=(--prerelease)
+          gh release create "$GITHUB_REF_NAME" "${flags[@]}" out/*.zip out/*.sha256
 
-      - name: Publish npm packages
-        if: env.NODE_AUTH_TOKEN != ''
+      - name: Publish npm package
+        if: ${{ env.NODE_AUTH_TOKEN != '' }}
         run: |
-          cd tools/npm-package && npm publish --access public
+          cd tools/npm-package
+          npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: |
-            nupkg/*.nupkg
-            dist/demos/**/*.wasm
-
-      - name: Deploy demo to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
