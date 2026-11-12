@@ -1,70 +1,42 @@
 name: Release
 
+# Tagging vX.Y.Z publishes a GitHub release with the showcase site as a zip (landing page + prebuilt demos), after the
+# end-to-end tests have run against exactly what is zipped.  No compiler is needed: site/ holds the prebuilt demos.
+# (A NuGet / npm package is not published yet.)
 on:
   push:
     tags: ["v*"]
 
+permissions:
+  contents: write
+
 jobs:
   release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "10.0.x"
 
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
 
-      - name: Install fsharp-wasm compiler
+      - name: Install Playwright and Chromium
         run: |
-          curl -L https://github.com/fsharp-wasm/fsharp-wasm/releases/latest/download/fsharp-wasm-linux-x64.tar.gz \
-            | tar xz -C /usr/local/bin
-          chmod +x /usr/local/bin/fable
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build release
-        run: bash build/release.sh ${GITHUB_REF_NAME#v}
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-
-      - name: Publish NuGet package
-        if: env.NUGET_API_KEY != ''
+      - name: Test the site
         run: |
-          dotnet nuget push nupkg/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          node tests/e2e/site.mjs
+          E2E_ROOT=site node tests/e2e/demos.mjs
 
-      - name: Publish npm packages
-        if: env.NODE_AUTH_TOKEN != ''
+      - name: Zip the site
         run: |
-          cd tools/npm-package && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          cd site
+          zip -qr "../fsharp-wasm-runtime-site-${GITHUB_REF_NAME}.zip" . -x '*.DS_Store'
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: |
-            nupkg/*.nupkg
-            dist/demos/**/*.wasm
-
-      - name: Deploy demo to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
+          files: fsharp-wasm-runtime-site-*.zip

@@ -45,6 +45,8 @@ import * as componentsModule from "./components.js";
  * Each JS glue module is mapped to its canonical import path.
  */
 function buildImports(getInstance) {
+    // when the JS function standing for a closure is garbage collected, the module frees the closure's table slot
+    const released = new FinalizationRegistry((id) => getInstance().exports.__cbFree(id));
     return {
         "runtime/core.js":       coreModule,
         "runtime/dom.js":        domModule,
@@ -72,7 +74,11 @@ function buildImports(getInstance) {
             },
         },
         "fsharp:host": {
-            callback: (id) => (...args) => getInstance().exports.__cb(id, ...args),
+            callback: (id) => {
+                const f = (...args) => getInstance().exports.__cb(id, ...args);
+                released.register(f, id);
+                return f;
+            },
             i2x: (n) => n,
             f2x: (n) => n,
             x2i: (x) => Number(x) | 0,
@@ -124,7 +130,10 @@ export async function boot({ wasm, entry }) {
         entryFn();
 
     } catch (err) {
-        setStatus(`<strong>✗ Error:</strong> ${err.message}`);
+        // an engine without WasmGC or without the JS String Builtins fails to compile the module
+        const unsupported = err instanceof WebAssembly.CompileError || err instanceof WebAssembly.LinkError;
+        setStatus(`<strong>✗ Error:</strong> ${err.message}` +
+            (unsupported ? "<br><small>This module needs WebAssembly GC and the JS String Builtins: Chrome / Edge 130+ or Firefox 134+.</small>" : ""));
         console.error("[fsharp-wasm-runtime] boot failed:", err);
     }
 }

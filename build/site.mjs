@@ -20,6 +20,14 @@ if (!existsSync(join(DIST, "demos"))) {
     process.exit(1);
 }
 
+// refuse to replace the published site with a broken build: every demo must have its .wasm
+const incomplete = readdirSync(join(DIST, "demos"))
+    .filter((demo) => !readdirSync(join(DIST, "demos", demo)).some((f) => f.endsWith(".wasm") && !/-(embedded|component)\.wasm$/.test(f)));
+if (incomplete.length > 0) {
+    console.error(`✗ no .wasm in dist/demos/${incomplete.join(", dist/demos/")} — the build failed; site/ was left as it is`);
+    process.exit(1);
+}
+
 const deployable = (file) =>
     file === "index.html" || file.endsWith(".js") || (file.endsWith(".wasm") && !/-(embedded|component)\.wasm$/.test(file));
 

@@ -45,6 +45,8 @@ import * as componentsModule from "./components.js";
  * Each JS glue module is mapped to its canonical import path.
  */
 function buildImports(getInstance) {
+    // when the JS function standing for a closure is garbage collected, the module frees the closure's table slot
+    const released = new FinalizationRegistry((id) => getInstance().exports.__cbFree(id));
     return {
         "runtime/core.js":       coreModule,
         "runtime/dom.js":        domModule,
@@ -72,7 +74,11 @@ function buildImports(getInstance) {
             },
         },
         "fsharp:host": {
-            callback: (id) => (...args) => getInstance().exports.__cb(id, ...args),
+            callback: (id) => {
+                const f = (...args) => getInstance().exports.__cb(id, ...args);
+                released.register(f, id);
+                return f;
+            },
             i2x: (n) => n,
             f2x: (n) => n,
             x2i: (x) => Number(x) | 0,
