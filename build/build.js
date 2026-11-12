@@ -26,7 +26,8 @@
  */
 
 import { execSync } from "child_process";
-import { cpSync, mkdirSync, existsSync, rmSync, readdirSync, copyFileSync } from "fs";
+import { cpSync, mkdirSync, existsSync, rmSync, readdirSync, copyFileSync, readFileSync, writeFileSync, chmodSync } from "fs";
+import { createHash } from "crypto";
 import { resolve, join, dirname } from "path";
 
 const ROOT    = resolve(import.meta.dirname, "..");
@@ -42,11 +43,14 @@ const HOME = process.env.HOME || process.env.USERPROFILE || "";
  * Resolve the fsharp-wasm compiler: `tools/FSharp.Wasm.Cli` of the fsharp-wasm repository.
  *
  * Resolution order (first hit wins):
- *  1. FSHARP_WASM_CLI   — a built FSharp.Wasm.Cli (fsharp-wasm.dll): fastest, no rebuild per demo
- *  2. FSHARP_WASM_DIR   — a fsharp-wasm checkout (`dotnet run` on its CLI project)
- *  3. a checkout found next to this repository: this repo is usually a submodule of fsharp-wasm (`..`),
- *     or sits beside it (`../fsharp-wasm`)
- *  4. FSHARP_WASM_FABLE — an explicit `fable`-style binary
+ *  1. FSHARP_WASM_BIN   — the self-contained `fsharp-wasm` executable of a release
+ *  2. FSHARP_WASM_VERSION (or a `.fsharp-wasm-version` file) — a release tag, e.g. v0.1.0-experimental: its binary is
+ *     downloaded once from the fsharp-wasm releases into ~/.cache/fsharp-wasm and checked against SHA256SUMS
+ *     (FSHARP_WASM_RELEASE_BASE overrides the download URL prefix)
+ *  3. FSHARP_WASM_CLI   — a built FSharp.Wasm.Cli (fsharp-wasm.dll): fastest, no rebuild per demo
+ *  4. FSHARP_WASM_DIR   — a fsharp-wasm checkout (`dotnet run` on its CLI project)
+ *  5. a checkout found next to this repository (`../fsharp-wasm`)
+ *  6. FSHARP_WASM_FABLE — an explicit `fable`-style binary
  *
  * There is deliberately NO fallback to a `fable` on PATH: that is whatever Fable happens to be installed — upstream
  * Fable and old builds of this backend report the same version — and its WasmGc output is not this compiler's.
@@ -68,7 +72,53 @@ function findCheckout() {
     return candidates.find((dir) => existsSync(join(dir, ...CLI_PROJECT)));
 }
 
-function resolveFable() {
+const RELEASE_BASE = process.env.FSHARP_WASM_RELEASE_BASE ?? "https://github.com/fsharp-wasm/fsharp-wasm/releases/download";
+const RID = { linux: { x64: "linux-x64" }, darwin: { x64: "osx-x64", arm64: "osx-arm64" }, win32: { x64: "win-x64" } }[process.platform]?.[process.arch];
+
+/** The binary of release `version`, downloaded once and verified against the release's SHA256SUMS. */
+async function releaseBinary(version) {
+    if (!RID) { console.error(`✗ no fsharp-wasm release binary for ${process.platform}/${process.arch}`); process.exit(1); }
+    const dir = join(HOME, ".cache", "fsharp-wasm", version, RID);
+    const exe = join(dir, process.platform === "win32" ? "fsharp-wasm.exe" : "fsharp-wasm");
+    if (existsSync(exe)) return exe;
+
+    const archive = `fsharp-wasm-${RID}.${process.platform === "win32" ? "zip" : "tar.gz"}`;
+    const get = async (name) => {
+        const res = await fetch(`${RELEASE_BASE}/${version}/${name}`);
+        if (!res.ok) throw new Error(`${RELEASE_BASE}/${version}/${name}: HTTP ${res.status}`);
+        return Buffer.from(await res.arrayBuffer());
+    };
+    console.log(`  downloading fsharp-wasm ${version} (${RID})…`);
+    const bytes = await get(archive);
+    const sums = (await get("SHA256SUMS")).toString().split("\n").map((l) => l.trim().split(/\s+/));
+    const expected = sums.find(([, name]) => name?.replace(/^\*/, "") === archive)?.[0];
+    const actual = createHash("sha256").update(bytes).digest("hex");
+    if (expected !== actual) { console.error(`✗ ${archive}: SHA-256 ${actual} does not match the release's ${expected ?? "(no entry)"}`); process.exit(1); }
+
+    mkdirSync(dir, { recursive: true });
+    const file = join(dir, archive);
+    writeFileSync(file, bytes);
+    execSync(`tar -xf "${file}" -C "${dir}"`, { stdio: "inherit" });
+    rmSync(file);
+    if (process.platform !== "win32") chmodSync(exe, 0o755);
+    return exe;
+}
+
+async function resolveFable() {
+    const bin = process.env.FSHARP_WASM_BIN;
+    if (bin) {
+        if (!existsSync(bin)) { console.error(`✗ FSHARP_WASM_BIN does not exist: ${bin}`); process.exit(1); }
+        console.log(`  fsharp-wasm (release binary)  [${bin}]`);
+        return { mode: "bin", exe: bin };
+    }
+    const pinned = join(ROOT, ".fsharp-wasm-version");
+    const version = process.env.FSHARP_WASM_VERSION ?? (existsSync(pinned) ? readFileSync(pinned, "utf8").trim() : "");
+    if (version) {
+        const exe = await releaseBinary(version);
+        console.log(`  fsharp-wasm ${version}  [${exe}]`);
+        return { mode: "bin", exe };
+    }
+
     const cliDll = process.env.FSHARP_WASM_CLI;
     if (cliDll) {
         if (!existsSync(cliDll)) { console.error(`✗ FSHARP_WASM_CLI does not exist: ${cliDll}`); process.exit(1); }
@@ -94,9 +144,11 @@ function resolveFable() {
     }
 
     console.error("\n✗ the fsharp-wasm compiler was not found.");
-    console.error("  Point this build at a checkout of https://github.com/aiqs4/fsharp-wasm:");
+    console.error("  Use a release of https://github.com/fsharp-wasm/fsharp-wasm:");
+    console.error("    export FSHARP_WASM_VERSION=v0.1.0-experimental         # downloaded once, checked against SHA256SUMS");
+    console.error("    export FSHARP_WASM_BIN=/path/to/fsharp-wasm            # or an unpacked release");
+    console.error("  or a checkout:");
     console.error("    export FSHARP_WASM_DIR=/path/to/fsharp-wasm            # runs tools/FSharp.Wasm.Cli");
-    console.error("    export FSHARP_WASM_CLI=/path/to/FSharp.Wasm.Cli.dll    # or a built CLI");
     console.error("  (a `fable` on PATH is NOT used: it is not necessarily this compiler)");
     process.exit(1);
 }
@@ -205,7 +257,8 @@ function compileDemos(compiler, demos) {
         console.log(`\n▸ F# → WasmGC  [${demo.name}]`);
         const fsproj = join(ROOT, demo.fsproj);
         const cmd =
-            compiler.mode === "dll"    ? `dotnet "${compiler.cliDll}" "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
+            compiler.mode === "bin"    ? `"${compiler.exe}" "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
+          : compiler.mode === "dll"    ? `dotnet "${compiler.cliDll}" "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
           : compiler.mode === "dotnet" ? `dotnet run -c Release --project "${compiler.cliProj}" -- "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
           :                              `"${compiler.bin}" "${fsproj}" --lang wasmgc -o "${outDir}"`;
         try {
@@ -265,7 +318,7 @@ console.log("  fsharp-wasm-runtime — Build");
 if (selectedName) console.log(`  (demo filter: ${selectedName})`);
 console.log("═══════════════════════════════════════════════════");
 
-const compiler = resolveFable();
+const compiler = await resolveFable();
 
 if (!selectedName) clean();
 copyGlue();

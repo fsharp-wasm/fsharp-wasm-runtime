@@ -77,19 +77,24 @@ callback dispatches a message. A module cannot block on a JS promise.
 
 #### The compiler
 
-Clone [fsharp-wasm](https://github.com/aiqs4/fsharp-wasm), build it (see its README) and point the runtime at it:
+Use a release of [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-wasm): its self-contained binary is downloaded once
+into `~/.cache/fsharp-wasm` and checked against the release's `SHA256SUMS`. Needs a .NET 10 SDK on the `PATH` (the compiler
+cracks projects through it), nothing else.
 
 ```bash
-export FSHARP_WASM_DIR=/path/to/fsharp-wasm      # builds and runs tools/FSharp.Wasm.Cli
-# or, with a prebuilt CLI:
-export FSHARP_WASM_CLI=/path/to/FSharp.Wasm.Cli.dll
-export FSHARP_WASM_LIBRARY=/path/to/fsharp-wasm/fable-library-wasmgc
+export FSHARP_WASM_VERSION=v0.1.0-experimental   # a release tag; or put the tag in a `.fsharp-wasm-version` file
+# or an unpacked release:
+export FSHARP_WASM_BIN=/path/to/fsharp-wasm
 ```
+
+Working on the compiler itself? `FSHARP_WASM_DIR=/path/to/fsharp-wasm` builds and runs its CLI from a checkout (which needs
+its patched F# compiler, see that repository). Nothing in this repository is a submodule of the compiler or the other way
+round.
 
 ### Setup
 
 ```bash
-git clone https://github.com/aiqs4/fsharp-wasm-runtime.git
+git clone https://github.com/fsharp-wasm/fsharp-wasm-runtime.git
 cd fsharp-wasm-runtime
 npm install
 ```
