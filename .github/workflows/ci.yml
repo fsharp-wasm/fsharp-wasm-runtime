@@ -8,7 +8,7 @@ jobs:
   # The committed site/ is the product: the landing page plus the prebuilt demos.  This job needs no compiler:
   # it drives every demo, the live benchmark and every link of the page in a real Chromium.
   site:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # Playwright does not support chromium on ubuntu-latest (26.04) yet
     steps:
       - uses: actions/checkout@v4
 
