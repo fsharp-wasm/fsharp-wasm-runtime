@@ -13,12 +13,15 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-24.04
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}   # job level, so `if: env.NODE_AUTH_TOKEN` below can see it
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          registry-url: https://registry.npmjs.org
 
       - name: Install Playwright and Chromium
         run: |
@@ -30,10 +33,14 @@ jobs:
           node tests/e2e/site.mjs
           E2E_ROOT=site node tests/e2e/demos.mjs
 
-      - name: Zip the site
+      - name: Zip the site (with the runtime sources, README and LICENSE)
         run: |
-          cd site
-          zip -qr "../fsharp-wasm-runtime-site-${GITHUB_REF_NAME}.zip" . -x '*.DS_Store'
+          name="fsharp-wasm-runtime-site-${GITHUB_REF_NAME}"
+          mkdir -p "out/$name"
+          cp -r site/. "out/$name/"
+          cp -r runtime "out/$name/runtime-src"
+          cp LICENSE README.md "out/$name/"
+          (cd out && zip -qr "../$name.zip" "$name" -x '*.DS_Store')
 
       - name: Checksum
         run: sha256sum fsharp-wasm-runtime-site-*.zip > "fsharp-wasm-runtime-site-${GITHUB_REF_NAME}.zip.sha256"
@@ -46,3 +53,13 @@ jobs:
           files: |
             fsharp-wasm-runtime-site-*.zip
             fsharp-wasm-runtime-site-*.zip.sha256
+
+      # needs the NPM_TOKEN secret; without it the step is skipped.  The package ships the runtime/ glue next to index.js.
+      - name: Publish npm package
+        if: env.NODE_AUTH_TOKEN != ''
+        run: |
+          cp -r runtime tools/npm-package/runtime
+          cd tools/npm-package
+          npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
+          tag=latest; [[ "$GITHUB_REF_NAME" == *-* ]] && tag=next   # a prerelease must not become `latest`
+          npm publish --access public --tag "$tag"
