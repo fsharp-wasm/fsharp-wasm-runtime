@@ -16,9 +16,10 @@ jobs:
         with:
           node-version: "22"
 
+      # one locked Playwright for both the browser download and the tests (a second, newer copy wants another chromium)
       - name: Install Playwright and Chromium
         run: |
-          npm install --no-save playwright
+          npm ci --ignore-scripts
           npx playwright install --with-deps chromium
 
       - name: Landing page, embedded demos, benchmark, links
