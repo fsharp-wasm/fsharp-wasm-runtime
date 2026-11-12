@@ -21,8 +21,8 @@
  * Usage:
  *   node build/build.js [--demo <name>]
  *
- * Requires the fsharp-wasm compiler (fable v5+) on PATH.
- * Run `bash prerequisites.sh` to install it.
+ * Requires the fsharp-wasm compiler (see resolveFable below for how it is found).
+ * Run `bash prerequisites.sh` to check your setup.
  */
 
 import { execSync } from "child_process";
@@ -39,69 +39,65 @@ const DEMOS   = resolve(ROOT, "demos");
 const HOME = process.env.HOME || process.env.USERPROFILE || "";
 
 /**
- * Resolve the fsharp-wasm compiler (our patched Fable with WasmGC backend).
+ * Resolve the fsharp-wasm compiler: `tools/FSharp.Wasm.Cli` of the fsharp-wasm repository.
  *
- * Resolution order:
- *  1. FSHARP_WASM_FABLE env var — path to a prebuilt fable binary
- *  2. FSHARP_WASM_DIR env var   — path to fsharp-wasm source tree (dev mode)
- *     → uses: dotnet run --project $FSHARP_WASM_DIR/vendor/Fable/src/Fable.Cli
- *  3. fable on PATH (must be version 5+)
- *  4. ~/.local/bin/fable
+ * Resolution order (first hit wins):
+ *  1. FSHARP_WASM_CLI   — a built FSharp.Wasm.Cli (fsharp-wasm.dll): fastest, no rebuild per demo
+ *  2. FSHARP_WASM_DIR   — a fsharp-wasm checkout (`dotnet run` on its CLI project)
+ *  3. a checkout found next to this repository: this repo is usually a submodule of fsharp-wasm (`..`),
+ *     or sits beside it (`../fsharp-wasm`)
+ *  4. FSHARP_WASM_FABLE — an explicit `fable`-style binary
  *
- * For local development: set FSHARP_WASM_DIR to the fsharp-wasm repo root.
- * For CI: set FSHARP_WASM_FABLE to the path of the built executable.
+ * There is deliberately NO fallback to a `fable` on PATH: that is whatever Fable happens to be installed — upstream
+ * Fable and old builds of this backend report the same version — and its WasmGc output is not this compiler's.
+ *
+ * The CLI needs the patched F# compiler (vendor/fsharp of fsharp-wasm) as FSHARP_COMPILER; it is set here when the
+ * checkout has it built.
  */
 
-function tryFable(bin) {
-    try {
-        const ver = execSync(`"${bin}" --version`, { cwd: ROOT, timeout: 10000 })
-            .toString().replace(/\x1b\[[0-9;]*m/g, "").trim();
-        const major = parseInt(ver.split(".")[0], 10);
-        if (!isNaN(major) && major >= 5) return { mode: "binary", bin, ver };
-    } catch { /* not available */ }
-    return null;
+const CLI_PROJECT = ["tools", "FSharp.Wasm.Cli", "FSharp.Wasm.Cli.fsproj"];
+
+function findCheckout() {
+    const fromEnv = process.env.FSHARP_WASM_DIR;
+    const candidates = [
+        fromEnv,
+        resolve(ROOT, ".."),
+        resolve(ROOT, "..", ".."),
+        resolve(ROOT, "..", "fsharp-wasm"),
+    ].filter(Boolean);
+    return candidates.find((dir) => existsSync(join(dir, ...CLI_PROJECT)));
 }
 
 function resolveFable() {
-    // 0. FSHARP_WASM_CLI — a built CLI (FSharp.Wasm.Cli.dll): no rebuild per demo
     const cliDll = process.env.FSHARP_WASM_CLI;
-    if (cliDll && existsSync(cliDll)) {
+    if (cliDll) {
+        if (!existsSync(cliDll)) { console.error(`✗ FSHARP_WASM_CLI does not exist: ${cliDll}`); process.exit(1); }
         console.log(`  fsharp-wasm CLI (prebuilt)  [${cliDll}]`);
         return { mode: "dll", cliDll };
     }
 
-    // 1. FSHARP_WASM_DIR — dev mode: use source tree via dotnet run
-    const wasmDir = process.env.FSHARP_WASM_DIR;
-    if (wasmDir) {
-        const cliProj = join(wasmDir, "vendor", "Fable", "src", "Fable.Cli");
-        if (existsSync(join(cliProj, "Fable.Cli.fsproj"))) {
-            console.log(`  fsharp-wasm source (dotnet run)  [${cliProj}]`);
-            return { mode: "dotnet", cliProj };
-        }
-        // The fsharp-wasm CLI (tools/FSharp.Wasm.Cli) — what the repo ships and CI builds
-        const cliTool = join(wasmDir, "tools", "FSharp.Wasm.Cli");
-        if (existsSync(join(cliTool, "FSharp.Wasm.Cli.fsproj"))) {
-            console.log(`  fsharp-wasm CLI (dotnet run)  [${cliTool}]`);
-            return { mode: "dotnet", cliProj: cliTool };
-        }
-        console.error(`  ⚠  FSHARP_WASM_DIR set to "${wasmDir}" but no Fable.Cli project found.`);
+    const checkout = findCheckout();
+    if (checkout) {
+        const cliProj = join(checkout, "tools", "FSharp.Wasm.Cli");
+        const fsc = join(checkout, "vendor", "fsharp", "artifacts", "bin", "fsc", "Release", "net10.0", "fsc.dll");
+        if (!process.env.FSHARP_COMPILER && existsSync(fsc)) process.env.FSHARP_COMPILER = fsc;
+        console.log(`  fsharp-wasm CLI (dotnet run)  [${cliProj}]`);
+        if (!process.env.FSHARP_COMPILER)
+            console.warn("  ⚠  FSHARP_COMPILER is not set: the CLI needs the patched F# compiler (vendor/fsharp/artifacts/bin/fsc/Release/net10.0/fsc.dll)");
+        return { mode: "dotnet", cliProj };
     }
 
-    // 2. FSHARP_WASM_FABLE / PATH / ~/.local/bin/fable
-    const candidates = [
-        process.env.FSHARP_WASM_FABLE,
-        "fable",
-        `${HOME}/.local/bin/fable`,
-    ].filter(Boolean);
-
-    for (const c of candidates) {
-        const r = tryFable(c);
+    const explicit = process.env.FSHARP_WASM_FABLE;
+    if (explicit) {
+        const r = tryFable(explicit);
         if (r) { console.log(`  fable ${r.ver}  [${r.bin}]`); return r; }
     }
 
-    console.error("\n✗ fsharp-wasm compiler not found.");
-    console.error("  For local dev, set:  export FSHARP_WASM_DIR=/path/to/fsharp-wasm");
-    console.error("  For releases, run:   bash prerequisites.sh");
+    console.error("\n✗ the fsharp-wasm compiler was not found.");
+    console.error("  Point this build at a checkout of https://github.com/aiqs4/fsharp-wasm:");
+    console.error("    export FSHARP_WASM_DIR=/path/to/fsharp-wasm            # runs tools/FSharp.Wasm.Cli");
+    console.error("    export FSHARP_WASM_CLI=/path/to/FSharp.Wasm.Cli.dll    # or a built CLI");
+    console.error("  (a `fable` on PATH is NOT used: it is not necessarily this compiler)");
     process.exit(1);
 }
 
