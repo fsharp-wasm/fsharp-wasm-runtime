@@ -1,0 +1,16 @@
+# Categories for the generated release notes
+changelog:
+  exclude:
+    labels: [skip-changelog]
+    authors: [dependabot]
+  categories:
+    - title: Runtime (Browser.*)
+      labels: [runtime, browser-api]
+    - title: Demos & site
+      labels: [demos, site]
+    - title: Build & CI
+      labels: [ci, build]
+    - title: Documentation
+      labels: [docs]
+    - title: Other changes
+      labels: ["*"]

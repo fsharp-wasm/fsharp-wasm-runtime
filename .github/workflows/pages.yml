@@ -1,7 +1,7 @@
 name: Pages
 
 # Deploys site/ — the landing page and the prebuilt demos — to GitHub Pages.
-# One-time setup: repository Settings → Pages → Source: "GitHub Actions".
+# One-time setup: repository Settings → Pages → Source: "GitHub Actions" (nothing here enables it: a workflow cannot).
 on:
   push:
     branches: [main]
@@ -24,7 +24,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

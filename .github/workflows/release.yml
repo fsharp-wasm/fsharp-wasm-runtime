@@ -35,8 +35,14 @@ jobs:
           cd site
           zip -qr "../fsharp-wasm-runtime-site-${GITHUB_REF_NAME}.zip" . -x '*.DS_Store'
 
+      - name: Checksum
+        run: sha256sum fsharp-wasm-runtime-site-*.zip > "fsharp-wasm-runtime-site-${GITHUB_REF_NAME}.zip.sha256"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: fsharp-wasm-runtime-site-*.zip
+          prerelease: ${{ contains(github.ref_name, '-') }}   # v0.2.0-experimental, v1.0.0-rc.1 …
+          files: |
+            fsharp-wasm-runtime-site-*.zip
+            fsharp-wasm-runtime-site-*.zip.sha256
