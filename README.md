@@ -23,7 +23,7 @@ let view model dispatch =
 let start () = run "counter-root" { Init = init; Update = update; View = view }
 ```
 
-**Live:** every demo runs in the browser, compiled from F# by [fsharp-wasm](https://github.com/aiqs4/fsharp-wasm) —
+**Live:** every demo runs in the browser, compiled from F# by [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-wasm) —
 see the [showcase site](#showcase-site). ♥ [Sponsor the project](https://github.com/sponsors/aiqs4).
 
 ## Features
