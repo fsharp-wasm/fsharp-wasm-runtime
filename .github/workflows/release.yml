@@ -16,9 +16,9 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}   # job level, so `if: env.NODE_AUTH_TOKEN` below can see it
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "22"
           registry-url: https://registry.npmjs.org
@@ -46,7 +46,7 @@ jobs:
         run: sha256sum fsharp-wasm-runtime-site-*.zip > "fsharp-wasm-runtime-site-${GITHUB_REF_NAME}.zip.sha256"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}   # v0.2.0-experimental, v1.0.0-rc.1 …
