@@ -67,13 +67,9 @@ type ElementBuilder(tag: string) =
 
     member _.Delay(f: unit -> HtmlItem list) : HtmlItem list = f ()
 
-    // `for x in xs do …` inside a block.  Lists and arrays are the collections a view iterates; the compiler represents
-    // a `seq<_>` parameter only for pure pipelines, so the builder takes the concrete types.
-    member _.For(xs: 'a list, f: 'a -> HtmlItem list) : HtmlItem list =
-        List.collect f xs
-
-    member _.For(xs: 'a array, f: 'a -> HtmlItem list) : HtmlItem list =
-        xs |> Array.toList |> List.collect f
+    /// `for x in xs do …` inside a block: a list, an array or any `seq` that is a list or an array.
+    member _.For(xs: 'a seq, f: 'a -> HtmlItem list) : HtmlItem list =
+        xs |> Seq.toList |> List.collect f
 
     // ─── Run: convert accumulated items → Node ────────────────────────────────
 
