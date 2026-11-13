@@ -13,6 +13,10 @@ All notable changes to this project will be documented in this file.
   centred, the dashboard's tab bar is no longer spread over the page (its `class'` was dropped by an explicit `yield`).
 
 ### Added
+- GUI Builder demo (`demos/graphics-editor`): the F# project of fsharp-wasm-graphics (a visual editor on the `FSharp.Graphics`
+  widget library) compiled to WasmGC and drawn onto one canvas through `runtime/gfx.js`, which also forwards pointer, wheel,
+  key and size events to the module. The build compiles it when a checkout of fsharp-wasm-graphics is next to this
+  repository (`FSHARP_WASM_GRAPHICS_DIR`), else the committed `site/` module is kept.
 - Complete `Browser.*` module set (Core, Dom, Events, Canvas, Components, Net, PubSub, Storage, IndexedDb, Workers, Timing, Gpu, Css, Quotations)
 - HTML DSL with computation expressions (F# 10)
 - CSS DSL with active patterns

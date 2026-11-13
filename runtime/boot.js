@@ -29,6 +29,7 @@ import * as clipboardModule from "./clipboard.js";
 import * as locationModule  from "./location.js";
 import * as pointerModule   from "./pointer.js";
 import * as componentsModule from "./components.js";
+import * as gfxModule      from "./gfx.js";
 
 /**
  * Build the WebAssembly import object.
@@ -64,6 +65,7 @@ function buildImports(getInstance) {
         "runtime/location.js":   locationModule,
         "runtime/pointer.js":    pointerModule,
         "runtime/components.js": componentsModule,
+        "runtime/gfx.js":       gfxModule,
         // `printfn`: the module passes an opaque string and exports `__str_len` / `__str_at` to read it
         "env": {
             consolePrint: (s) => {
@@ -98,6 +100,8 @@ const COMPILE_OPTIONS = { builtins: ["js-string"] };
  * @param {object} options
  * @param {URL}    options.wasm   - URL to the .wasm file (use `new URL("X.wasm", import.meta.url)`)
  * @param {string} options.entry  - name of the exported F# function to call after load
+ * @returns {Promise<WebAssembly.Instance|undefined>} the instance (undefined when loading failed), so a page can
+ *          wire events to further exports
  */
 export async function boot({ wasm, entry }) {
     const statusEl = document.getElementById("status");
@@ -128,6 +132,7 @@ export async function boot({ wasm, entry }) {
 
         setStatus(`<strong>✓ Loaded.</strong>`);
         entryFn();
+        return instance;
 
     } catch (err) {
         // an engine without WasmGC or without the JS String Builtins fails to compile the module
