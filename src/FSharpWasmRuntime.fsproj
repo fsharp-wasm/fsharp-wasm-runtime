@@ -12,7 +12,7 @@
     <Authors>FSharpWasmRuntime contributors</Authors>
     <Description>F# browser runtime for WebAssembly GC — typed DOM, Canvas, Fetch, Elmish MVU, HTML DSL and more. Requires the fsharp-wasm (WasmGC) compiler.</Description>
     <PackageTags>fsharp;wasm;wasmgc;browser;elmish;dom</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
