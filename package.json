@@ -20,7 +20,7 @@
     "runtime"
   ],
   "author": "fsharp-wasm contributors",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@playwright/test": "^1.48.0",
     "serve": "^14.2.0"

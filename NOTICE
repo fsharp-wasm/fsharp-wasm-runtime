@@ -1,0 +1,8 @@
+fsharp-wasm-runtime
+Copyright 2024-2026 The fsharp-wasm contributors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).  Versions of this repository before the change of licence were
+published under the MIT License.
+
+Third-party components that keep their own licences:
+  site/vendor/pico.min.css   Pico CSS, MIT, Copyright 2019-2024 Pico (https://picocss.com)

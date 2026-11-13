@@ -228,7 +228,7 @@ The `.fsproj` sets standard NuGet metadata:
   <Description>F# browser runtime for WebAssembly GC — typed DOM, Canvas, Fetch, Elmish MVU, HTML DSL and more.</Description>
   <PackageTags>fsharp;wasm;wasmgc;browser;elmish</PackageTags>
   <RepositoryUrl>https://github.com/your-org/fsharp-wasm-runtime</RepositoryUrl>
-  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 </PropertyGroup>
 ```
 

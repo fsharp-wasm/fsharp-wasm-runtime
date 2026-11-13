@@ -16,7 +16,7 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": ["vite", "fsharp", "wasm", "wasmgc"],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "peerDependencies": {
     "vite": ">=5.0.0"
   },
