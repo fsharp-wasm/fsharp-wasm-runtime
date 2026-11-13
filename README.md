@@ -33,7 +33,7 @@ see the [showcase site](#showcase-site). ♥ [Sponsor the project](https://githu
 - **Elmish loop** — model–update–view with commands, ~60 lines of F#
 - **Native Web Components** defined entirely in F#
 - **No JavaScript application code** — ~600 lines of glue in total, one small file per browser API
-- **Tested in a real browser** — each of the eleven demos is driven by Playwright/Chromium (`npm run test:e2e`)
+- **Tested in a real browser** — each of the twelve demos is driven by Playwright/Chromium (`npm run test:e2e`)
 
 ## Architecture
 

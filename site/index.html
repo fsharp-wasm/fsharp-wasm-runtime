@@ -62,15 +62,16 @@
 
 <section id="live">
   <h2 class="sec">Live: this is F#</h2>
-  <p class="sub">Four of the demos, running right here. Each one is an F# program compiled to its own WebAssembly module —
+  <p class="sub">Five of the demos, running right here. Each one is an F# program compiled to its own WebAssembly module —
     the page around it contains no application code.</p>
   <div class="demos">
     <iframe title="Counter" src="demos/counter/?embed" loading="lazy" height="300"></iframe>
     <iframe title="Todo list" src="demos/todo/?embed" loading="lazy" height="300"></iframe>
     <iframe title="Mandelbrot: F# vs JavaScript" src="demos/canvas-mandelbrot/?embed" loading="lazy" height="620" class="wide"></iframe>
     <iframe title="Dashboard" src="demos/full-dashboard/?embed" loading="lazy" height="420" class="wide"></iframe>
+    <iframe title="Scene gallery" src="demos/graphics-gallery/?embed#dashboard" loading="lazy" height="730" class="wide"></iframe>
   </div>
-  <p><a href="#demos">All eleven demos →</a></p>
+  <p><a href="#demos">All twelve demos →</a></p>
 </section>
 
 <section id="speed">
@@ -128,6 +129,7 @@ let start () = run "counter-root" { Init = init; Update = update; View = view }<
     <a href="demos/web-component/"><b>Web Component</b><span>a custom element defined in F#</span></a>
     <a href="demos/webgpu-basic/"><b>WebGPU</b><span>adapter and device from F#</span></a>
     <a href="demos/graphics-editor/"><b>GUI Builder</b><span>a visual editor drawn by F# onto one canvas</span></a>
+    <a href="demos/graphics-gallery/"><b>Scene Gallery</b><span>thirteen scenes of the graphics library, animated and interactive</span></a>
     <a href="demos/full-dashboard/"><b>Dashboard</b><span>everything in one tabbed app</span></a>
   </div>
 </section>

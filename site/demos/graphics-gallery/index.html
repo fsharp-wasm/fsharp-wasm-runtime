@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scene Gallery — fsharp-wasm-graphics</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    #scenes { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .6rem; }
+    #scenes button { width: auto; margin: 0; padding: .22rem .7rem; font-size: .85rem; }
+    #covers { margin: 0 0 .6rem; font-size: .9rem; opacity: .75; min-height: 1.4em; }
+    #gfx { display: block; width: 100%; height: min(70vh, 640px); min-height: 380px; border-radius: var(--pico-border-radius);
+           background: #0f172a; outline: none; touch-action: none; }
+    #gfx:focus-visible { box-shadow: 0 0 0 3px var(--pico-primary-focus); }
+    .hint { font-size: .85rem; opacity: .7; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <a href="../../index.html">← All Demos</a>
+      <span>F# → WasmGC</span>
+    </nav>
+    <hgroup>
+      <h1>Scene Gallery — fsharp-wasm-graphics</h1>
+      <p>Thirteen scenes of the <code>FSharp.Graphics</code> library — shapes, strokes, gradients, shadows, transforms,
+         layout, clipping, layers, text, animation, interaction, a dashboard and a stress test. Each scene is a pure F#
+         function of time and size; the module resolves it and draws it onto one canvas.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+
+    <div id="scenes" role="tablist" aria-label="Scenes"></div>
+    <p id="covers" aria-live="polite"></p>
+    <canvas id="gfx" tabindex="0" aria-label="Scene gallery canvas"></canvas>
+    <p class="hint">Click the canvas and use <kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd> <kbd>End</kbd> to switch scenes.
+      <em>Interaction</em> reacts to hover, click and drag; <em>Animation</em> and <em>Stress</em> run on every frame,
+      the other scenes are drawn when something changes.</p>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    import { mount } from "../../runtime/gfx.js";
+
+    const canvas = document.getElementById("gfx");
+    const tabs = document.getElementById("scenes");
+    const covers = document.getElementById("covers");
+    const scenes = [];                 // { id, title, covers } in the order the module announces them
+    let exports = null;
+
+    const show = (i) => {
+      const scene = scenes[i];
+      if (!scene) return;
+      [...tabs.children].forEach((b, j) => {
+        b.setAttribute("aria-selected", String(j === i));
+        b.classList.toggle("outline", j !== i);
+      });
+      covers.textContent = scene.covers;
+      history.replaceState(null, "", `#${scene.id}`);
+    };
+
+    // the module names its scenes and reports the selection (it also changes on the arrow keys, inside the canvas)
+    canvas.addEventListener("gfx", ({ detail: { kind, a, b } }) => {
+      if (kind.startsWith("scene:")) {
+        const i = scenes.push({ id: kind.slice(6), title: a, covers: b }) - 1;
+        const button = Object.assign(document.createElement("button"), { type: "button", textContent: a });
+        button.setAttribute("role", "tab");
+        button.classList.add("outline");
+        button.addEventListener("click", () => { exports.select(i); canvas.focus(); });
+        tabs.appendChild(button);
+      } else if (kind === "selected") {
+        show(Number(a));
+      }
+    });
+
+    // the module reports "selected 0" while it starts, which rewrites the hash: read the requested scene first
+    const requested = location.hash;
+    const instance = await boot({ wasm: new URL("SceneGallery.wasm", import.meta.url), entry: "start" });
+    if (instance) {
+      exports = instance.exports;
+      mount(instance, "gfx");
+      const pick = (hash) => { const i = scenes.findIndex((s) => `#${s.id}` === hash); if (i >= 0) exports.select(i); };
+      pick(requested);
+      addEventListener("hashchange", () => pick(location.hash));
+    }
+  </script>
+</body>
+</html>

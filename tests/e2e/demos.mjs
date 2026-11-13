@@ -23,6 +23,17 @@ const demo = async (name, body) => {
 };
 const text = (page, sel) => page.textContent(sel);
 
+/** What a canvas shows: a hash of its pixels, and how many colours there are (a graphics demo is judged by this). */
+const canvasLook = (page, id = 'gfx') => page.evaluate((id) => {
+  const c = document.getElementById(id);
+  const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+  let h = 0; const colours = new Set();
+  for (let i = 0; i < d.length; i += 4 * 13) { h = (h * 31 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) | 0; colours.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); }
+  return { h, colours: colours.size };
+}, id);
+/** The colour of one canvas pixel (device pixels; the tests run at a device pixel ratio of 1). */
+const canvasPixel = (page, x, y, id = 'gfx') => page.evaluate(([id, x, y]) => [...document.getElementById(id).getContext('2d').getImageData(x, y, 1, 1).data.slice(0, 3)], [id, x, y]);
+
 /** Typing arrives key by key and every key renders the view again: the field must stay the focused element, with every
  *  character in it.  Resolves to true, or to the observed state. */
 const keepsFocus = async (page, selector, word) => {
@@ -196,13 +207,7 @@ if ((await fetch(`${base}/demos/graphics-editor/index.html`)).ok)
     await page.waitForTimeout(500);
     const box = await page.locator('#gfx').boundingBox();
     const at = (x, y) => [box.x + x, box.y + y];
-    const look = () => page.evaluate(() => {      // a hash of the pixels, and how many colours there are
-      const c = document.getElementById('gfx');
-      const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
-      let h = 0; const colours = new Set();
-      for (let i = 0; i < d.length; i += 4 * 13) { h = (h * 31 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) | 0; colours.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); }
-      return { h, colours: colours.size };
-    });
+    const look = () => canvasLook(page);
     const changed = async (name, act) => { const before = (await look()).h; await act(); await page.waitForTimeout(300); check(name, (await look()).h !== before); };
 
     const first = await look();
@@ -221,6 +226,69 @@ if ((await fetch(`${base}/demos/graphics-editor/index.html`)).ok)
       for (const ch of 'ok') { await page.keyboard.press(ch); await page.waitForTimeout(40); }
     });
     check('the canvas keeps the focus while typing', await page.evaluate(() => document.activeElement?.id === 'gfx'));
+  });
+
+// The scene gallery: the module names its thirteen scenes and the page builds its tabs from them.  Every scene is a pure
+// function of time and size, so the canvas can be judged: scenes differ from each other, a static one stands still, an
+// animated one moves, hover and click change the interaction scene, the colour matrices of the layers scene change colours.
+if ((await fetch(`${base}/demos/graphics-gallery/index.html`)).ok)
+  await demo('graphics-gallery', async (page) => {
+    await page.setViewportSize({ width: 1280, height: 1000 });
+    const tabs = page.locator('#scenes button');
+    const selected = () => tabs.evaluateAll((bs) => bs.findIndex((b) => b.getAttribute('aria-selected') === 'true'));
+    const open = async (i) => { await tabs.nth(i).click(); await page.waitForTimeout(200); };
+    const look = () => canvasLook(page);
+
+    const titles = await tabs.allTextContents();
+    check('the module announces thirteen scenes', titles.length === 13 && titles[0] === 'Shapes' && titles[12] === 'Stress', titles.join());
+
+    const looks = [];
+    for (let i = 0; i < titles.length; i++) { await open(i); looks.push(await look()); }
+    check('every scene is painted', looks.every((l) => l.colours > 100), looks.map((l) => l.colours).join());
+    check('every scene looks different', new Set(looks.map((l) => l.h)).size === 13);
+    check('the selected tab and the address follow', (await selected()) === 12 && (await page.evaluate(() => location.hash)) === '#stress');
+
+    await page.locator('#gfx').click({ position: { x: 5, y: 5 } });
+    await page.keyboard.press('Home');   await page.waitForTimeout(100);
+    check('Home selects the first scene', (await selected()) === 0);
+    await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowRight'); await page.waitForTimeout(100);
+    check('→ moves on', (await selected()) === 2 && (await page.evaluate(() => location.hash)) === '#gradients');
+    await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(100);
+    check('← moves back', (await selected()) === 1);
+    await page.keyboard.press('End');    await page.waitForTimeout(100);
+    check('End selects the last scene', (await selected()) === 12);
+
+    await open(0);                                              // static: drawn when something changes, not on every frame
+    const still = (await look()).h; await page.waitForTimeout(300);
+    check('a static scene stands still', (await look()).h === still);
+    await open(9);                                              // Animation
+    const moving = (await look()).h; await page.waitForTimeout(300);
+    check('an animated scene moves', (await look()).h !== moving);
+
+    await open(10);                                             // Interaction: "Hover me" (40..190 x 100..144), "Click me" (210..360)
+    const box = await page.locator('#gfx').boundingBox();
+    const idle = (await look()).h;
+    await page.mouse.move(box.x + 115, box.y + 122); await page.waitForTimeout(150);
+    const hovered = (await look()).h;
+    check('hovering a button changes it', hovered !== idle);
+    await page.mouse.move(box.x + 285, box.y + 122); await page.waitForTimeout(150);
+    const overClick = (await look()).h;                         // hover moved to the second button; nothing else changes while it rests
+    await page.mouse.down(); await page.mouse.up(); await page.waitForTimeout(150);
+    check('clicking counts (only the "clicks:" label changes)', (await look()).h !== overClick);
+
+    await open(7);                                              // Layers: original / grayscale / sepia / invert swatches at y = 360
+    const [orig, gray, sepia, invert] = await Promise.all([24, 174, 324, 474].map((x) => canvasPixel(page, x + 8, 372)));
+    const near = (a, b, tol = 4) => a.every((v, i) => Math.abs(v - b[i]) <= tol);
+    const [r, g, b] = orig, lum = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+    check('the original swatch is blue', near(orig, [59, 130, 246]), String(orig));
+    check('grayscale matrix: grey, by luminance', near(gray, [lum, lum, lum]), `${gray} expected ${lum}`);
+    check('sepia matrix: warm brown', near(sepia, [0.393 * r + 0.769 * g + 0.189 * b, 0.349 * r + 0.686 * g + 0.168 * b, 0.272 * r + 0.534 * g + 0.131 * b].map(Math.round)), String(sepia));
+    check('invert matrix: the complement', near(invert, [255 - r, 255 - g, 255 - b]), String(invert));
+
+    await page.goto(`${base}/demos/graphics-gallery/#layers`);      // a link names a scene
+    await page.waitForFunction(() => /Loaded/.test(document.getElementById('status')?.textContent ?? ''));
+    await page.waitForTimeout(300);
+    check('#layers opens the Layers scene', (await selected()) === 7);
   });
 
 server.close();

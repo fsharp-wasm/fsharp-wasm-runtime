@@ -61,6 +61,30 @@ export const layer = (a, m, blurPx) => {
     cx.globalCompositeOperation = BLEND[m] ?? "source-over";
     if (blurPx > 0) cx.filter = `blur(${blurPx * ratio}px)`;
 };
+// A colour matrix is collected value by value (20 of them: rows R, G, B, A with the offset last, offsets in 0..1 — the
+// convention of SVG's feColorMatrix) and then applies to everything the current layer draws.  The canvas filter refers to an
+// SVG filter by url(#id): one hidden <filter> per distinct matrix, created on first use, computed in sRGB like the other hosts.
+const SVG_NS = "http://www.w3.org/2000/svg";
+const matrixFilters = new Map();
+let matrix = [];
+export const matrixBegin = () => { matrix = []; };
+export const matrixValue = (v) => { matrix.push(v); };
+export const matrixUse = () => {
+    const values = matrix.join(" ");
+    let id = matrixFilters.get(values);
+    if (!id) {
+        id = `gfx-matrix-${matrixFilters.size}`;
+        const svg = document.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("width", "0");
+        svg.setAttribute("height", "0");
+        svg.setAttribute("aria-hidden", "true");
+        svg.style.position = "absolute";
+        svg.innerHTML = `<filter id="${id}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${values}"/></filter>`;
+        document.body.appendChild(svg);
+        matrixFilters.set(values, id);
+    }
+    cx.filter = `${cx.filter === "none" ? "" : cx.filter + " "}url(#${id})`;
+};
 export const clip      = (x, y, w, h) => { cx.beginPath(); cx.rect(x, y, w, h); cx.clip(); };
 export const clipPath  = () => cx.clip();
 
@@ -104,6 +128,12 @@ export const text = (s, x, y, size, weight, r, g, b, a) => {
 export const measure = (s, size, weight) => { cx.font = font(size, weight); return cx.measureText(s).width; };
 
 export const cursor     = (k) => { cv.style.cursor = CURSORS[k] ?? "default"; };
+/**
+ * Tell the page something that is not drawing: a `gfx` event on the canvas, `detail = { kind, a, b }`.  A module can send
+ * strings out but not receive them, so this is how it names its parts (the scenes of a gallery, the selected one).
+ * Listen before the module starts: `canvas.addEventListener("gfx", (e) => …)`.
+ */
+export const announce = (kind, a, b) => cv.dispatchEvent(new CustomEvent("gfx", { detail: { kind, a, b } }));
 /** The key of the key event being delivered (F# cannot receive a string through an export, so it asks for it). */
 export const pendingKey = () => key;
 
@@ -142,8 +172,13 @@ export function mount(instance, canvasId) {
     canvas.addEventListener("keydown", onKey(0));
     canvas.addEventListener("keyup", onKey(1));
 
+    // the loop runs only while the canvas is on screen (a page may embed several of them, or scroll one out of view)
     let raf = 0;
     const loop = (t) => { ex.frame(t); raf = requestAnimationFrame(loop); };
-    raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+    const io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting && !raf) raf = requestAnimationFrame(loop);
+        else if (!e.isIntersecting) { cancelAnimationFrame(raf); raf = 0; }
+    });
+    io.observe(canvas);
+    return () => { cancelAnimationFrame(raf); raf = 0; io.disconnect(); ro.disconnect(); };
 }
