@@ -188,6 +188,41 @@ await demo('full-dashboard', async (page) => {
   check('state survives tab switches', (await text(page, '.count-display')) === '1');
 });
 
+// The GUI builder (F# project of fsharp-wasm-graphics) draws everything on one canvas, so it is driven by pointer and key
+// events at canvas coordinates and judged by what the canvas shows.  Skipped when this build did not include it.
+if ((await fetch(`${base}/demos/graphics-editor/index.html`)).ok)
+  await demo('graphics-editor', async (page) => {
+    await page.setViewportSize({ width: 1280, height: 1100 });
+    await page.waitForTimeout(500);
+    const box = await page.locator('#gfx').boundingBox();
+    const at = (x, y) => [box.x + x, box.y + y];
+    const look = () => page.evaluate(() => {      // a hash of the pixels, and how many colours there are
+      const c = document.getElementById('gfx');
+      const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+      let h = 0; const colours = new Set();
+      for (let i = 0; i < d.length; i += 4 * 13) { h = (h * 31 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) | 0; colours.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); }
+      return { h, colours: colours.size };
+    });
+    const changed = async (name, act) => { const before = (await look()).h; await act(); await page.waitForTimeout(300); check(name, (await look()).h !== before); };
+
+    const first = await look();
+    check('the interface is painted', first.colours > 8, `${first.colours} colours`);
+    await changed('Label from the palette is added', () => page.mouse.click(...at(95, 179)));
+    await changed('the selected button is dragged', async () => {
+      await page.mouse.move(...at(378, 293)); await page.mouse.down();
+      await page.mouse.move(...at(520, 450), { steps: 8 }); await page.mouse.up();
+    });
+    await changed('preview hides the editing chrome', () => page.mouse.click(...at(906, 26)));
+    await changed('preview is left again', () => page.mouse.click(...at(906, 26)));
+    await changed('Export F# shows the generated code', () => page.mouse.click(...at(1018, 26)));
+    await page.mouse.click(...at(1018, 26)); await page.waitForTimeout(200);
+    await changed('typing in the inspector edits the element', async () => {
+      await page.mouse.click(...at(1055, 137)); await page.waitForTimeout(150);
+      for (const ch of 'ok') { await page.keyboard.press(ch); await page.waitForTimeout(40); }
+    });
+    check('the canvas keeps the focus while typing', await page.evaluate(() => document.activeElement?.id === 'gfx'));
+  });
+
 server.close();
 const failed = failures();
 console.log(failed ? `\n${failed} check(s) failed` : '\nall e2e checks passed');

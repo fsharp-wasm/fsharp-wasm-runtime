@@ -222,7 +222,26 @@ const ALL_DEMOS = [
         title:  "Full Dashboard",
         desc:   "All demos combined in one tabbed dashboard to stress-test the complete runtime.",
     },
+    {
+        // The F# project lives in ANOTHER repository (fsharp-wasm-graphics); this repo holds its page and the glue
+        // (runtime/gfx.js).  Built when a checkout is found next to this one (or FSHARP_WASM_GRAPHICS_DIR); otherwise
+        // skipped, and the committed site/ keeps the prebuilt module.
+        name:   "graphics-editor",
+        repo:   "fsharp-wasm-graphics",
+        repoEnv: "FSHARP_WASM_GRAPHICS_DIR",
+        project: "demo/FSharp.Graphics.Browser",
+        title:  "GUI Builder — fsharp-wasm-graphics",
+        desc:   "A visual editor written in F# with the FSharp.Graphics widget library, drawn by the module onto one canvas.",
+    },
 ];
+
+/** The project directory of a demo: in this repository, or in the checkout of the repository it belongs to. */
+function demoProjectDir(demo) {
+    if (!demo.repo) return dirname(join(ROOT, demo.fsproj));
+    const checkout = process.env[demo.repoEnv] ?? resolve(ROOT, "..", demo.repo);
+    const dir = join(checkout, demo.project);
+    return existsSync(dir) ? dir : null;
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -252,15 +271,19 @@ function copyGlue() {
 function compileDemos(compiler, demos) {
     const failed = [];
     for (const demo of demos) {
+        const projectDir = demoProjectDir(demo);
+        if (!projectDir) {
+            console.log(`\n▸ F# → WasmGC  [${demo.name}]  skipped: no checkout of ${demo.repo} next to this repository (set ${demo.repoEnv})`);
+            continue;
+        }
         const outDir = join(DIST, "demos", demo.name);
         mkdirSync(outDir, { recursive: true });
         console.log(`\n▸ F# → WasmGC  [${demo.name}]`);
-        const fsproj = join(ROOT, demo.fsproj);
         const cmd =
-            compiler.mode === "bin"    ? `"${compiler.exe}" "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
-          : compiler.mode === "dll"    ? `dotnet "${compiler.cliDll}" "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
-          : compiler.mode === "dotnet" ? `dotnet run -c Release --project "${compiler.cliProj}" -- "${dirname(fsproj)}" --outDir "${outDir}" --noCache`
-          :                              `"${compiler.bin}" "${fsproj}" --lang wasmgc -o "${outDir}"`;
+            compiler.mode === "bin"    ? `"${compiler.exe}" "${projectDir}" --outDir "${outDir}" --noCache`
+          : compiler.mode === "dll"    ? `dotnet "${compiler.cliDll}" "${projectDir}" --outDir "${outDir}" --noCache`
+          : compiler.mode === "dotnet" ? `dotnet run -c Release --project "${compiler.cliProj}" -- "${projectDir}" --outDir "${outDir}" --noCache`
+          :                              `"${compiler.bin}" "${join(projectDir, "*.fsproj")}" --lang wasmgc -o "${outDir}"`;
         try {
             execSync(cmd, { cwd: ROOT, stdio: "inherit" });
         } catch {
@@ -278,6 +301,7 @@ function copyDemoPages(demos) {
     for (const demo of demos) {
         const srcPage = join(DEMOS, demo.name, "index.html");
         const dstDir  = join(DIST, "demos", demo.name);
+        if (demo.repo && !demoProjectDir(demo)) continue;      // not built: its page would have no module
         mkdirSync(dstDir, { recursive: true });
         if (existsSync(srcPage)) {
             copyFileSync(srcPage, join(dstDir, "index.html"));

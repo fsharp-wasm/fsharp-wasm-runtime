@@ -31,6 +31,13 @@ if (incomplete.length > 0) {
 const deployable = (file) =>
     file === "index.html" || file.endsWith(".js") || (file.endsWith(".wasm") && !/-(embedded|component)\.wasm$/.test(file));
 
+// a demo this build skipped (its project is in another repository that was not checked out) keeps its committed files
+const carried = existsSync(join(SITE, "demos"))
+    ? readdirSync(join(SITE, "demos")).filter((demo) => !existsSync(join(DIST, "demos", demo)))
+    : [];
+const kept = new Map(carried.map((demo) => [demo, join(SITE, "demos", demo)]));
+const stash = join(DIST, ".carried");
+for (const [demo, dir] of kept) cpSync(dir, join(stash, demo), { recursive: true });
 rmSync(join(SITE, "demos"), { recursive: true, force: true });
 rmSync(join(SITE, "runtime"), { recursive: true, force: true });
 cpSync(join(DIST, "runtime"), join(SITE, "runtime"), { recursive: true });
@@ -44,4 +51,9 @@ for (const demo of readdirSync(join(DIST, "demos"))) {
         if (file.endsWith(".wasm")) wasm++;
     }
 }
+for (const demo of kept.keys()) {
+    cpSync(join(stash, demo), join(SITE, "demos", demo), { recursive: true });
+    console.log(`  kept the committed demos/${demo} (not built here)`);
+}
+rmSync(stash, { recursive: true, force: true });
 console.log(`✔ site/ updated: ${wasm} wasm modules + runtime glue`);
