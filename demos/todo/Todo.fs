@@ -39,6 +39,7 @@ let update msg model =
 
 let viewTodo dispatch (todo: Todo) =
     li {
+        key' (string todo.Id)
         class' (if todo.Done then "done" else "")
         span {
             onClick (fun () -> dispatch (ToggleTodo todo.Id))

@@ -125,6 +125,7 @@ let todoView model dispatch =
         ul {
             for (id, txt, done') in model.Todos do
                 li {
+                    key' (string id)
                     class' (if done' then "done" else "")
                     span {
                         onClick (fun () -> dispatch (ToggleTodo id))
@@ -171,18 +172,14 @@ let view model dispatch =
             h2 "Full Dashboard"
             p model.Clock
         }
+        // (no explicit `yield` in this block: it would switch implicit yields off, and `class'` would be dropped)
         nav {
             class' "button-group"
-            let counterBtn = tabBtn model.ActiveTab Counter "Counter" dispatch
-            let todoBtn    = tabBtn model.ActiveTab Todo    "Todo"    dispatch
-            let canvasBtn  = tabBtn model.ActiveTab Canvas  "Canvas"  dispatch
-            let pubsubBtn  = tabBtn model.ActiveTab PubSub  "Pub/Sub" dispatch
-            let storageBtn = tabBtn model.ActiveTab Storage "Storage" dispatch
-            yield counterBtn
-            yield todoBtn
-            yield canvasBtn
-            yield pubsubBtn
-            yield storageBtn
+            tabBtn model.ActiveTab Counter "Counter" dispatch
+            tabBtn model.ActiveTab Todo    "Todo"    dispatch
+            tabBtn model.ActiveTab Canvas  "Canvas"  dispatch
+            tabBtn model.ActiveTab PubSub  "Pub/Sub" dispatch
+            tabBtn model.ActiveTab Storage "Storage" dispatch
         }
         section {
             match model.ActiveTab with
