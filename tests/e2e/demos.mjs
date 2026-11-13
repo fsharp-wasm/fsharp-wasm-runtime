@@ -23,6 +23,25 @@ const demo = async (name, body) => {
 };
 const text = (page, sel) => page.textContent(sel);
 
+/** Typing arrives key by key and every key renders the view again: the field must stay the focused element, with every
+ *  character in it.  Resolves to true, or to the observed state. */
+const keepsFocus = async (page, selector, word) => {
+  const field = page.locator(selector).first();
+  await field.click();
+  await page.keyboard.type(word, { delay: 10 });
+  const state = await field.evaluate((el) => ({ value: el.value, focused: document.activeElement === el }));
+  return state.value === word && state.focused ? true : JSON.stringify(state);
+};
+
+/** Controls in one row share a height and a centre line (an input beside a taller button looks misaligned). */
+const aligned = (page, rowSelector) =>
+  page.locator(rowSelector).first().evaluate((row) => {
+    const boxes = [...row.children].map((c) => c.getBoundingClientRect());
+    const heights = boxes.map((b) => Math.round(b.height)), centres = boxes.map((b) => Math.round(b.top + b.height / 2));
+    const spread = (xs) => Math.max(...xs) - Math.min(...xs);
+    return spread(heights) <= 1 && spread(centres) <= 1 ? true : JSON.stringify({ heights, centres });
+  });
+
 await demo('counter', async (page) => {
   const n = () => text(page, '.count-display');
   check('starts at 0', (await n()) === '0');
@@ -38,6 +57,8 @@ await demo('counter', async (page) => {
 await demo('todo', async (page) => {
   const hint = () => text(page, '.hint');
   check('starts empty', (await page.locator('li').count()) === 0 && (await hint()) === '0 of 0 completed');
+  check('typing keeps the focus', (await keepsFocus(page, 'input[placeholder]', 'keep typing')) === true, await keepsFocus(page, 'input[placeholder]', ''));
+  check('field and button are aligned', (await aligned(page, '.input-group')) === true, JSON.stringify(await aligned(page, '.input-group')));
   await page.fill('input[placeholder]', 'Buy milk');
   await page.click('button:has-text("Add")');
   check('item added', (await page.locator('li').count()) === 1 && (await text(page, 'li span')).includes('Buy milk'));
@@ -90,6 +111,8 @@ await demo('web-component', async (page) => {
 });
 
 await demo('realtime-pubsub', async (page) => {
+  check('typing keeps the focus', (await keepsFocus(page, 'input[placeholder]', 'type here')) === true);
+  check('field and button are aligned', (await aligned(page, '.input-group')) === true);
   await page.fill('input[placeholder]', 'hello bus');
   await page.click('button:has-text("Send")');
   await page.waitForSelector('li');
@@ -98,6 +121,12 @@ await demo('realtime-pubsub', async (page) => {
 
 await demo('indexeddb-crud', async (page) => {
   const msg = () => page.locator('section > p').textContent();
+  check('typing keeps the focus (key and value)',
+    (await keepsFocus(page, 'input[placeholder="Key"]', 'some key')) === true && (await keepsFocus(page, 'input[placeholder="Value"]', 'some value')) === true);
+  check('actions are a spaced row', await page.locator('.button-group').first().evaluate((row) => {
+    const b = [...row.children].map((c) => c.getBoundingClientRect());
+    return b.every((r, i) => i === 0 || r.left - b[i - 1].right >= 4);
+  }));
   await page.fill('input[placeholder="Key"]', 'answer');
   await page.fill('input[placeholder="Value"]', '42');
   await page.click('button:has-text("Save")');
@@ -117,6 +146,8 @@ await demo('indexeddb-crud', async (page) => {
 
 await demo('worker-actor', async (page) => {
   check('idle', (await text(page, 'section > p')).includes('Ready'));
+  check('typing keeps the focus', (await keepsFocus(page, 'input[placeholder]', 'to the worker')) === true);
+  check('field and button are aligned', (await aligned(page, '.input-group')) === true);
   await page.fill('input[placeholder]', 'ping');
   await page.click('button:has-text("Send")');
   await page.waitForFunction(() => document.querySelectorAll('li').length > 0, null, { timeout: 5000 }).catch(() => {});
@@ -135,7 +166,10 @@ await demo('full-dashboard', async (page) => {
   check('opens on Counter', (await text(page, '.count-display')) === '0');
   await page.click('button:has-text("+")');
   check('counter tab counts', (await text(page, '.count-display')) === '1');
+  check('tabs are one centred row', await page.locator('nav.button-group').count() === 1 && (await page.locator('nav.button-group').evaluate((n) => getComputedStyle(n).justifyContent)) === 'center');
   await tab('Todo');
+  check('typing keeps the focus', (await keepsFocus(page, 'input[placeholder]', 'dashboard todo')) === true);
+  check('field and button are aligned', (await aligned(page, '.input-group')) === true);
   await page.fill('input[placeholder]', 'from the dashboard');
   await page.click('button:has-text("Add")');
   check('todo tab adds', (await page.locator('li').allTextContents()).join().includes('from the dashboard'));

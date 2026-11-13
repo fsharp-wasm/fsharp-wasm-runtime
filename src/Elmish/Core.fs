@@ -40,7 +40,7 @@ let runWith
     }
 
     let render (model: 'Model) (dispatch: Dispatch<'Msg>) =
-        clearAndRender container [view model dispatch]
+        render container [view model dispatch]
 
     let dispatchImpl (msg: 'Msg) =
         let newModel, newCmds = update msg state.Model

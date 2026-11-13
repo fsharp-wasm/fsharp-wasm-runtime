@@ -41,6 +41,8 @@ let jsSetValue (id: Handle) (value: string) : unit = nativeOnly
 let jsFocus (id: Handle) : unit = nativeOnly
 [<Import("scrollIntoView",  "runtime/dom.js")>]
 let jsScrollIntoView (id: Handle) : unit = nativeOnly
+[<Import("morphChildrenOf", "runtime/dom.js")>]
+let jsMorphChildren (parent: Handle) (scratch: Handle) : unit = nativeOnly
 
 // ─── Typed Element wrapper ────────────────────────────────────────────────────
 
@@ -77,3 +79,7 @@ let getValue (El id)              = jsGetValue id
 let setValue (El id) value        = jsSetValue id value
 let focus    (El id)              = jsFocus id
 let scrollIntoView (El id)        = jsScrollIntoView id
+
+/// Make the children of `parent` equal to those of `scratch` (a tree built off-document), reusing the elements that are
+/// already on the page; `scratch`'s handles are released.  See `morphChildren` in runtime/dom.js.
+let morphChildren (El parent) (El scratch) = jsMorphChildren parent scratch

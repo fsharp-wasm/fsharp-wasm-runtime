@@ -45,7 +45,16 @@ and applyAttr (el: Element) (attr: Attr) =
     | OnInput f       -> onInput el f
     | OnChange f      -> onChange el f
 
-/// Clear a parent element and re-render children.
+/// Make the children of `parent` show `nodes`.  The view is built off-document and merged into what is on the page:
+/// elements that stay are updated in place, so a focused input keeps focus, caret and selection through every render,
+/// and scroll positions and CSS transitions survive.  (Children match by `data-key` when they have one, else by
+/// position and tag.)
+let render (parent: Element) (nodes: Node list) =
+    let scratch = Element.create "div"
+    nodes |> List.iter (fun n -> renderInto scratch n |> ignore)
+    morphChildren parent scratch
+
+/// Clear a parent element and render children from scratch (nothing of what was there is kept).
 let clearAndRender (parent: Element) (nodes: Node list) =
     clear parent
     nodes |> List.iter (fun n -> renderInto parent n |> ignore)

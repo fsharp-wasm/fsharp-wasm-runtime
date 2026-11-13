@@ -160,6 +160,8 @@ let width'     (v: int)               : HtmlItem = AttrItem("width", string v)
 let height'    (v: int)               : HtmlItem = AttrItem("height", string v)
 let tabindex   (v: int)               : HtmlItem = AttrItem("tabindex", string v)
 let data'      (k: string) (v: string): HtmlItem = AttrItem("data-" + k, v)
+/// Identity of a child in a list: a render keeps (and moves) the element with the same key instead of matching by position.
+let key'       (v: string)            : HtmlItem = AttrItem("data-key", v)
 let disabled   (v: bool)              : HtmlItem = if v then AttrItem("disabled", "") else AttrItem("", "")
 let checked'   (v: bool)              : HtmlItem = if v then AttrItem("checked", "")  else AttrItem("", "")
 let readonly'  (v: bool)              : HtmlItem = if v then AttrItem("readonly", "") else AttrItem("", "")
