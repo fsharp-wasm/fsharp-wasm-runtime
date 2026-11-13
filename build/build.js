@@ -233,6 +233,15 @@ const ALL_DEMOS = [
         title:  "GUI Builder — fsharp-wasm-graphics",
         desc:   "A visual editor written in F# with the FSharp.Graphics widget library, drawn by the module onto one canvas.",
     },
+    {
+        // The second module of the same repository: the scenes of FSharp.Graphics.Scenes, selected from the page.
+        name:   "graphics-gallery",
+        repo:   "fsharp-wasm-graphics",
+        repoEnv: "FSHARP_WASM_GRAPHICS_DIR",
+        project: "demo/FSharp.Graphics.Browser.Gallery",
+        title:  "Scene Gallery — fsharp-wasm-graphics",
+        desc:   "Thirteen scenes of the FSharp.Graphics library — shapes, gradients, shadows, text, animation, interaction — drawn onto one canvas.",
+    },
 ];
 
 /** The project directory of a demo: in this repository, or in the checkout of the repository it belongs to. */

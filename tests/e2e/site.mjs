@@ -16,7 +16,7 @@ check('sponsor link', (await page.locator('a[href="https://github.com/sponsors/a
 // the demos embedded in the page run
 const frame = (title) => page.frameLocator(`iframe[title="${title}"]`);
 await page.locator('#live').scrollIntoViewIfNeeded();
-for (const t of ['Counter', 'Todo list', 'Mandelbrot: F# vs JavaScript', 'Dashboard']) await page.locator(`iframe[title="${t}"]`).scrollIntoViewIfNeeded();
+for (const t of ['Counter', 'Todo list', 'Mandelbrot: F# vs JavaScript', 'Dashboard', 'Scene gallery']) await page.locator(`iframe[title="${t}"]`).scrollIntoViewIfNeeded();
 
 const counter = frame('Counter');
 await counter.locator('.count-display').waitFor({ timeout: 15000 });
@@ -41,6 +41,19 @@ await dash.locator('nav button:has-text("Todo")').waitFor({ timeout: 15000 });
 await dash.locator('nav button:has-text("Todo")').click();
 check('embedded dashboard switches tabs', (await dash.locator('input[placeholder]').count()) === 1);
 
+// the graphics demos draw onto one canvas each: judged by what the canvas shows
+const painted = (f) => f.locator('#gfx').evaluate((c) => {
+  const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+  const colours = new Set(); for (let i = 0; i < d.length; i += 4 * 13) colours.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+  return colours.size;
+});
+const gallery = frame('Scene gallery');
+await gallery.locator('#scenes button').nth(12).waitFor({ timeout: 20000 });
+check('embedded scene gallery lists thirteen scenes', (await gallery.locator('#scenes button').count()) === 13);
+check('embedded scene gallery opens the scene its link names', (await gallery.locator('#scenes button[aria-selected="true"]').textContent()) === 'Dashboard');
+check('embedded scene gallery is painted', (await painted(gallery)) > 100);
+
+
 // the live benchmark
 await page.click('#run-bench');
 await page.waitForFunction(() => window.__benchDone === true, null, { timeout: 120000 });
@@ -50,7 +63,7 @@ check('benchmark: F# and JavaScript agree on every result', rows.every((r) => r[
 
 // every demo in the gallery opens and boots
 const links = await page.locator('#demos .gallery a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-check('gallery lists eleven demos', links.length === 11, String(links.length));
+check('gallery lists twelve demos', links.length === 12, String(links.length));
 for (const href of links) {
   const p = await browser.newPage();
   const errs = [];

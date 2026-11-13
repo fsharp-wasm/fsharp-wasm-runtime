@@ -13,6 +13,15 @@ All notable changes to this project will be documented in this file.
   centred, the dashboard's tab bar is no longer spread over the page (its `class'` was dropped by an explicit `yield`).
 
 ### Added
+- Scene Gallery demo (`demos/graphics-gallery`): the thirteen scenes of `FSharp.Graphics.Scenes` (shapes, strokes, gradients,
+  shadows, transforms, layout, clipping, layers, text, animation, interaction, a dashboard, a stress test) compiled to WasmGC
+  from fsharp-wasm-graphics (`demo/FSharp.Graphics.Browser.Gallery`) and drawn onto one canvas. The module announces its
+  scenes to the page (`announce` in `runtime/gfx.js` raises a `gfx` event on the canvas), which builds the tabs from them;
+  ← → Home End and `#<scene>` links select a scene. It is embedded live on the landing page.
+- `runtime/gfx.js`: colour matrices (`matrixBegin` / `matrixValue` / `matrixUse`, an SVG `feColorMatrix` per distinct matrix,
+  computed in sRGB) for the grayscale / sepia / invert layers; the frame loop of `mount` pauses while the canvas is off screen.
+  Known limit: layer alpha, blur and matrix apply to each drawn shape, not to the composed group (overlapping children of a
+  group show through each other).
 - GUI Builder demo (`demos/graphics-editor`): the F# project of fsharp-wasm-graphics (a visual editor on the `FSharp.Graphics`
   widget library) compiled to WasmGC and drawn onto one canvas through `runtime/gfx.js`, which also forwards pointer, wheel,
   key and size events to the module. The build compiles it when a checkout of fsharp-wasm-graphics is next to this
