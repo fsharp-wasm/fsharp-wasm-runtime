@@ -86,7 +86,7 @@
     superb at tight loops, so expect parity (Mandelbrot, CRC-32, word count) and sometimes a loss (the sieve: the compiler stores <code>bool[]</code> as 32-bit
     elements, JavaScript's <code>Uint8Array</code> as bytes). The wasm wins where the language helps: calls (Fibonacci), 64-bit integers, and the list pipeline,
     which the compiler fuses into one loop with no intermediate lists (that row measures the optimisation, not the VM). The F# is unmodified, idiomatic code.
-    <a href="demos/bench/index.html">The full benchmark page</a> has the chart, the standard profile with its spread, and a JSON export;
+    <a href="benchmarks/index.html">All results — speed, size and network load times, recorded and published —</a> and <a href="demos/bench/index.html">the full benchmark page</a> have the chart, the standard profile with its spread, and a JSON export;
     <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/docs/benchmarks.md">docs/benchmarks.md</a> has measured results for Node, Deno, Bun and Chromium.</small>
 </section>
 

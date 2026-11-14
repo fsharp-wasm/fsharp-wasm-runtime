@@ -10,7 +10,7 @@
     "test:e2e": "node tests/e2e/demos.mjs && node tests/e2e/site.mjs && node tests/e2e/bench.mjs",
     "bench": "node demos/bench/run.mjs",
     "clean": "rm -rf dist release",
-    "site": "node build/build.js && node build/site.mjs"
+    "site": "node build/build.js && node build/site.mjs && node build/benchmarks.mjs"
   },
   "keywords": [
     "fsharp",
