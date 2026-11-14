@@ -51,7 +51,12 @@ const gallery = frame('Scene gallery');
 await gallery.locator('#scenes button').nth(12).waitFor({ timeout: 20000 });
 check('embedded scene gallery lists thirteen scenes', (await gallery.locator('#scenes button').count()) === 13);
 check('embedded scene gallery opens the scene its link names', (await gallery.locator('#scenes button[aria-selected="true"]').textContent()) === 'Dashboard');
-check('embedded scene gallery is painted', (await painted(gallery)) > 100);
+// The gallery draws only while it is on screen (runtime/gfx.js pauses the frame loop off screen), and the clicks above scrolled other
+// frames into view: bring it back, then wait for its first frame instead of sampling the canvas once.
+await page.locator('iframe[title="Scene gallery"]').scrollIntoViewIfNeeded();
+let colours = 0;
+for (let i = 0; i < 100 && colours <= 100; i++) { colours = await painted(gallery); if (colours <= 100) await page.waitForTimeout(100); }
+check('embedded scene gallery is painted', colours > 100, `${colours} colours`);
 
 
 // the live benchmark

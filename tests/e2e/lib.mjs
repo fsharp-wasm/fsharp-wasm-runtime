@@ -29,6 +29,8 @@ export const serve = (root = fileURLToPath(new URL(`../../${process.env.E2E_ROOT
 export const launch = async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
+  // E2E_CPU_THROTTLE=6: run the page six times slower — a CI runner's timing, to reproduce a race that only a slow machine shows
+  if (process.env.E2E_CPU_THROTTLE) await (await page.context().newCDPSession(page)).send('Emulation.setCPUThrottlingRate', { rate: Number(process.env.E2E_CPU_THROTTLE) });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
