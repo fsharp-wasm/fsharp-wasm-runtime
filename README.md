@@ -179,7 +179,7 @@ fsharp-wasm-runtime/
 | IndexedDB CRUD | Persistent key-value storage |
 | Worker Actor | Web Worker message passing |
 | WebGPU Basic | GPU availability check + canvas |
-| Benchmark | Four kernels, F# vs JavaScript, timed in your browser |
+| Benchmark | Thirteen kernels, F# vs JavaScript, timed in a worker; chart, spreads, JSON export — results in [docs/benchmarks.md](docs/benchmarks.md) |
 | Full Dashboard | All features combined |
 
 ## Documentation

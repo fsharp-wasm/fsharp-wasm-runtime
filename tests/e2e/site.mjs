@@ -58,7 +58,7 @@ check('embedded scene gallery is painted', (await painted(gallery)) > 100);
 await page.click('#run-bench');
 await page.waitForFunction(() => window.__benchDone === true, null, { timeout: 120000 });
 const rows = await page.locator('#bench-rows tr').evaluateAll((trs) => trs.map((tr) => [...tr.children].map((td) => td.textContent)));
-check('benchmark: four kernels', rows.length === 4, JSON.stringify(rows));
+check('benchmark: thirteen kernels', rows.length === 13, JSON.stringify(rows));
 check('benchmark: F# and JavaScript agree on every result', rows.every((r) => r[4].startsWith('✓')), JSON.stringify(rows.map((r) => r[4])));
 
 // every demo in the gallery opens and boots

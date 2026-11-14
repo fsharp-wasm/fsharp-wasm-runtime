@@ -214,7 +214,7 @@ const ALL_DEMOS = [
         name:   "bench",
         fsproj: "demos/bench/Bench.fsproj",
         title:  "Benchmark — F# vs JavaScript",
-        desc:   "Four compute kernels, once as F# compiled to WasmGC and once as JavaScript, timed in your browser.",
+        desc:   "Thirteen compute kernels, once as F# compiled to WasmGC and once as JavaScript, timed in your browser with a chart, spreads and a JSON export.",
     },
     {
         name:   "full-dashboard",
