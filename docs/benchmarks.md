@@ -335,9 +335,21 @@ Measured here, handed to [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-was
    quicksort kernel is written out on both sides because the point is the same algorithm in both languages, not the library's sort.
 3. **The list pipeline is fused into one loop** — a real optimisation, and the reason for the † row.
 4. **64-bit integers are native** (`i64`); JavaScript has doubles (or `BigInt`, which is far slower), which is most of the Collatz result.
-5. **Small functions stay calls in the generated module.** The speed of calls into small helpers (`evalA`, `fibRec`, the string helpers) is whatever V8's optimising tier makes of
-   it: the geometric mean on Node falls from 1.40 to 1.22 with `--no-wasm-inlining`, and Liftoff, which runs first, inlines nothing (the first call of the
-   module is about 1.8× its steady state). An inlining pass for small functions in the compiler would make the speed predictable.
+5. **Small functions stay calls in the generated module — and inlining them does not pay.** V8's inliner decides the speed of calls into small helpers
+   (`evalA`, the string helpers): the geometric mean on Node falls from 1.40 to 1.22 with `--no-wasm-inlining`. An inlining pass was written
+   (fsharp-wasm `8b454b9`, opt-in with `WASMGC_INLINE=1`) and measured, two runs each ([`docs/benchmarks/inliner-ab.json`](benchmarks/inliner-ab.json)):
+
+   | | without the pass | with it |
+   |---|---:|---:|
+   | Node 24, V8's inliner on — geometric mean against JavaScript | 1.38 / 1.41 | 1.41 / 1.40 |
+   | Node 24, `--no-wasm-inlining` | 1.25 / 1.24 | 1.28 / 1.28 (spectral norm 47 → 29 ms; V8's own inlining: 24 ms) |
+   | Bun 1 (JavaScriptCore) | 1.00 / 0.99 | 1.00 / 1.01 |
+   | first call of the module (median over the kernels, V8) | | 0.96 of without |
+   | benchmark module | 17 685 bytes | 17 797 bytes |
+   | scene gallery / widget editor | 140 071 / 153 025 bytes | 163 085 (+16 %) / 160 251 (+4.7 %) bytes |
+
+   It pays only where the engine does not inline, and costs code everywhere, so it stays off by default; the first call is not faster either (the cost of the baseline
+   tier is compiling the bodies, not the calls).
 6. **The F# optimizer does not help.** `--optimize+` (typed-tree inlining, constant folding) on the kernels alone: module 75 bytes larger, the per-kernel times
    within noise (0.84–1.12; geometric mean against JavaScript 1.30 and 1.31 without, 1.27 and 1.29 with it, two runs each), and the runtime library's
    `[<Emit>]` members (`CeBuilder`) no longer compile. It stays off.
