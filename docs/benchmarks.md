@@ -168,7 +168,9 @@ Measured here, handed to [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-was
 1. **`bool[]` is `(array (mut i32))` — four bytes per element** (`byte[]` is the same). The sieve is memory-bound: JavaScript with an
    `Int32Array` needs the same 70 ms as the module, with a `Uint8Array` 46 ms (Node 24, n = 5 000 000). A packed `i8` array
    (`array.get_u` / `array.set`) would remove the gap.
-2. **`Array.sort` / `sortWith` is an insertion sort** (`src/Runtime/ArraySort.fs`, O(n²)); a benchmark that called it would measure the
-   algorithm, not the code generator. The quicksort kernel is therefore written out on both sides.
+2. **`List.sortBy` was an insertion sort** (O(n²)): 20 000, 40 000 and 80 000 elements took 155, 433 and 1979 ms, and a string key did not compile. Fixed in
+   fsharp-wasm `7c628ff` (a stable merge sort, ordered by Fable's comparer: the same sizes take 10, 10 and 16 ms). `Array.sort`, `sortWith`,
+   `sortInPlace`, `List.sort` and `List.sortWith` were already merge sorts — this document said otherwise until the numbers were measured. The
+   quicksort kernel is written out on both sides because the point is the same algorithm in both languages, not the library's sort.
 3. **The list pipeline is fused into one loop** — a real optimisation, and the reason for the † row.
 4. **64-bit integers are native** (`i64`); JavaScript has doubles (or `BigInt`, which is far slower), which is most of the Collatz result.
