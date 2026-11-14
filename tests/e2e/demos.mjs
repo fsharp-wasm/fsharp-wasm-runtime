@@ -199,10 +199,10 @@ await demo('full-dashboard', async (page) => {
   check('state survives tab switches', (await text(page, '.count-display')) === '1');
 });
 
-// The GUI builder (F# project of fsharp-wasm-graphics) draws everything on one canvas, so it is driven by pointer and key
+// The widget editor (F# project of fsharp-wasm-ide) draws everything on one canvas, so it is driven by pointer and key
 // events at canvas coordinates and judged by what the canvas shows.  Skipped when this build did not include it.
-if ((await fetch(`${base}/demos/graphics-editor/index.html`)).ok)
-  await demo('graphics-editor', async (page) => {
+if ((await fetch(`${base}/demos/widget-editor/index.html`)).ok)
+  await demo('widget-editor', async (page) => {
     await page.setViewportSize({ width: 1280, height: 1100 });
     await page.waitForTimeout(500);
     const box = await page.locator('#gfx').boundingBox();
