@@ -1,0 +1,2089 @@
+{
+  "schema": "size-1",
+  "date": "2026-11-14T12:26:54.866Z",
+  "env": {
+    "chromium": "153.0.8010.12",
+    "os": "linux x64",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "node": "22.23.4"
+  },
+  "note": "Same-origin requests only; sizes as the server holds them, gzip level 9, brotli quality 11.",
+  "modules": [
+    {
+      "id": "bench/Bench.wasm",
+      "demo": "bench",
+      "file": "Bench.wasm",
+      "raw": 17685,
+      "gzip": 7474,
+      "brotli": 6534
+    },
+    {
+      "id": "canvas-mandelbrot/Mandelbrot.wasm",
+      "demo": "canvas-mandelbrot",
+      "file": "Mandelbrot.wasm",
+      "raw": 12632,
+      "gzip": 4907,
+      "brotli": 4295
+    },
+    {
+      "id": "counter/Counter.wasm",
+      "demo": "counter",
+      "file": "Counter.wasm",
+      "raw": 22966,
+      "gzip": 8968,
+      "brotli": 7643
+    },
+    {
+      "id": "full-dashboard/Dashboard.wasm",
+      "demo": "full-dashboard",
+      "file": "Dashboard.wasm",
+      "raw": 46973,
+      "gzip": 15718,
+      "brotli": 12754
+    },
+    {
+      "id": "graphics-gallery/SceneGallery.wasm",
+      "demo": "graphics-gallery",
+      "file": "SceneGallery.wasm",
+      "raw": 140071,
+      "gzip": 55256,
+      "brotli": 45211
+    },
+    {
+      "id": "indexeddb-crud/IndexedDbCrud.wasm",
+      "demo": "indexeddb-crud",
+      "file": "IndexedDbCrud.wasm",
+      "raw": 32195,
+      "gzip": 11953,
+      "brotli": 9987
+    },
+    {
+      "id": "realtime-pubsub/RealtimePubSub.wasm",
+      "demo": "realtime-pubsub",
+      "file": "RealtimePubSub.wasm",
+      "raw": 25060,
+      "gzip": 9899,
+      "brotli": 8465
+    },
+    {
+      "id": "todo/Todo.wasm",
+      "demo": "todo",
+      "file": "Todo.wasm",
+      "raw": 28518,
+      "gzip": 10956,
+      "brotli": 9312
+    },
+    {
+      "id": "web-component/MyCounter.wasm",
+      "demo": "web-component",
+      "file": "MyCounter.wasm",
+      "raw": 13574,
+      "gzip": 5366,
+      "brotli": 4698
+    },
+    {
+      "id": "webgpu-basic/WebGpuBasic.wasm",
+      "demo": "webgpu-basic",
+      "file": "WebGpuBasic.wasm",
+      "raw": 22878,
+      "gzip": 9112,
+      "brotli": 7874
+    },
+    {
+      "id": "widget-editor/WidgetEditor.wasm",
+      "demo": "widget-editor",
+      "file": "WidgetEditor.wasm",
+      "raw": 153025,
+      "gzip": 56673,
+      "brotli": 46482
+    },
+    {
+      "id": "worker-actor/WorkerActor.wasm",
+      "demo": "worker-actor",
+      "file": "WorkerActor.wasm",
+      "raw": 26136,
+      "gzip": 10242,
+      "brotli": 8764
+    }
+  ],
+  "pages": [
+    {
+      "id": "(landing page)",
+      "requests": [
+        {
+          "path": "/demos/graphics-gallery/SceneGallery.wasm",
+          "type": "fetch",
+          "raw": 140071,
+          "gzip": 55256,
+          "brotli": 45211
+        },
+        {
+          "path": "/vendor/pico.min.css",
+          "type": "stylesheet",
+          "raw": 82194,
+          "gzip": 11522,
+          "brotli": 9956
+        },
+        {
+          "path": "/demos/full-dashboard/Dashboard.wasm",
+          "type": "fetch",
+          "raw": 46973,
+          "gzip": 15718,
+          "brotli": 12754
+        },
+        {
+          "path": "/demos/todo/Todo.wasm",
+          "type": "fetch",
+          "raw": 28518,
+          "gzip": 10956,
+          "brotli": 9312
+        },
+        {
+          "path": "/demos/counter/Counter.wasm",
+          "type": "fetch",
+          "raw": 22966,
+          "gzip": 8968,
+          "brotli": 7643
+        },
+        {
+          "path": "/demos/canvas-mandelbrot/Mandelbrot.wasm",
+          "type": "fetch",
+          "raw": 12632,
+          "gzip": 4907,
+          "brotli": 4295
+        },
+        {
+          "path": "/",
+          "type": "document",
+          "raw": 11883,
+          "gzip": 4583,
+          "brotli": 3707
+        },
+        {
+          "path": "/demos/bench/kernels.js",
+          "type": "script",
+          "raw": 11522,
+          "gzip": 4165,
+          "brotli": 3581
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/demos/canvas-mandelbrot/",
+          "type": "document",
+          "raw": 6179,
+          "gzip": 2228,
+          "brotli": 1775
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/demos/graphics-gallery/",
+          "type": "document",
+          "raw": 4171,
+          "gzip": 1950,
+          "brotli": 1495
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/demos/bench/bench.js",
+          "type": "script",
+          "raw": 2241,
+          "gzip": 1008,
+          "brotli": 855
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/counter/",
+          "type": "document",
+          "raw": 1062,
+          "gzip": 609,
+          "brotli": 432
+        },
+        {
+          "path": "/demos/full-dashboard/",
+          "type": "document",
+          "raw": 1039,
+          "gzip": 597,
+          "brotli": 425
+        },
+        {
+          "path": "/demos/todo/",
+          "type": "document",
+          "raw": 1030,
+          "gzip": 593,
+          "brotli": 418
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 412287,
+        "gzip": 138359,
+        "brotli": 114734
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "bench",
+      "requests": [
+        {
+          "path": "/demos/bench/Bench.wasm",
+          "type": "fetch",
+          "raw": 17685,
+          "gzip": 7474,
+          "brotli": 6534
+        },
+        {
+          "path": "/demos/bench/kernels.js",
+          "type": "script",
+          "raw": 11522,
+          "gzip": 4165,
+          "brotli": 3581
+        },
+        {
+          "path": "/demos/bench/",
+          "type": "document",
+          "raw": 10566,
+          "gzip": 4024,
+          "brotli": 3286
+        },
+        {
+          "path": "/demos/bench/render.js",
+          "type": "script",
+          "raw": 7613,
+          "gzip": 3016,
+          "brotli": 2622
+        },
+        {
+          "path": "/demos/bench/harness.js",
+          "type": "script",
+          "raw": 6232,
+          "gzip": 2687,
+          "brotli": 2328
+        },
+        {
+          "path": "/demos/bench/bench.js",
+          "type": "script",
+          "raw": 2241,
+          "gzip": 1008,
+          "brotli": 855
+        },
+        {
+          "path": "/demos/bench/worker.js",
+          "type": "script",
+          "raw": 1141,
+          "gzip": 518,
+          "brotli": 466
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        }
+      ],
+      "total": {
+        "raw": 57410,
+        "gzip": 23177,
+        "brotli": 19875
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "canvas-mandelbrot",
+      "requests": [
+        {
+          "path": "/demos/canvas-mandelbrot/Mandelbrot.wasm",
+          "type": "fetch",
+          "raw": 12632,
+          "gzip": 4907,
+          "brotli": 4295
+        },
+        {
+          "path": "/demos/canvas-mandelbrot/",
+          "type": "document",
+          "raw": 6179,
+          "gzip": 2228,
+          "brotli": 1775
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        }
+      ],
+      "total": {
+        "raw": 19221,
+        "gzip": 7420,
+        "brotli": 6273
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "counter",
+      "requests": [
+        {
+          "path": "/demos/counter/Counter.wasm",
+          "type": "fetch",
+          "raw": 22966,
+          "gzip": 8968,
+          "brotli": 7643
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/counter/",
+          "type": "document",
+          "raw": 1062,
+          "gzip": 609,
+          "brotli": 432
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 63834,
+        "gzip": 24876,
+        "brotli": 20950
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "full-dashboard",
+      "requests": [
+        {
+          "path": "/demos/full-dashboard/Dashboard.wasm",
+          "type": "fetch",
+          "raw": 46973,
+          "gzip": 15718,
+          "brotli": 12754
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/full-dashboard/",
+          "type": "document",
+          "raw": 1039,
+          "gzip": 597,
+          "brotli": 425
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 87818,
+        "gzip": 31614,
+        "brotli": 26054
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "graphics-gallery",
+      "requests": [
+        {
+          "path": "/demos/graphics-gallery/SceneGallery.wasm",
+          "type": "fetch",
+          "raw": 140071,
+          "gzip": 55256,
+          "brotli": 45211
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/demos/graphics-gallery/",
+          "type": "document",
+          "raw": 4171,
+          "gzip": 1950,
+          "brotli": 1495
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 182467,
+        "gzip": 71789,
+        "brotli": 59009
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "indexeddb-crud",
+      "requests": [
+        {
+          "path": "/demos/indexeddb-crud/IndexedDbCrud.wasm",
+          "type": "fetch",
+          "raw": 32195,
+          "gzip": 11953,
+          "brotli": 9987
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/indexeddb-crud/",
+          "type": "document",
+          "raw": 1089,
+          "gzip": 619,
+          "brotli": 441
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 73090,
+        "gzip": 27871,
+        "brotli": 23303
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "realtime-pubsub",
+      "requests": [
+        {
+          "path": "/demos/realtime-pubsub/RealtimePubSub.wasm",
+          "type": "fetch",
+          "raw": 25060,
+          "gzip": 9899,
+          "brotli": 8465
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/realtime-pubsub/",
+          "type": "document",
+          "raw": 1098,
+          "gzip": 627,
+          "brotli": 440
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 65964,
+        "gzip": 25825,
+        "brotli": 21780
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "todo",
+      "requests": [
+        {
+          "path": "/demos/todo/Todo.wasm",
+          "type": "fetch",
+          "raw": 28518,
+          "gzip": 10956,
+          "brotli": 9312
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/todo/",
+          "type": "document",
+          "raw": 1030,
+          "gzip": 593,
+          "brotli": 418
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 69354,
+        "gzip": 26848,
+        "brotli": 22605
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "web-component",
+      "requests": [
+        {
+          "path": "/demos/web-component/MyCounter.wasm",
+          "type": "fetch",
+          "raw": 13574,
+          "gzip": 5366,
+          "brotli": 4698
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/demos/web-component/",
+          "type": "document",
+          "raw": 1575,
+          "gzip": 821,
+          "brotli": 584
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 53374,
+        "gzip": 20770,
+        "brotli": 17585
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "webgpu-basic",
+      "requests": [
+        {
+          "path": "/demos/webgpu-basic/WebGpuBasic.wasm",
+          "type": "fetch",
+          "raw": 22878,
+          "gzip": 9112,
+          "brotli": 7874
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/demos/webgpu-basic/",
+          "type": "document",
+          "raw": 1234,
+          "gzip": 731,
+          "brotli": 523
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 62337,
+        "gzip": 24426,
+        "brotli": 20700
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "widget-editor",
+      "requests": [
+        {
+          "path": "/demos/widget-editor/WidgetEditor.wasm",
+          "type": "fetch",
+          "raw": 153025,
+          "gzip": 56673,
+          "brotli": 46482
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/demos/widget-editor/",
+          "type": "document",
+          "raw": 1968,
+          "gzip": 1079,
+          "brotli": 792
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        }
+      ],
+      "total": {
+        "raw": 193218,
+        "gzip": 72335,
+        "brotli": 59577
+      },
+      "externalRequests": 1
+    },
+    {
+      "id": "worker-actor",
+      "requests": [
+        {
+          "path": "/demos/worker-actor/WorkerActor.wasm",
+          "type": "fetch",
+          "raw": 26136,
+          "gzip": 10242,
+          "brotli": 8764
+        },
+        {
+          "path": "/runtime/gfx.js",
+          "type": "script",
+          "raw": 9074,
+          "gzip": 3585,
+          "brotli": 3042
+        },
+        {
+          "path": "/runtime/boot.js",
+          "type": "script",
+          "raw": 6188,
+          "gzip": 2306,
+          "brotli": 1984
+        },
+        {
+          "path": "/runtime/dom.js",
+          "type": "script",
+          "raw": 6129,
+          "gzip": 2062,
+          "brotli": 1766
+        },
+        {
+          "path": "/runtime/location.js",
+          "type": "script",
+          "raw": 2283,
+          "gzip": 838,
+          "brotli": 688
+        },
+        {
+          "path": "/runtime/cookies.js",
+          "type": "script",
+          "raw": 2127,
+          "gzip": 842,
+          "brotli": 695
+        },
+        {
+          "path": "/runtime/canvas.js",
+          "type": "script",
+          "raw": 1889,
+          "gzip": 404,
+          "brotli": 377
+        },
+        {
+          "path": "/runtime/pointer.js",
+          "type": "script",
+          "raw": 1733,
+          "gzip": 658,
+          "brotli": 546
+        },
+        {
+          "path": "/runtime/events.js",
+          "type": "script",
+          "raw": 1678,
+          "gzip": 749,
+          "brotli": 611
+        },
+        {
+          "path": "/runtime/ui.css",
+          "type": "stylesheet",
+          "raw": 1581,
+          "gzip": 716,
+          "brotli": 572
+        },
+        {
+          "path": "/runtime/indexeddb.js",
+          "type": "script",
+          "raw": 1174,
+          "gzip": 537,
+          "brotli": 436
+        },
+        {
+          "path": "/runtime/net.js",
+          "type": "script",
+          "raw": 1103,
+          "gzip": 380,
+          "brotli": 323
+        },
+        {
+          "path": "/demos/worker-actor/",
+          "type": "document",
+          "raw": 1095,
+          "gzip": 624,
+          "brotli": 439
+        },
+        {
+          "path": "/runtime/gpu.js",
+          "type": "script",
+          "raw": 935,
+          "gzip": 359,
+          "brotli": 321
+        },
+        {
+          "path": "/runtime/clipboard.js",
+          "type": "script",
+          "raw": 885,
+          "gzip": 375,
+          "brotli": 298
+        },
+        {
+          "path": "/runtime/storage.js",
+          "type": "script",
+          "raw": 587,
+          "gzip": 176,
+          "brotli": 145
+        },
+        {
+          "path": "/runtime/pubsub.js",
+          "type": "script",
+          "raw": 520,
+          "gzip": 228,
+          "brotli": 201
+        },
+        {
+          "path": "/runtime/workers.js",
+          "type": "script",
+          "raw": 513,
+          "gzip": 207,
+          "brotli": 184
+        },
+        {
+          "path": "/runtime/embed.js",
+          "type": "script",
+          "raw": 410,
+          "gzip": 285,
+          "brotli": 203
+        },
+        {
+          "path": "/runtime/core.js",
+          "type": "script",
+          "raw": 393,
+          "gzip": 252,
+          "brotli": 204
+        },
+        {
+          "path": "/runtime/timing.js",
+          "type": "script",
+          "raw": 373,
+          "gzip": 162,
+          "brotli": 137
+        },
+        {
+          "path": "/runtime/components.js",
+          "type": "script",
+          "raw": 231,
+          "gzip": 178,
+          "brotli": 142
+        },
+        {
+          "path": "/demos/worker-actor/worker.js",
+          "type": "script",
+          "raw": 222,
+          "gzip": 188,
+          "brotli": 158
+        }
+      ],
+      "total": {
+        "raw": 67259,
+        "gzip": 26353,
+        "brotli": 22236
+      },
+      "externalRequests": 1
+    }
+  ]
+}

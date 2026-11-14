@@ -1,0 +1,13 @@
+{
+  "speed": [
+    "node-24-run1.json",
+    "node-24-run2.json",
+    "node-24-run3.json",
+    "deno-2.json",
+    "bun-1.json",
+    "chromium.json"
+  ],
+  "size": "size.json",
+  "network": "network.json",
+  "liveHost": "live-host.json"
+}

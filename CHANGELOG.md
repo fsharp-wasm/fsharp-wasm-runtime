@@ -20,6 +20,12 @@ All notable changes to this project will be documented in this file.
   centred, the dashboard's tab bar is no longer spread over the page (its `class'` was dropped by an explicit `yield`).
 
 ### Added
+- Public benchmarks page (`site/benchmarks/`, [live](https://fsharp-wasm.github.io/fsharp-wasm-runtime/benchmarks/)): the recorded speed reports of Node, Deno, Bun and
+  Chromium (table, chart), the size of every module (raw, gzip, brotli) and of every page's first load, the time to download and compile every module under four
+  emulated networks (Wi-Fi, 4G, Slow 4G, 3G) and three encodings, the real GitHub Pages host measured with curl (it sends gzip, no brotli), and a button that
+  measures the reader's own connection. `tests/e2e/network.mjs` records size.json and network.json (the server of `tests/e2e/lib.mjs` can answer gzip or brotli,
+  `E2E_ENCODING`), `demos/bench/report-size.mjs` prints the tables of `docs/benchmarks.md`, `build/benchmarks.mjs` publishes the reports and the manifest
+  (`npm run site` runs it). The site test checks the page.
 - Benchmarks, rebuilt (`demos/bench`, [`docs/benchmarks.md`](docs/benchmarks.md)): thirteen kernels (Mandelbrot, N-body, spectral norm, matrix
   product, sieve, fannkuch-redux, CRC-32, Collatz, Fibonacci, binary trees, word count, quicksort, list pipeline) in F# and in JavaScript
   with equal results (bit for bit, also for the doubles) before any time counts. The harness (`harness.js`, shared by the page, a worker, Node, Deno

@@ -180,6 +180,7 @@ fsharp-wasm-runtime/
 | Worker Actor | Web Worker message passing |
 | WebGPU Basic | GPU availability check + canvas |
 | Benchmark | Thirteen kernels, F# vs JavaScript, timed in a worker; chart, spreads, JSON export — results in [docs/benchmarks.md](docs/benchmarks.md) |
+| Benchmarks (results) | Speed, size and network load times, recorded and public: [`/benchmarks/`](site/benchmarks/index.html), [docs/benchmarks.md](docs/benchmarks.md) |
 | Full Dashboard | All features combined |
 
 ## Documentation

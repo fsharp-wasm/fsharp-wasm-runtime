@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Benchmarks — speed, size, network</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    table { font-size: .875rem; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td, th { white-space: nowrap; padding: .4rem .5rem; }
+    td.wrap { white-space: normal; min-width: 14rem; }
+    .scroll { overflow-x: auto; }
+    .muted { color: var(--pico-muted-color); font-weight: 400; }
+    .block { display: block; }
+    .win { color: var(--pico-primary); font-weight: 700; }
+    .controls { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; }
+    .controls > * { margin: 0; width: auto; }
+    h2 { margin-top: 2.5rem; }
+    .note { font-size: .8125rem; color: var(--pico-muted-color); }
+
+    /* the chart (tokens by role, light and dark) */
+    .viz {
+      color-scheme: light;
+      --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781; --grid: #e1e0d9; --axis: #c3c2b7; --wasm: #2a78d6; --js: #eb6834;
+      position: relative; background: var(--surface); color: var(--ink); border: 1px solid rgba(11,11,11,.10); border-radius: 8px; padding: 1rem; margin: 1rem 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:where(:not([data-theme="light"])) .viz { color-scheme: dark; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --grid: #2c2c2a; --axis: #383835; --wasm: #3987e5; --js: #d95926; border-color: rgba(255,255,255,.10); }
+    }
+    :root[data-theme="dark"] .viz { color-scheme: dark; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --grid: #2c2c2a; --axis: #383835; --wasm: #3987e5; --js: #d95926; border-color: rgba(255,255,255,.10); }
+    .viz .legend { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin-bottom: .5rem; font-size: .8125rem; color: var(--ink2); }
+    .viz .legend i, .tip-row i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+    i.wasm { background: var(--wasm); } i.js { background: var(--js); }
+    .tip-row i { width: 12px; height: 2px; border-radius: 0; vertical-align: middle; }
+    #chart svg { display: block; max-width: 100%; }
+    #chart .grid { stroke: var(--grid); stroke-width: 1; } #chart .axis { stroke: var(--axis); stroke-width: 1; }
+    #chart .tick { fill: var(--muted); font-size: 11px; } #chart .name { fill: var(--ink); font-size: 13px; }
+    #chart .value { fill: var(--ink2); font-size: 12px; font-variant-numeric: tabular-nums; }
+    #chart .bar.wasm { fill: var(--wasm); } #chart .bar.js { fill: var(--js); }
+    #chart .hit { fill: transparent; } #chart .row { outline: none; } #chart .row.on .hit, #chart .row:focus .hit { fill: var(--grid); opacity: .5; }
+    #tip { position: absolute; z-index: 2; max-width: 22rem; padding: .5rem .625rem; font-size: .75rem; line-height: 1.35; pointer-events: none; background: var(--surface); color: var(--ink2); border: 1px solid var(--axis); border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+    #tip b { color: var(--ink); font-weight: 600; } #tip .tip-head { color: var(--ink); font-weight: 600; margin-bottom: .25rem; } #tip .tip-what { margin-top: .25rem; color: var(--muted); } #tip[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../index.html">← fsharp-wasm</a><span>Benchmarks</span></nav>
+    <hgroup>
+      <h1>Benchmarks — speed, size, network</h1>
+      <p>Measured, recorded and published as they are: the raw reports are linked below each table. Speed compares the same thirteen algorithms in F# (compiled to
+         WasmGC by fsharp-wasm) and in JavaScript; size and network are the cost of shipping the compiled modules.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <h2>Speed</h2>
+    <p class="note" id="speed-env"></p>
+    <div class="scroll"><table><thead id="speed-head"></thead><tbody id="speed-body"><tr><td><small>loading…</small></td></tr></tbody></table></div>
+    <p class="note">Ratio = JavaScript median ÷ F# → WasmGC median; above 1 the F# module is faster. † the compiler fuses the list pipeline into one loop (an optimisation, not
+      the VM). ⚠ the interquartile range of one side exceeds a quarter of its median in at least one report. Node ran three times to show the spread. One machine: a 4-vCPU
+      virtual machine. How to read the numbers, and what V8's inliner contributes: <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/docs/benchmarks.md">docs/benchmarks.md</a>.
+      <a href="../demos/bench/index.html">Run it yourself.</a></p>
+
+    <div class="controls">
+      <label>Chart for <select id="speed-pick"></select></label>
+    </div>
+    <section class="viz" id="viz" aria-label="Speed of the F# module relative to JavaScript">
+      <div class="legend"><span><i class="wasm"></i>F# → WasmGC faster</span><span><i class="js"></i>JavaScript faster</span></div>
+      <div id="chart"></div>
+      <div id="tip" hidden></div>
+    </section>
+    <p class="note" id="speed-files"></p>
+
+    <h2>Size</h2>
+    <p>What each compiled module weighs, as the server holds it, gzip (what GitHub Pages sends) and brotli.</p>
+    <div class="scroll"><table><thead><tr><th>Module</th><th class="num">raw</th><th class="num">gzip</th><th class="num">brotli</th><th class="num">brotli / raw</th></tr></thead><tbody id="size-modules"></tbody></table></div>
+    <h3>What a page loads</h3>
+    <p class="note">Every same-origin request of the first load (HTML, scripts, runtime glue, module), no cache; the benchmark page also runs one kernel so that its worker loads the module.
+      The stylesheet from a CDN (one request per page) is not counted.</p>
+    <div class="scroll"><table><thead><tr><th>Page</th><th class="num">requests</th><th class="num">raw</th><th class="num">gzip</th><th class="num">brotli</th><th>largest</th></tr></thead><tbody id="size-pages"></tbody></table></div>
+    <p class="note" id="size-files"></p>
+
+    <h2>Network</h2>
+    <p>The time to download a module and to compile it, by network profile. Chromium emulates the network (a round trip of latency per request, the bandwidth capped; no connection
+      setup, no TLS), the server answers with the chosen encoding; the median of the runs.</p>
+    <div class="controls">
+      <label>Encoding
+        <select id="net-enc"><option value="gzip" selected>gzip (GitHub Pages)</option><option value="br">brotli</option><option value="identity">none</option></select>
+      </label>
+    </div>
+    <div class="scroll"><table><thead id="net-head"></thead><tbody id="net-body"></tbody></table></div>
+    <p class="note" id="net-files"></p>
+
+    <h3>The real host</h3>
+    <p class="note" id="host-note"></p>
+    <div class="scroll"><table><thead><tr><th>Module</th><th class="num">raw</th><th class="num">sent as gzip</th><th class="num">request (none / gzip / brotli asked)</th></tr></thead><tbody id="host-body"></tbody></table></div>
+    <p class="note" id="host-files"></p>
+
+    <h3>Load times on your connection</h3>
+    <p class="note">Fetches every module of this site now (cache bypassed) and compiles it — the real line between you and this host, with whatever encoding it sends.</p>
+    <div class="controls"><button id="live-run">Measure</button><span class="note" id="live-conn"></span></div>
+    <div class="scroll"><table><thead><tr><th>Module</th><th class="num">on the wire</th><th class="num">download</th><th class="num">speed</th><th class="num">compile</th></tr></thead><tbody id="live-body"></tbody></table></div>
+  </main>
+
+  <script type="module">
+    import { renderChart } from '../demos/bench/render.js';
+
+    const $ = (id) => document.getElementById(id);
+    const el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); e.append(...kids); return e; };
+    const kb = (n) => (n / 1024).toFixed(n >= 10240 ? 0 : 1) + ' KB';
+    const fx = (x) => (x >= 10 ? x.toFixed(0) : x.toFixed(2));
+    const med = (xs) => { const s = [...xs].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    const json = (u) => fetch(u).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`${u}: HTTP ${r.status}`))));
+    const link = (f) => el('a', { href: f }, f);
+const modCell = (m) => el('th', { scope: 'row' }, m.file, el('small', { class: 'muted block' }, m.demo));
+    const files = (host, list) => host.replaceChildren('Raw data: ', ...list.flatMap((f, i) => (i ? [', ', link(f)] : [link(f)])));
+
+    const manifest = await json('manifest.json').catch(() => null);
+    if (!manifest) { $('speed-body').replaceChildren(el('tr', {}, el('td', {}, 'No recorded reports found next to this page.'))); throw new Error('no manifest'); }
+
+    // ── speed ────────────────────────────────────────────────────────────────
+    const reports = await Promise.all(manifest.speed.map(json));
+    const name = (r) => { const e = r.env, v = (e.version ?? e.userAgent?.match(/Chrome\/(\d+)/)?.[1] ?? '').split('.')[0]; return `${e.runtime === 'browser' ? 'Chromium' : e.runtime[0].toUpperCase() + e.runtime.slice(1)} ${v}`; };
+    const groups = new Map();
+    for (const r of reports) (groups.get(name(r)) ?? groups.set(name(r), []).get(name(r))).push(r);
+    const cols = [...groups.entries()];
+    const shaky = (r) => [r.js, r.wasm].some((s) => (s.p75 - s.p25) / s.median > 0.25);
+    const cell = (xs, flag) => (xs.length === 1 ? fx(xs[0]) : `${fx(med(xs))} (${fx(Math.min(...xs))}–${fx(Math.max(...xs))})`) + (flag ? ' ⚠' : '');
+    $('speed-head').replaceChildren(el('tr', {}, el('th', {}, 'Kernel'), ...cols.map(([n, g]) => el('th', { class: 'num' }, n + (g.length > 1 ? ` (${g.length} runs)` : '')))));
+    const label = (r) => r.label + (r.fused ? ' †' : '');
+    const first = reports[0];
+    $('speed-body').replaceChildren(
+      ...first.rows.map((row) => el('tr', {}, el('th', { scope: 'row', title: row.what }, label(row)),
+        ...cols.map(([, g]) => { const rs = g.map((r) => r.rows.find((x) => x.id === row.id)); const v = rs.map((x) => x.ratio);
+          return el('td', { class: 'num' + (med(v) >= 1 ? ' win' : '') }, cell(v, rs.some(shaky))); }))),
+      el('tr', {}, el('th', {}, 'geometric mean'), ...cols.map(([, g]) => el('td', { class: 'num' }, cell(g.map((r) => r.summary.geomean), false)))),
+      el('tr', {}, el('th', {}, 'geometric mean without †'), ...cols.map(([, g]) => el('td', { class: 'num' }, cell(g.map((r) => r.summary.geomeanVm), false)))));
+    $('speed-env').textContent = `Recorded ${first.date.slice(0, 10)}, standard profile, module ${first.wasm.bytes} bytes (sha256 ${first.wasm.sha256 ?? '?'}…), ${first.env.cpu ?? 'a virtual machine'}${first.env.cores ? ` × ${first.env.cores}` : ''}.`;
+    $('speed-pick').replaceChildren(...cols.map(([n], i) => el('option', { value: i }, n)));
+    const draw = () => renderChart($('chart'), cols[Number($('speed-pick').value)][1][0].rows, $('tip'));
+    $('speed-pick').addEventListener('change', draw);
+    new ResizeObserver(draw).observe($('viz'));
+    files($('speed-files'), manifest.speed);
+
+    // ── size ─────────────────────────────────────────────────────────────────
+    const size = manifest.size ? await json(manifest.size).catch(() => null) : null;
+    if (size) {
+      $('size-modules').replaceChildren(...[...size.modules].sort((a, b) => b.raw - a.raw).map((m) =>
+        el('tr', {}, modCell(m), el('td', { class: 'num' }, kb(m.raw)), el('td', { class: 'num' }, kb(m.gzip)), el('td', { class: 'num' }, kb(m.brotli)), el('td', { class: 'num' }, Math.round((m.brotli / m.raw) * 100) + ' %'))));
+      $('size-pages').replaceChildren(...size.pages.map((p) =>
+        el('tr', {}, el('th', { scope: 'row' }, p.id), el('td', { class: 'num' }, String(p.requests.length)), el('td', { class: 'num' }, kb(p.total.raw)), el('td', { class: 'num' }, kb(p.total.gzip)), el('td', { class: 'num' }, kb(p.total.brotli)),
+          el('td', { class: 'muted wrap' }, p.requests.slice(0, 2).map((r) => `${r.path.split('/').filter(Boolean).pop() || r.path} ${kb(r.raw)}`).join(', ')))));
+      files($('size-files'), [manifest.size]);
+    }
+
+    // ── network ──────────────────────────────────────────────────────────────
+    const net = manifest.network ? await json(manifest.network).catch(() => null) : null;
+    if (net) {
+      const drawNet = () => {
+        const enc = $('net-enc').value;
+        $('net-head').replaceChildren(el('tr', {}, el('th', {}, 'Module'), el('th', { class: 'num' }, 'on the wire'),
+          ...net.profiles.map((p) => el('th', { class: 'num' }, p.label, el('small', { class: 'muted block' }, p.mbps ? `${p.mbps} Mbps, ${p.rtt} ms` : 'no limit')))));
+        $('net-body').replaceChildren(...[...net.modules].sort((a, b) => b.raw - a.raw).map((m) =>
+          el('tr', {}, modCell(m), el('td', { class: 'num' }, kb(m.results.local[enc].wireBytes)),
+            ...net.profiles.map((p) => { const r = m.results[p.id][enc]; return el('td', { class: 'num' }, `${Math.round(r.downloadMs + r.compileMs)} ms`); }))));
+      };
+      $('net-enc').addEventListener('change', drawNet);
+      drawNet();
+      files($('net-files'), [manifest.network]);
+    }
+
+    // ── the real host (curl from one VM) ──────────────────────────────────────
+    const host = manifest.liveHost ? await json(manifest.liveHost).catch(() => null) : null;
+    if (host) {
+      $('host-note').textContent = `${host.host}, asked with curl from one cloud VM (${host.date.slice(0, 10)}): the median of three requests after a warm-up. GitHub Pages sends gzip and no brotli — asked for brotli it answers with the file as it is.`;
+      $('host-body').replaceChildren(...[...host.modules].sort((a, b) => b.raw - a.raw).map((m) => {
+        const [n, g, b] = ['identity', 'gzip', 'br'].map((e) => Math.round(m.results[e].totalMs));
+        const [file, demo] = [m.id.split('/')[1], m.id.split('/')[0]];
+        return el('tr', {}, el('th', { scope: 'row' }, file, el('small', { class: 'muted block' }, demo)), el('td', { class: 'num' }, kb(m.raw)), el('td', { class: 'num' }, kb(m.results.gzip.wireBytes)), el('td', { class: 'num' }, `${n} / ${g} / ${b} ms`));
+      }));
+      files($('host-files'), [manifest.liveHost]);
+    }
+
+    // ── live: the reader's own connection ───────────────────────────────────
+    const mods = (size ?? net)?.modules ?? [];
+    const c = navigator.connection;
+    if (c) $('live-conn').textContent = `The browser reports: ${c.effectiveType ?? '?'}, ${c.downlink ?? '?'} Mbps, ${c.rtt ?? '?'} ms round trip.`;
+    $('live-run').addEventListener('click', async () => {
+      const button = $('live-run');
+      button.disabled = true; button.textContent = 'measuring…'; $('live-body').replaceChildren();
+      for (const m of mods) {
+        const url = new URL(`../demos/${m.demo}/${m.file}`, location.href).href;
+        const t0 = performance.now();
+        const res = await fetch(url, { cache: 'no-store' });
+        const bytes = await res.arrayBuffer();
+        const t1 = performance.now();
+        await WebAssembly.compile(bytes);
+        const t2 = performance.now();
+        const e = performance.getEntriesByName(url).pop();
+        const wire = e?.encodedBodySize || bytes.byteLength;
+        $('live-body').append(el('tr', {}, modCell(m), el('td', { class: 'num' }, kb(wire)), el('td', { class: 'num' }, `${Math.round(t1 - t0)} ms`),
+          el('td', { class: 'num' }, `${((wire * 8) / (t1 - t0) / 1000).toFixed(1)} Mbps`), el('td', { class: 'num' }, `${Math.round(t2 - t1)} ms`)));
+      }
+      button.disabled = false; button.textContent = 'Measure again';
+      document.body.dataset.live = 'done';
+    });
+    document.body.dataset.ready = 'true';
+  </script>
+</body>
+</html>

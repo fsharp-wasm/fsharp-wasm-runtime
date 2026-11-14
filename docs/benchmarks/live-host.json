@@ -1,0 +1,332 @@
+{
+  "schema": "live-host-1",
+  "date": "2026-11-14T12:33:26.965Z",
+  "host": "https://fsharp-wasm.github.io/fsharp-wasm-runtime",
+  "note": "curl from one cloud VM to GitHub Pages: median of 3 requests after one warm-up; ttfb includes DNS-cached connect + TLS + server; not a user line.",
+  "modules": [
+    {
+      "id": "bench/Bench.wasm",
+      "raw": 17685,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 17685,
+          "ttfbMs": 181.689,
+          "totalMs": 199.69,
+          "downloadMs": 17.874999999999943
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 7413,
+          "ttfbMs": 122.726,
+          "totalMs": 122.848,
+          "downloadMs": 0.12199999999999989
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 17685,
+          "ttfbMs": 119.53,
+          "totalMs": 120.22099999999999,
+          "downloadMs": 0.6909999999999883
+        }
+      }
+    },
+    {
+      "id": "canvas-mandelbrot/Mandelbrot.wasm",
+      "raw": 12632,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 12632,
+          "ttfbMs": 113.376,
+          "totalMs": 113.96000000000001,
+          "downloadMs": 0.40099999999999625
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 4885,
+          "ttfbMs": 121.739,
+          "totalMs": 122.185,
+          "downloadMs": 0.17700000000002092
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 12632,
+          "ttfbMs": 113.155,
+          "totalMs": 113.572,
+          "downloadMs": 0.6339999999999861
+        }
+      }
+    },
+    {
+      "id": "counter/Counter.wasm",
+      "raw": 22966,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 22966,
+          "ttfbMs": 118.754,
+          "totalMs": 119.99600000000001,
+          "downloadMs": 1.2420000000000044
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 8868,
+          "ttfbMs": 108.883,
+          "totalMs": 109.169,
+          "downloadMs": 0.16499999999999204
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 22966,
+          "ttfbMs": 109.774,
+          "totalMs": 111.83999999999999,
+          "downloadMs": 1.3000000000000114
+        }
+      }
+    },
+    {
+      "id": "full-dashboard/Dashboard.wasm",
+      "raw": 46973,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 46973,
+          "ttfbMs": 116.03099999999999,
+          "totalMs": 118.437,
+          "downloadMs": 9.115000000000009
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 15635,
+          "ttfbMs": 106.953,
+          "totalMs": 108.414,
+          "downloadMs": 1.0740000000000123
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 46973,
+          "ttfbMs": 105.74799999999999,
+          "totalMs": 120.223,
+          "downloadMs": 9.77600000000001
+        }
+      }
+    },
+    {
+      "id": "graphics-gallery/SceneGallery.wasm",
+      "raw": 140071,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 140071,
+          "ttfbMs": 112.14399999999999,
+          "totalMs": 133.982,
+          "downloadMs": 20.12900000000002
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 55334,
+          "ttfbMs": 104.188,
+          "totalMs": 114.198,
+          "downloadMs": 10.009999999999991
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 140071,
+          "ttfbMs": 112.55999999999999,
+          "totalMs": 129.405,
+          "downloadMs": 18.466000000000008
+        }
+      }
+    },
+    {
+      "id": "indexeddb-crud/IndexedDbCrud.wasm",
+      "raw": 32195,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 32195,
+          "ttfbMs": 123.13499999999999,
+          "totalMs": 126.45500000000001,
+          "downloadMs": 3.3200000000000216
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 11807,
+          "ttfbMs": 105.25800000000001,
+          "totalMs": 105.352,
+          "downloadMs": 0.10000000000000853
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 32195,
+          "ttfbMs": 105.48100000000001,
+          "totalMs": 108.28999999999999,
+          "downloadMs": 2.8089999999999833
+        }
+      }
+    },
+    {
+      "id": "realtime-pubsub/RealtimePubSub.wasm",
+      "raw": 25060,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 25060,
+          "ttfbMs": 123.314,
+          "totalMs": 126.271,
+          "downloadMs": 2.4369999999999834
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 9786,
+          "ttfbMs": 112.816,
+          "totalMs": 112.915,
+          "downloadMs": 0.24100000000001387
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 25060,
+          "ttfbMs": 106.777,
+          "totalMs": 109.435,
+          "downloadMs": 2.566999999999993
+        }
+      }
+    },
+    {
+      "id": "todo/Todo.wasm",
+      "raw": 28518,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 28518,
+          "ttfbMs": 102.62599999999999,
+          "totalMs": 104.923,
+          "downloadMs": 1.6290000000000049
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 10841,
+          "ttfbMs": 119.32900000000001,
+          "totalMs": 120.66799999999999,
+          "downloadMs": 0.568000000000012
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 28518,
+          "ttfbMs": 104.938,
+          "totalMs": 105.30000000000001,
+          "downloadMs": 1.7049999999999983
+        }
+      }
+    },
+    {
+      "id": "web-component/MyCounter.wasm",
+      "raw": 13574,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 13574,
+          "ttfbMs": 104.836,
+          "totalMs": 105.458,
+          "downloadMs": 0.6219999999999999
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 5342,
+          "ttfbMs": 100.648,
+          "totalMs": 100.85900000000001,
+          "downloadMs": 0.21100000000001273
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 13574,
+          "ttfbMs": 110.584,
+          "totalMs": 110.868,
+          "downloadMs": 0.2839999999999918
+        }
+      }
+    },
+    {
+      "id": "webgpu-basic/WebGpuBasic.wasm",
+      "raw": 22878,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 22878,
+          "ttfbMs": 103.588,
+          "totalMs": 105.674,
+          "downloadMs": 2.0860000000000127
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 9007,
+          "ttfbMs": 103.036,
+          "totalMs": 103.188,
+          "downloadMs": 0.15200000000000102
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 22878,
+          "ttfbMs": 105.393,
+          "totalMs": 105.49600000000001,
+          "downloadMs": 1.3240000000000123
+        }
+      }
+    },
+    {
+      "id": "widget-editor/WidgetEditor.wasm",
+      "raw": 153025,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 153025,
+          "ttfbMs": 104.298,
+          "totalMs": 125.107,
+          "downloadMs": 21.26400000000001
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 56553,
+          "ttfbMs": 108.742,
+          "totalMs": 118.97399999999999,
+          "downloadMs": 10.677000000000021
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 153025,
+          "ttfbMs": 103.385,
+          "totalMs": 122.367,
+          "downloadMs": 20.184999999999988
+        }
+      }
+    },
+    {
+      "id": "worker-actor/WorkerActor.wasm",
+      "raw": 26136,
+      "results": {
+        "identity": {
+          "contentEncoding": "none",
+          "wireBytes": 26136,
+          "ttfbMs": 103.239,
+          "totalMs": 106.018,
+          "downloadMs": 2.7789999999999964
+        },
+        "gzip": {
+          "contentEncoding": "gzip",
+          "wireBytes": 10122,
+          "ttfbMs": 104.065,
+          "totalMs": 104.95500000000001,
+          "downloadMs": 0.6599999999999966
+        },
+        "br": {
+          "contentEncoding": "none",
+          "wireBytes": 26136,
+          "ttfbMs": 105.821,
+          "totalMs": 107.678,
+          "downloadMs": 1.8569999999999993
+        }
+      }
+    }
+  ]
+}

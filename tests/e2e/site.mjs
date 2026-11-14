@@ -89,6 +89,34 @@ for (const href of links) {
   await p.close();
 }
 
+// the public benchmarks page: speed, size and network from the recorded reports, and the live measurement
+{
+  const p = await browser.newPage();
+  const errs = [];
+  p.on('pageerror', (e) => errs.push(e.message));
+  await p.goto(`${base}/benchmarks/`);
+  await p.waitForFunction(() => document.body.dataset.ready === 'true', null, { timeout: 20000 }).catch(() => {});
+  const count = (sel) => p.locator(sel).count();
+  check('benchmarks page: the speed table has a row per kernel and the two means', (await count('#speed-body tr')) === 15, String(await count('#speed-body tr')));
+  check('benchmarks page: the chart has a bar per kernel', (await count('#chart .row')) === 13, String(await count('#chart .row')));
+  check('benchmarks page: every kernel agrees in every report', await p.evaluate(async () => {
+    const m = await (await fetch('manifest.json')).json();
+    const rs = await Promise.all(m.speed.map((f) => fetch(f).then((r) => r.json())));
+    return rs.length >= 4 && rs.every((r) => r.rows.every((x) => x.same));
+  }));
+  check('benchmarks page: size of every module', (await count('#size-modules tr')) === 12, String(await count('#size-modules tr')));
+  check('benchmarks page: weight of every page', (await count('#size-pages tr')) === 13, String(await count('#size-pages tr')));
+  check('benchmarks page: network time of every module', (await count('#net-body tr')) === 12, String(await count('#net-body tr')));
+  check('benchmarks page: the real host, per module', (await count('#host-body tr')) === 12, String(await count('#host-body tr')));
+  await p.selectOption('#net-enc', 'br');
+  check('benchmarks page: the encoding changes the network table', /ms$/.test((await p.locator('#net-body tr').first().locator('td').last().textContent()) ?? ''));
+  await p.click('#live-run');
+  await p.waitForFunction(() => document.body.dataset.live === 'done', null, { timeout: 60000 }).catch(() => {});
+  check('benchmarks page: the live measurement times every module', (await count('#live-body tr')) === 12, String(await count('#live-body tr')));
+  check('benchmarks page: no page errors', errs.length === 0, errs.join(' | '));
+  await p.close();
+}
+
 check('landing page: no page errors', errors.filter((e) => !/WebGPU|ERR_/.test(e)).length === 0, JSON.stringify(errors).slice(0, 300));
 await browser.close();
 server.close();
