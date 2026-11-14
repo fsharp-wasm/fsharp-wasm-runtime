@@ -73,7 +73,7 @@ Options of `run.mjs`: `--profile quick|standard`, `--only fib,crc32`, `--wasm <p
 ## Results
 
 Recorded on 14 November 2026 on **one machine**: a 4-vCPU virtual machine (Intel Xeon @ 2.10 GHz) in a cloud container, the standard profile,
-the same module on every runtime (17 685 bytes, SHA-256 `e5a29d313a253e12…`). The container was otherwise idle apart from a few short git and API
+the same module on every runtime (17 706 bytes, SHA-256 `9c294196595e6395…`, built by fsharp-wasm `2e63a0c`). The container was otherwise idle apart from a few short git and API
 calls while the runs were recorded. Node ran three times in a row, to show the run-to-run spread. The reports are in
 [`docs/benchmarks/`](benchmarks/); `node demos/bench/report.mjs docs/benchmarks/*.json` prints the tables below from them.
 
@@ -81,21 +81,21 @@ calls while the runs were recorded. Node ran three times in a row, to show the r
 
 | kernel | Node 24 (3 runs) | Deno 2 | Bun 1 | Chromium 153 |
 |---|---:|---:|---:|---:|
-| Mandelbrot | 0.99 (0.99–1.01) | 0.90 | 1.01 | 0.89 |
-| N-body | 1.69 (1.66–1.69) | 1.20 | 1.01 | 1.84 |
-| Spectral norm | 2.40 (2.39–2.43) | 6.52 ⚠ | 1.33 | 2.48 |
-| Matrix product | 1.55 (1.50–1.55) ⚠ | 1.49 | 1.02 | 1.51 |
-| Sieve | 0.65 (0.62–0.66) | 0.76 | 0.71 | 0.74 |
-| Fannkuch-redux | 1.30 (1.29–1.30) | 1.23 | 0.95 | 1.36 |
-| CRC-32 | 0.90 (0.90–0.90) | 0.89 | 0.99 | 0.89 |
-| Collatz | 4.98 (4.96–4.99) | 5.06 | 1.88 | 4.94 |
-| Fibonacci | 2.31 (2.30–2.32) | 2.97 | 1.23 | 2.99 |
-| Binary trees | 0.87 (0.82–0.91) | 1.01 | 0.53 | 1.14 |
-| Word count | 0.85 (0.75–0.88) | 0.85 | 0.86 | 1.04 |
-| Quicksort | 1.23 (1.11–1.28) | 1.25 | 1.03 | 1.12 |
-| List pipeline † | 78 (75–79) | 82 | 16 | 60 |
-| **geometric mean** | 1.87 (1.87–1.90) | 2.05 | 1.24 | 1.96 |
-| **geometric mean without †** | 1.37 (1.37–1.40) | 1.51 | 1.00 | 1.48 |
+| Mandelbrot | 1.00 (0.98–1.00) | 0.91 | 1.01 | 0.90 |
+| N-body | 1.67 (1.66–1.71) | 1.18 | 1.01 | 1.79 |
+| Spectral norm | 2.38 (2.34–2.44) | 6.69 ⚠ | 1.13 ⚠ | 2.54 ⚠ |
+| Matrix product | 1.57 (1.53–1.71) | 1.39 | 1.03 | 1.53 |
+| Sieve | 1.06 (1.04–1.08) ⚠ | 1.10 | 1.06 | 1.19 |
+| Fannkuch-redux | 1.29 (1.27–1.32) | 1.22 | 0.93 | 1.40 |
+| CRC-32 | 0.90 (0.89–0.91) | 0.98 | 1.02 | 0.88 |
+| Collatz | 5.05 (4.17–5.48) ⚠ | 4.42 | 1.80 | 5.64 ⚠ |
+| Fibonacci | 2.29 (2.25–2.34) | 3.40 ⚠ | 1.22 | 3.13 |
+| Binary trees | 0.84 (0.77–0.85) | 0.86 | 0.56 | 1.20 |
+| Word count | 0.82 (0.81–0.94) | 0.94 | 0.88 | 1.01 |
+| Quicksort | 1.25 (1.23–1.40) | 1.24 | 1.05 | 1.25 |
+| List pipeline † | 78 (73–83) | 72 | 12 | 57 |
+| **geometric mean** | 1.97 (1.93–1.97) | 2.09 | 1.24 | 2.08 |
+| **geometric mean without †** | 1.45 (1.42–1.45) | 1.55 | 1.03 | 1.58 |
 
 ⚠ — the interquartile range of one side is more than a quarter of its median in at least one report: the ratio is not stable.
 
@@ -105,50 +105,50 @@ Median times of the first report of each runtime (JS / F# → WasmGC, ms; in bra
 
 | kernel | n | Node 24 | Deno 2 | Bun 1 | Chromium 153 |
 |---|---:|---|---|---|---|
-| Mandelbrot | 700 | 64.0 / 63.1 (57.5–64.2 / 57.6–65.2); 72.3 / 116; 13 | 64.7 / 71.9 (64.4–65.1 / 71.5–72.2); 72.3 / 130; 11 | 67.4 / 66.6 (62.8–67.9 / 64.0–67.7); 69.9 / 71.7; 12 | 64.2 / 71.9 (63.9–64.6 / 71.6–72.4); 66.8 / 118; 11 |
-| N-body | 1,000,000 | 104 / 62.9 (103–105 / 61.5–64.1); 113 / 180; 9 | 74.9 / 62.6 (74.2–75.5 / 62.4–62.7); 72.5 / 191; 11 | 59.4 / 58.9 (58.9–59.9 / 58.4–59.1); 99.6 / 75.4; 13 | 109 / 59.4 (107–115 / 54.3–59.9); 195 / 178; 9 |
-| Spectral norm | 700 | 74.6 / 31.1 (69.8–76.7 / 30.6–31.1); 50.1 / 36.1; 15 | 204 / 31.2 (42.9–210 / 31.1–31.9); 46.5 / 34.4; 9 | 41.2 / 31.1 (40.8–44.0 / 30.1–32.8); 44.0 / 33.1; 19 | 79.7 / 32.1 (76.0–82.0 / 31.4–33.4); 48.2 / 38.5; 14 |
-| Matrix product | 400 | 101 / 65.4 (99.3–133 / 64.6–69.2); 117 / 197; 9 | 104 / 69.7 (98.2–112 / 66.3–72.0); 114 / 286; 9 | 56.0 / 55.0 (54.1–57.2 / 53.9–56.2); 59.2 / 56.4; 13 | 102 / 67.8 (98.7–103 / 67.1–70.0); 112 / 221; 9 |
-| Sieve | 5,000,000 | 47.5 / 71.6 (44.2–48.7 / 70.4–75.1); 51.5 / 98.7; 13 | 48.0 / 63.4 (47.4–48.4 / 62.4–66.3); 48.5 / 99.1; 14 | 45.9 / 64.7 (43.8–46.4 / 60.6–71.4); 47.2 / 86.3; 14 | 47.9 / 64.5 (47.4–48.5 / 61.6–67.3); 46.0 / 98.7; 14 |
-| Fannkuch-redux | 9 | 25.1 / 19.5 (24.8–25.7 / 19.3–19.9); 30.0 / 44.8; 31 | 23.0 / 18.7 (22.9–23.2 / 18.6–18.8); 25.2 / 41.2; 31 | 18.7 / 19.6 (17.1–19.1 / 17.8–20.5); 25.5 / 21.6; 31 | 21.3 / 15.7 (21.0–25.9 / 15.1–18.5); 29.8 / 43.0; 31 |
-| CRC-32 | 16,000,000 | 41.1 / 45.6 (41.1–41.2 / 45.5–45.7); 51.2 / 100; 13 | 40.5 / 45.4 (40.2–40.8 / 45.2–45.7); 41.7 / 96.1; 16 | 40.7 / 41.0 (40.3–41.8 / 40.9–41.7); 35.9 / 34.1; 19 | 40.3 / 45.4 (40.1–40.7 / 45.1–45.7); 33.1 / 75.1; 18 |
-| Collatz | 300,000 | 442 / 88.7 (428–456 / 85.9–93.3); 335 / 366; 7 | 442 / 87.5 (421–445 / 84.8–88.0); 297 / 299; 7 | 503 / 267 (485–511 / 266–269); 405 / 281; 7 | 428 / 86.5 (423–442 / 82.2–92.3); 310 / 301; 7 |
-| Fibonacci | 35 | 72.5 / 31.3 (70.6–74.3 / 31.0–33.1); 80.5 / 35.8; 14 | 79.3 / 26.7 (78.4–80.9 / 26.0–27.1); 75.9 / 25.2; 15 | 48.1 / 39.2 (47.6–48.8 / 38.7–41.8); 50.1 / 40.8; 17 | 81.9 / 27.4 (81.1–84.5 / 27.0–28.8); 77.8 / 24.2; 14 |
-| Binary trees | 15 | 115 / 127 (112–122 / 124–150); 95.0 / 141; 7 | 133 / 132 (125–137 / 123–136); 159 / 116; 7 | 123 / 233 (115–130 / 224–237); 160 / 208; 7 | 93.6 / 82.0 (89.7–104 / 80.8–83.3); 104 / 100; 9 |
-| Word count | 1,200,000 | 60.6 / 68.9 (60.1–64.9 / 66.1–75.5); 68.4 / 102; 11 | 55.0 / 64.4 (52.2–55.9 / 62.5–66.9); 88.6 / 113; 13 | 185 / 216 (182–191 / 215–228); 201 / 249; 7 | 55.1 / 53.0 (51.8–57.0 / 52.2–53.4); 66.7 / 90.6; 14 |
-| Quicksort | 1,500,000 | 180 / 146 (178–182 / 146–148); 192 / 155; 7 | 177 / 142 (168–179 / 141–144); 181 / 151; 7 | 145 / 141 (142–148 / 139–147); 159 / 149; 7 | 160 / 143 (153–175 / 139–146); 192 / 153; 7 |
-| List pipeline † | 3,000,000 | 216 / 2.89 (215–229 / 2.88–3.00); 213 / 8.63; 7 | 226 / 2.75 (209–242 / 2.57–2.89); 230 / 8.62; 7 | 59.8 / 3.79 (53.4–65.2 / 3.73–4.14); 93.9 / 4.68; 24 | 173 / 2.90 (168–191 / 2.90–2.90); 169 / 9.10; 9 |
+| Mandelbrot | 700 | 63.8 / 63.7 (62.5–65.3 / 62.9–65.5); 71.3 / 117; 12 | 50.9 / 56.1 (50.3–52.7 / 56.0–58.9); 67.3 / 108; 14 | 65.5 / 65.1 (64.8–66.5 / 63.5–65.5); 79.2 / 77.6; 12 | 50.4 / 56.3 (50.2–51.4 / 56.1–57.4); 56.2 / 91.9; 14 |
+| N-body | 1,000,000 | 100 / 60.4 (97.0–101 / 50.8–61.3); 109 / 176; 10 | 59.0 / 50.2 (58.1–60.8 / 48.7–51.6); 66.1 / 150; 14 | 56.8 / 56.4 (56.0–57.5 / 55.6–57.3); 70.8 / 66.7; 14 | 108 / 60.3 (105–115 / 59.2–60.8); 187 / 200; 9 |
+| Spectral norm | 700 | 56.3 / 24.1 (55.6–58.0 / 23.8–28.9); 45.8 / 32.1; 19 | 172 / 25.8 (65.3–185 / 25.5–26.2); 38.6 / 27.9; 10 | 33.1 / 29.2 (32.4–40.8 / 24.5–30.3); 37.4 / 28.7; 23 | 71.1 / 28.0 (61.9–82.9 / 24.4–32.7); 45.4 / 33.8; 15 |
+| Matrix product | 400 | 108 / 63.2 (97.2–118 / 62.4–65.6); 93.1 / 185; 9 | 90.6 / 65.3 (88.1–95.0 / 64.4–66.0); 103 / 201; 9 | 56.4 / 54.5 (55.1–57.7 / 53.3–56.5); 74.2 / 55.6; 14 | 106 / 69.0 (99.7–109 / 66.5–70.8); 82.0 / 152; 9 |
+| Sieve | 5,000,000 | 46.2 / 43.4 (42.1–47.5 / 42.4–45.7); 51.8 / 67.6; 17 | 46.3 / 42.0 (46.0–47.0 / 41.7–42.4); 48.5 / 64.8; 17 | 45.6 / 42.9 (40.2–46.6 / 42.0–43.5); 47.5 / 47.9; 18 | 48.1 / 40.5 (43.9–52.0 / 38.0–42.5); 52.5 / 67.6; 17 |
+| Fannkuch-redux | 9 | 21.3 / 16.1 (20.3–22.2 / 15.7–17.2); 26.3 / 43.0; 31 | 18.1 / 14.8 (17.9–18.8 / 14.6–15.3); 19.8 / 32.6; 31 | 17.8 / 19.0 (17.3–19.0 / 17.9–20.4); 26.0 / 21.6; 31 | 24.4 / 17.4 (24.0–24.7 / 17.3–17.8); 26.4 / 40.2; 31 |
+| CRC-32 | 16,000,000 | 33.0 / 37.2 (32.4–34.0 / 35.8–37.3); 37.1 / 77.5; 17 | 36.2 / 37.1 (33.0–38.8 / 36.0–43.5); 35.1 / 80.3; 19 | 39.1 / 38.2 (36.0–40.1 / 35.9–40.2); 39.4 / 36.3; 20 | 38.7 / 43.8 (33.6–39.9 / 37.4–44.8); 40.5 / 86.4; 19 |
+| Collatz | 300,000 | 353 / 69.8 (340–416 / 68.7–85.9); 323 / 272; 7 | 385 / 87.1 (378–447 / 85.5–88.0); 323 / 288; 7 | 473 / 262 (433–484 / 246–266); 356 / 266; 7 | 391 / 69.3 (346–403 / 67.5–85.4); 300 / 309; 7 |
+| Fibonacci | 35 | 67.2 / 28.7 (65.8–76.3 / 28.1–33.7); 85.1 / 38.8; 15 | 72.5 / 21.3 (61.8–87.6 / 20.7–28.6); 86.8 / 26.8; 15 | 47.4 / 38.7 (44.4–51.9 / 36.6–39.5); 40.0 / 31.9; 17 | 65.8 / 21.0 (62.3–76.6 / 20.7–23.8); 108 / 26.3; 17 |
+| Binary trees | 15 | 93.4 / 121 (91.3–101 / 114–130); 89.6 / 101; 7 | 107 / 125 (105–122 / 110–130); 142 / 113; 7 | 122 / 219 (118–124 / 200–234); 131 / 224; 7 | 86.8 / 72.4 (77.0–88.9 / 71.7–76.6); 72.0 / 75.5; 10 |
+| Word count | 1,200,000 | 59.3 / 63.4 (48.0–61.1 / 56.4–64.2); 60.2 / 99.4; 13 | 60.3 / 63.9 (58.9–61.9 / 63.1–65.8); 66.7 / 107; 12 | 113 / 128 (110–119 / 127–129); 131 / 118; 7 | 44.6 / 44.0 (43.5–52.6 / 40.7–46.8); 59.0 / 90.1; 17 |
+| Quicksort | 1,500,000 | 139 / 113 (138–152 / 113–116); 145 / 130; 7 | 174 / 140 (171–176 / 139–141); 172 / 143; 7 | 138 / 131 (124–143 / 122–141); 160 / 151; 7 | 160 / 128 (146–170 / 115–137); 144 / 117; 7 |
+| List pipeline † | 3,000,000 | 218 / 2.80 (211–235 / 2.75–2.95); 214 / 8.49; 7 | 210 / 2.90 (207–214 / 2.81–2.92); 240 / 8.10; 7 | 44.6 / 3.58 (39.5–48.1 / 3.38–3.65); 86.1 / 4.66; 31 | 166 / 2.90 (154–194 / 2.90–3.60); 140 / 7.00; 9 |
 
 ### Environments
 
-- **Node 24** — node 24.22.3, V8 13.6.233.17-node.63; Intel(R) Xeon(R) Processor @ 2.10GHz ×4; module 17685 bytes, sha256 e5a29d313a253e12…; 2026-11-14 07:55, 2026-11-14 07:56, 2026-11-14 07:56 UTC
-- **Deno 2** — deno 2.9.6, V8 15.0.245.2-rusty; Intel(R) Xeon(R) Processor @ 2.10GHz ×4; module 17685 bytes, sha256 e5a29d313a253e12…; 2026-11-14 07:57 UTC
-- **Bun 1** — bun 1.4.4; Intel(R) Xeon(R) Processor @ 2.10GHz ×4; module 17685 bytes, sha256 e5a29d313a253e12…; 2026-11-14 07:57 UTC
-- **Chromium 153** — Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36;  ×4; module 17685 bytes, sha256 e5a29d313a253e12…; 2026-11-14 07:58 UTC
+- **Node 24** — node 24.22.3, V8 13.6.233.17-node.63; Intel(R) Xeon(R) Processor @ 2.10GHz ×4; module 17706 bytes, sha256 9c294196595e6395…; 2026-11-14 14:36, 2026-11-14 14:37, 2026-11-14 14:37 UTC
+- **Deno 2** — deno 2.9.6, V8 15.0.245.2-rusty; Intel(R) Xeon(R) Processor @ 2.10GHz ×4; module 17706 bytes, sha256 9c294196595e6395…; 2026-11-14 14:37 UTC
+- **Bun 1** — bun 1.4.4; Intel(R) Xeon(R) Processor @ 2.10GHz ×4; module 17706 bytes, sha256 9c294196595e6395…; 2026-11-14 14:38 UTC
+- **Chromium 153** — Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36;  ×4; module 17706 bytes, sha256 9c294196595e6395…; 2026-11-14 14:40 UTC
 
 ### Reading the results
 
-- **Spread.** Node's three runs agree within a few percent on every kernel except the allocation- and string-heavy ones (binary trees
-  0.82–0.91, word count 0.75–0.88, quicksort 1.11–1.28). Treat differences below 10–15 % — between runs or between runtimes — as noise.
-- **V8 (Node 24, Deno 2, Chromium 153).** The F# module is faster in 8–9 of 13 kernels; the geometric mean without the † row is 1.37, 1.51 and
-  1.48. It is a few large wins — Collatz ≈ 5× (native 64-bit integers against doubles, presumably), Fibonacci 2.3–3× and N-body 1.2–1.8× (both lose much of it
-  without V8's inlining, see below), spectral norm (below) — next to modest gains (matrix product ≈ 1.5×, fannkuch 1.2–1.4×, quicksort 1.1–1.25×), near-ties (Mandelbrot 0.89–0.99, CRC-32 0.89–0.90,
-  binary trees 0.87–1.14) and losses (sieve 0.65–0.76; word count 0.85 on Node and Deno, 1.04 on Chromium). "Faster by about 1.4×" is a statement
-  about this suite, not about programs.
-- **Bun (JavaScriptCore).** Geometric mean 1.00 without †. Loops are at parity (0.95–1.33; the sieve 0.71), calls 1.23×, 64-bit integers 1.9×, and the allocation
-  kernel loses clearly (binary trees 0.53: 233 ms against 123 ms). Not investigated further.
+- **Spread.** Node's three runs agree within a few percent on most kernels; the exceptions are Collatz (4.2–5.5), quicksort (1.23–1.40), word count (0.81–0.94),
+  matrix product (1.53–1.71) and binary trees (0.77–0.85). Treat differences below 10–15 % — between runs or between runtimes — as noise.
+- **V8 (Node 24, Deno 2, Chromium 153).** The F# module is faster in 9–11 of 13 kernels; the geometric mean without the † row is 1.45, 1.55 and 1.58. It is a few
+  large wins — Collatz 4.4–5.6× (native 64-bit integers against doubles, presumably), Fibonacci 2.3–3.4× and N-body 1.2–1.8× (Fibonacci loses much of it without V8's
+  inlining, see below), spectral norm (below) — next to modest gains (matrix product 1.4–1.6×, fannkuch 1.2–1.4×, quicksort ≈ 1.25×, sieve 1.06–1.19×), near-ties
+  (Mandelbrot 0.90–1.00, CRC-32 0.88–0.98) and losses (binary trees 0.84–0.86 on Node and Deno, 1.20 on Chromium; word count 0.82–0.94 on Node and Deno, 1.01 on Chromium).
+  "Faster by about 1.5×" is a statement about this suite, not about programs.
+- **Bun (JavaScriptCore).** Geometric mean 1.03 without †. Loops are at parity (0.93–1.13), calls 1.22×, 64-bit integers 1.80×, and the allocation
+  kernel loses clearly (binary trees 0.56: 219 ms against 122 ms). Not investigated further.
 - **Spectral norm on V8 is an engine effect, not a Wasm effect.** The JavaScript kernel runs at 34–49 ms for its first calls and slows to 65 ms (Node 24)
-  or 200 ms (Deno 2, V8 15) once the optimising tier takes over — also in isolation, without the harness; JavaScriptCore stays at 40 ms. That is why Deno shows
-  6.5× (four more runs: 6.1–6.4×) and Node 2.4×; without this kernel the geometric means without † of Node, Deno, Bun and Chromium are 1.33, 1.32, 0.97 and 1.41.
+  or 170–200 ms (Deno 2, V8 15) once the optimising tier takes over — also in isolation, without the harness; JavaScriptCore stays at 40 ms. That is why Deno shows
+  6.7× (earlier recordings: 6.1–6.5×) and Node 2.3–2.4×; without this kernel the geometric means without † of Node, Deno, Bun and Chromium are 1.39, 1.36, 1.02 and 1.52.
   Writing the division as `>> 1` makes it *slower* on V8 (161 ms) and faster on JavaScriptCore (30 ms); the form in `kernels.js` is the textbook form of
   the formula, so that is what is measured.
-- **The sieve loses because of the array representation**, not the loop: `bool[]` is a 32-bit-element array (finding 1 below); with an `Int32Array`
-  JavaScript is exactly as slow.
-- **First call.** On V8 the module's first call is about 1.7–1.8× its steady state (presumably Liftoff, then tier-up to TurboFan; median over the kernels: Node 1.84,
-  Deno 1.81, Chromium 1.66; Bun 1.06); JavaScript's first call is close to — sometimes below — its steady state. For a kernel that is called once with
-  ≲ 100 ms of work the JavaScript's first call is faster than the module's in 9 of 12 kernels on Node, 8 on Deno, 6 on Chromium and 4 on Bun (without †). The advantage of the module is a
+- **The sieve was a loss and is none now.** Until fsharp-wasm `2e63a0c` a `bool[]` was a 32-bit-element array (finding 1 below): 0.65–0.76 against JavaScript, exactly what
+  JavaScript's own `Int32Array` gives. With packed 8-bit elements it is 1.06 (Node), 1.10 (Deno), 1.06 (Bun) and 1.19 (Chromium).
+- **First call.** On V8 the module's first call is about 1.7–1.8× its steady state (presumably Liftoff, then tier-up to TurboFan; median over the kernels: Node 1.68–1.81,
+  Deno 1.80, Chromium 1.82; Bun 1.02); JavaScript's first call is close to — sometimes below — its steady state. For a kernel that is called once with
+  ≲ 100 ms of work the JavaScript's first call is faster than the module's in 8–9 of 12 kernels on Node, 7 on Deno, 9 on Chromium and 2 on Bun (without †). The advantage of the module is a
   steady-state advantage. (A program that calls the same code many times, or runs for seconds, is in the steady state.)
-- **† (list pipeline): 16–82×.** An optimisation of the compiler against three allocated arrays; it says nothing about the VM.
+- **† (list pipeline): 12–78×.** An optimisation of the compiler against three allocated arrays; it says nothing about the VM.
 
 ### How much of this is V8's inliner
 
@@ -157,25 +157,25 @@ The same Node 24 run with `node --no-wasm-inlining` (report: `docs/benchmarks/no
 
 | kernel | F# module, ms (default) | F# module, ms (`--no-wasm-inlining`) | ratio vs JS (default → no inlining) |
 |---|---:|---:|---:|
-| Mandelbrot | 63.1 | 65.1 | 1.01 → 1.01 |
-| N-body | 62.9 | 76.3 | 1.66 → 1.37 |
-| Spectral norm | 31.1 | 58.0 | 2.40 → 1.31 |
-| Matrix product | 65.4 | 65.0 | 1.55 → 1.52 |
-| Sieve | 71.6 | 77.3 | 0.66 → 0.67 |
-| Fannkuch-redux | 19.5 | 18.6 | 1.29 → 1.30 |
-| CRC-32 | 45.6 | 41.3 | 0.90 → 0.93 |
-| Collatz | 88.7 | 75.7 | 4.98 → 4.87 |
-| Fibonacci | 31.3 | 62.3 | 2.32 → 1.26 |
-| Binary trees | 127 | 141 | 0.91 → 0.93 |
-| Word count | 68.9 | 83.6 | 0.88 → 0.70 |
-| Quicksort | 146 | 144 | 1.23 → 1.18 |
-| List pipeline † | 2.9 | 2.6 | 74.89 → 81.30 |
-| **geometric mean without †** | | | **1.40 → 1.22** |
+| Mandelbrot | 63.7 | 54.8 | 1.00 → 1.04 |
+| N-body | 60.4 | 61.9 | 1.66 → 1.83 |
+| Spectral norm | 24.1 | 49.3 | 2.34 → 1.24 |
+| Matrix product | 63.2 | 60.9 | 1.71 → 1.64 |
+| Sieve | 43.4 | 35.9 | 1.06 → 1.05 |
+| Fannkuch-redux | 16.1 | 18.4 | 1.32 → 1.30 |
+| CRC-32 | 37.2 | 44.2 | 0.89 → 0.93 |
+| Collatz | 69.8 | 85.7 | 5.05 → 4.76 |
+| Fibonacci | 28.7 | 64.0 | 2.34 → 1.23 |
+| Binary trees | 121 | 137 | 0.77 → 0.72 |
+| Word count | 63.4 | 84.7 | 0.94 → 0.69 |
+| Quicksort | 113 | 144 | 1.23 → 1.20 |
+| List pipeline † | 2.8 | 2.6 | 77.78 → 78.00 |
+| **geometric mean without †** | | | **1.45 → 1.27** |
 
-Fibonacci, spectral norm, N-body and the word count depend on it, the loops that call nothing (Mandelbrot, matrix product, fannkuch, CRC-32, Collatz, quicksort)
+Fibonacci, spectral norm and the word count depend on it (N-body moved in one recording and not in the next: noise), the loops that call nothing (Mandelbrot, matrix product, fannkuch, CRC-32, Collatz, quicksort)
 do not. About 0.2 of the geometric mean on V8 is therefore V8's inlining of the helpers the module calls, not the code the compiler emits — and V8's
-decision is not stable: the identical `fibRec` (the bytes of the function are the same) runs in 60 ms when the module is the 7 KB of `Bench.fs` alone and in
-36 ms in the 17 KB module of this benchmark; with `--no-wasm-inlining` both take 60 ms. Read the Fibonacci row accordingly: 2.3× with inlining, 1.3× without.
+decision is not stable: the identical `fibRec` (the bytes of the function are the same) ran in 60 ms when the module was the 7 KB of `Bench.fs` alone and in
+36 ms in the 17 KB module of this benchmark (measured with the build of the module before packed bytes); with `--no-wasm-inlining` both took 60 ms. Read the Fibonacci row accordingly: 2.3× with inlining, 1.2× without.
 
 ## Size
 
@@ -219,8 +219,8 @@ Reading it:
 
 - Brotli is 27–37 % of the raw size, gzip 31–40 %. The two graphics modules (widget editor, scene gallery) are 44–45 KB brotli; every other module is 12 KB or less.
 - For the small demos the JavaScript glue is as heavy as the module: the counter page is 62 KB raw, of which the module is 22 KB (the rest is the runtime's scripts and the page).
-- The same thirteen kernels: `Bench.wasm` is 17.7 KB raw / 7.3 KB gzip / 6.4 KB brotli (it also carries the runtime library's start-up code), their JavaScript source
-  `kernels.js` 11.5 KB raw / 4.2 KB gzip / 3.6 KB brotli, unminified. Not a like-for-like comparison — compiled code against source — but it is the order of magnitude.
+- The same thirteen kernels: `Bench.wasm` is 17.3 KB raw / 7.3 KB gzip / 6.4 KB brotli (it also carries the runtime library's start-up code), their JavaScript source
+  `kernels.js` 11.3 KB raw / 4.1 KB gzip / 3.5 KB brotli, unminified. Not a like-for-like comparison — compiled code against source — but it is the order of magnitude.
 
 ## Network
 
@@ -232,43 +232,43 @@ Download + compile, gzip (median of 3 runs):
 
 | module | on the wire | Localhost | Wi-Fi (30 Mbps, 20 ms) | 4G (9 Mbps, 85 ms) | Slow 4G (1.6 Mbps, 150 ms) | 3G (0.78 Mbps, 300 ms) |
 |---|---:|---:|---:|---:|---:|---:|
-| widget-editor/WidgetEditor.wasm | 55 KB | 6 ms | 46 ms | 146 ms | 440 ms | 890 ms |
-| graphics-gallery/SceneGallery.wasm | 54 KB | 6 ms | 43 ms | 146 ms | 433 ms | 874 ms |
-| full-dashboard/Dashboard.wasm | 15 KB | 4 ms | 30 ms | 106 ms | 238 ms | 475 ms |
-| indexeddb-crud/IndexedDbCrud.wasm | 12 KB | 5 ms | 30 ms | 105 ms | 222 ms | 444 ms |
-| todo/Todo.wasm | 11 KB | 4 ms | 30 ms | 102 ms | 214 ms | 428 ms |
-| worker-actor/WorkerActor.wasm | 10 KB | 4 ms | 29 ms | 102 ms | 202 ms | 413 ms |
-| realtime-pubsub/RealtimePubSub.wasm | 9.7 KB | 4 ms | 30 ms | 100 ms | 201 ms | 414 ms |
-| counter/Counter.wasm | 8.8 KB | 4 ms | 29 ms | 101 ms | 208 ms | 413 ms |
-| webgpu-basic/WebGpuBasic.wasm | 8.9 KB | 4 ms | 29 ms | 100 ms | 202 ms | 414 ms |
-| bench/Bench.wasm | 7.3 KB | 4 ms | 28 ms | 99 ms | 200 ms | 398 ms |
-| web-component/MyCounter.wasm | 5.2 KB | 4 ms | 27 ms | 96 ms | 178 ms | 355 ms |
-| canvas-mandelbrot/Mandelbrot.wasm | 4.8 KB | 4 ms | 27 ms | 97 ms | 184 ms | 353 ms |
+| widget-editor/WidgetEditor.wasm | 55 KB | 6 ms | 44 ms | 143 ms | 438 ms | 890 ms |
+| graphics-gallery/SceneGallery.wasm | 54 KB | 7 ms | 43 ms | 142 ms | 433 ms | 874 ms |
+| full-dashboard/Dashboard.wasm | 15 KB | 5 ms | 31 ms | 107 ms | 238 ms | 475 ms |
+| indexeddb-crud/IndexedDbCrud.wasm | 12 KB | 4 ms | 30 ms | 104 ms | 217 ms | 444 ms |
+| todo/Todo.wasm | 11 KB | 4 ms | 29 ms | 104 ms | 209 ms | 428 ms |
+| worker-actor/WorkerActor.wasm | 10 KB | 4 ms | 29 ms | 101 ms | 208 ms | 398 ms |
+| realtime-pubsub/RealtimePubSub.wasm | 9.7 KB | 4 ms | 28 ms | 101 ms | 208 ms | 398 ms |
+| counter/Counter.wasm | 8.8 KB | 5 ms | 28 ms | 101 ms | 201 ms | 412 ms |
+| webgpu-basic/WebGpuBasic.wasm | 8.9 KB | 4 ms | 28 ms | 103 ms | 207 ms | 413 ms |
+| bench/Bench.wasm | 7.3 KB | 5 ms | 28 ms | 99 ms | 201 ms | 398 ms |
+| web-component/MyCounter.wasm | 5.2 KB | 5 ms | 26 ms | 97 ms | 178 ms | 369 ms |
+| canvas-mandelbrot/Mandelbrot.wasm | 4.8 KB | 4 ms | 27 ms | 96 ms | 185 ms | 367 ms |
 
 Download + compile, brotli (median of 3 runs):
 
 | module | on the wire | Localhost | Wi-Fi (30 Mbps, 20 ms) | 4G (9 Mbps, 85 ms) | Slow 4G (1.6 Mbps, 150 ms) | 3G (0.78 Mbps, 300 ms) |
 |---|---:|---:|---:|---:|---:|---:|
-| widget-editor/WidgetEditor.wasm | 45 KB | 7 ms | 42 ms | 141 ms | 395 ms | 796 ms |
-| graphics-gallery/SceneGallery.wasm | 44 KB | 8 ms | 42 ms | 136 ms | 386 ms | 782 ms |
-| full-dashboard/Dashboard.wasm | 12 KB | 6 ms | 30 ms | 103 ms | 221 ms | 443 ms |
-| indexeddb-crud/IndexedDbCrud.wasm | 9.8 KB | 6 ms | 29 ms | 102 ms | 207 ms | 398 ms |
-| todo/Todo.wasm | 9.1 KB | 5 ms | 28 ms | 101 ms | 208 ms | 412 ms |
-| worker-actor/WorkerActor.wasm | 8.6 KB | 5 ms | 29 ms | 100 ms | 200 ms | 397 ms |
-| realtime-pubsub/RealtimePubSub.wasm | 8.3 KB | 5 ms | 29 ms | 100 ms | 194 ms | 397 ms |
-| counter/Counter.wasm | 7.5 KB | 6 ms | 28 ms | 98 ms | 201 ms | 397 ms |
-| webgpu-basic/WebGpuBasic.wasm | 7.7 KB | 5 ms | 28 ms | 101 ms | 201 ms | 398 ms |
-| bench/Bench.wasm | 6.4 KB | 5 ms | 28 ms | 97 ms | 193 ms | 369 ms |
-| web-component/MyCounter.wasm | 4.6 KB | 4 ms | 27 ms | 97 ms | 185 ms | 367 ms |
-| canvas-mandelbrot/Mandelbrot.wasm | 4.2 KB | 5 ms | 26 ms | 96 ms | 171 ms | 352 ms |
+| widget-editor/WidgetEditor.wasm | 45 KB | 7 ms | 41 ms | 138 ms | 393 ms | 797 ms |
+| graphics-gallery/SceneGallery.wasm | 44 KB | 7 ms | 41 ms | 140 ms | 387 ms | 782 ms |
+| full-dashboard/Dashboard.wasm | 12 KB | 5 ms | 31 ms | 104 ms | 223 ms | 444 ms |
+| indexeddb-crud/IndexedDbCrud.wasm | 9.8 KB | 5 ms | 28 ms | 102 ms | 207 ms | 412 ms |
+| todo/Todo.wasm | 9.1 KB | 4 ms | 28 ms | 100 ms | 208 ms | 413 ms |
+| worker-actor/WorkerActor.wasm | 8.6 KB | 7 ms | 28 ms | 100 ms | 194 ms | 397 ms |
+| realtime-pubsub/RealtimePubSub.wasm | 8.3 KB | 5 ms | 29 ms | 100 ms | 197 ms | 398 ms |
+| counter/Counter.wasm | 7.5 KB | 5 ms | 29 ms | 100 ms | 200 ms | 398 ms |
+| webgpu-basic/WebGpuBasic.wasm | 7.7 KB | 4 ms | 28 ms | 101 ms | 201 ms | 399 ms |
+| bench/Bench.wasm | 6.4 KB | 4 ms | 28 ms | 98 ms | 193 ms | 383 ms |
+| web-component/MyCounter.wasm | 4.6 KB | 4 ms | 27 ms | 97 ms | 179 ms | 366 ms |
+| canvas-mandelbrot/Mandelbrot.wasm | 4.2 KB | 5 ms | 27 ms | 96 ms | 172 ms | 338 ms |
 
 The largest module (widget-editor/WidgetEditor.wasm) by encoding:
 
 | encoding | on the wire | Localhost | Wi-Fi | 4G | Slow 4G | 3G |
 |---|---:|---:|---:|---:|---:|---:|
-| none | 149 KB | 6 ms | 70 ms | 230 ms | 928 ms | 1.89 s |
-| gzip | 55 KB | 6 ms | 46 ms | 146 ms | 440 ms | 890 ms |
-| brotli | 45 KB | 7 ms | 42 ms | 141 ms | 395 ms | 796 ms |
+| none | 149 KB | 5 ms | 69 ms | 231 ms | 925 ms | 1.89 s |
+| gzip | 55 KB | 6 ms | 44 ms | 143 ms | 438 ms | 890 ms |
+| brotli | 45 KB | 7 ms | 41 ms | 138 ms | 393 ms | 797 ms |
 
 Environment: Chromium 153.0.8010.12, linux x64, Intel(R) Xeon(R) Processor @ 2.10GHz × 4; recorded 2026-11-14.
 
@@ -326,9 +326,10 @@ Reproduce: `E2E_ROOT=site node tests/e2e/network.mjs` (writes `docs/benchmarks/s
 
 Measured here, handed to [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-wasm):
 
-1. **`bool[]` is `(array (mut i32))` — four bytes per element** (`byte[]` is the same). The sieve is memory-bound: JavaScript with an
-   `Int32Array` needs the same 70 ms as the module, with a `Uint8Array` 46 ms (Node 24, n = 5 000 000). A packed `i8` array
-   (`array.get_u` / `array.set`) would remove the gap.
+1. **`bool[]` and `byte[]` were `(array (mut i32))` — four bytes per element — and are packed now.** The sieve was memory-bound: JavaScript with an
+   `Int32Array` needed the same 70 ms as the module, with a `Uint8Array` 46 ms (Node 24, n = 5 000 000). Fixed in fsharp-wasm `2e63a0c`: `(array (mut i8))`, read with
+   `array.get_u`, also for `ResizeArray<byte>`; the sieve takes 43–46 ms (68–70 before, two runs each, interleaved), the other kernels do not move
+   ([`docs/benchmarks/packed-bytes-ab.json`](benchmarks/packed-bytes-ab.json)); the modules grow by 48–72 bytes. `WASMGC_PACKED_BYTES=0` brings the old layout back; `sbyte[]` stays 32-bit.
 2. **`List.sortBy` was an insertion sort** (O(n²)): 20 000, 40 000 and 80 000 elements took 155, 433 and 1979 ms, and a string key did not compile. Fixed on the migration branch of
    fsharp-wasm, `7c628ff` (a stable merge sort, ordered by Fable's comparer: the same sizes take 10, 10 and 16 ms). `Array.sort`, `sortWith`,
    `sortInPlace`, `List.sort` and `List.sortWith` were already merge sorts — this document said otherwise until the numbers were measured. The

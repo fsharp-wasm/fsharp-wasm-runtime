@@ -1,6 +1,6 @@
 {
   "schema": "size-1",
-  "date": "2026-11-14T12:26:54.866Z",
+  "date": "2026-11-14T14:40:14.657Z",
   "env": {
     "chromium": "153.0.8010.12",
     "os": "linux x64",
@@ -14,9 +14,9 @@
       "id": "bench/Bench.wasm",
       "demo": "bench",
       "file": "Bench.wasm",
-      "raw": 17685,
-      "gzip": 7474,
-      "brotli": 6534
+      "raw": 17706,
+      "gzip": 7489,
+      "brotli": 6595
     },
     {
       "id": "canvas-mandelbrot/Mandelbrot.wasm",
@@ -156,9 +156,9 @@
         {
           "path": "/",
           "type": "document",
-          "raw": 11883,
-          "gzip": 4583,
-          "brotli": 3707
+          "raw": 12003,
+          "gzip": 4632,
+          "brotli": 3737
         },
         {
           "path": "/demos/bench/kernels.js",
@@ -351,9 +351,9 @@
         }
       ],
       "total": {
-        "raw": 412287,
-        "gzip": 138359,
-        "brotli": 114734
+        "raw": 412407,
+        "gzip": 138408,
+        "brotli": 114764
       },
       "externalRequests": 1
     },
@@ -363,9 +363,9 @@
         {
           "path": "/demos/bench/Bench.wasm",
           "type": "fetch",
-          "raw": 17685,
-          "gzip": 7474,
-          "brotli": 6534
+          "raw": 17706,
+          "gzip": 7489,
+          "brotli": 6595
         },
         {
           "path": "/demos/bench/kernels.js",
@@ -418,9 +418,9 @@
         }
       ],
       "total": {
-        "raw": 57410,
-        "gzip": 23177,
-        "brotli": 19875
+        "raw": 57431,
+        "gzip": 23192,
+        "brotli": 19936
       },
       "externalRequests": 1
     },
