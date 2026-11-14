@@ -75,6 +75,15 @@ for (const href of links) {
   await p.close();
 }
 
+// the address the GUI builder had forwards to the Widget Editor
+{
+  const p = await browser.newPage();
+  await p.goto(`${base}/demos/graphics-editor/`);
+  await p.waitForURL(/\/demos\/widget-editor\//, { timeout: 10000 }).catch(() => {});
+  check('the old GUI builder address forwards to the Widget Editor', /\/demos\/widget-editor\//.test(p.url()), p.url());
+  await p.close();
+}
+
 check('landing page: no page errors', errors.filter((e) => !/WebGPU|ERR_/.test(e)).length === 0, JSON.stringify(errors).slice(0, 300));
 await browser.close();
 server.close();

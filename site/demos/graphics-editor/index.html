@@ -1,46 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GUI Builder — fsharp-wasm-graphics</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-  <style>
-    #gfx { display: block; width: 100%; height: min(74vh, 720px); min-height: 420px; border-radius: var(--pico-border-radius);
-           background: #1b1d23; outline: none; touch-action: none; }
-    #gfx:focus-visible { box-shadow: 0 0 0 3px var(--pico-primary-focus); }
-    .hint { font-size: .85rem; opacity: .7; }
-  </style>
-  <script src="../../runtime/embed.js"></script>
+  <title>Widget Editor — moved</title>
+  <meta http-equiv="refresh" content="0; url=../widget-editor/">
+  <link rel="canonical" href="../widget-editor/">
 </head>
-<body>
-  <header class="container">
-    <nav>
-      <a href="../../index.html">← All Demos</a>
-      <span>F# → WasmGC</span>
-    </nav>
-    <hgroup>
-      <h1>GUI Builder — fsharp-wasm-graphics</h1>
-      <p>A visual editor written in F# with the <code>FSharp.Graphics</code> TEA runtime and widget library, compiled to
-         WebAssembly GC. The whole interface — palette, design surface, inspector, generated code — is drawn by the
-         module onto one canvas; JavaScript only forwards pointer, key and size events.</p>
-    </hgroup>
-  </header>
-
-  <main class="container">
-    <article id="status-banner"><p id="status">Loading…</p></article>
-
-    <canvas id="gfx" tabindex="0" aria-label="GUI builder canvas"></canvas>
-    <p class="hint">Add elements from the palette, drag them on the surface, edit text, width and value in the inspector,
-      switch to <em>Preview</em> to use them, and open <em>Code</em> to see the F# the layout exports to.</p>
-  </main>
-
-  <script type="module">
-    import { boot } from "../../runtime/boot.js";
-    import { mount } from "../../runtime/gfx.js";
-
-    const instance = await boot({ wasm: new URL("GraphicsEditor.wasm", import.meta.url), entry: "start" });
-    if (instance) mount(instance, "gfx");
-  </script>
-</body>
+<body><p>The GUI builder is now the <a href="../widget-editor/">Widget Editor</a>.</p></body>
 </html>
