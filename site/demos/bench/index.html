@@ -6,8 +6,60 @@
   <title>Benchmark — F# → WasmGC vs JavaScript</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
   <style>
-    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table { font-size: .875rem; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td, th { white-space: nowrap; }
+    .block { display: block; }
     .win { color: var(--pico-primary); font-weight: 700; }
+    .muted { color: var(--pico-muted-color); font-weight: 400; }
+    .bad { color: var(--pico-del-color); font-weight: 700; }
+    .scroll { overflow-x: auto; }
+    .controls { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin-bottom: 1rem; }
+    .controls > * { margin: 0; width: auto; }
+    details.kernels { margin-bottom: 1rem; }
+    details.kernels label { display: inline-block; margin: 0 1rem .25rem 0; }
+    progress { margin-bottom: .5rem; }
+    #env, #summary { font-size: .875rem; }
+
+    /* the chart: tokens by role, light/dark swapped in one place */
+    .viz {
+      color-scheme: light;
+      --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781; --grid: #e1e0d9; --axis: #c3c2b7;
+      --wasm: #2a78d6; --js: #eb6834;
+      position: relative; background: var(--surface); color: var(--ink); border: 1px solid rgba(11,11,11,.10); border-radius: 8px; padding: 1rem;
+      margin-bottom: 1rem; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:where(:not([data-theme="light"])) .viz {
+        color-scheme: dark; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --grid: #2c2c2a; --axis: #383835;
+        --wasm: #3987e5; --js: #d95926; border-color: rgba(255,255,255,.10);
+      }
+    }
+    :root[data-theme="dark"] .viz {
+      color-scheme: dark; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --grid: #2c2c2a; --axis: #383835;
+      --wasm: #3987e5; --js: #d95926; border-color: rgba(255,255,255,.10);
+    }
+    .viz h2 { font-size: 1rem; margin: 0 0 .25rem; color: var(--ink); }
+    .viz .sub { margin: 0 0 .75rem; font-size: .8125rem; color: var(--ink2); }
+    .legend { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; margin-bottom: .5rem; font-size: .8125rem; color: var(--ink2); }
+    .legend i, .tip-row i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: baseline; }
+    i.wasm { background: var(--wasm); } i.js { background: var(--js); }
+    .tip-row i { width: 12px; height: 2px; border-radius: 0; vertical-align: middle; }
+    #chart svg { display: block; max-width: 100%; }
+    #chart .grid { stroke: var(--grid); stroke-width: 1; }
+    #chart .axis { stroke: var(--axis); stroke-width: 1; }
+    #chart .tick { fill: var(--muted); font-size: 11px; }
+    #chart .name { fill: var(--ink); font-size: 13px; }
+    #chart .value { fill: var(--ink2); font-size: 12px; font-variant-numeric: tabular-nums; }
+    #chart .bar.wasm { fill: var(--wasm); } #chart .bar.js { fill: var(--js); }
+    #chart .hit { fill: transparent; }
+    #chart .row { outline: none; } #chart .row.on .hit, #chart .row:focus .hit { fill: var(--grid); opacity: .5; }
+    #tip { position: absolute; z-index: 2; max-width: 22rem; padding: .5rem .625rem; font-size: .75rem; line-height: 1.35; pointer-events: none;
+           background: var(--surface); color: var(--ink2); border: 1px solid var(--axis); border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+    #tip b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+    #tip .tip-head { color: var(--ink); font-weight: 600; margin-bottom: .25rem; }
+    #tip .tip-what { margin-top: .25rem; color: var(--muted); }
+    #tip[hidden] { display: none; }
   </style>
   <script src="../../runtime/embed.js"></script>
 </head>
@@ -16,33 +68,118 @@
     <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
     <hgroup>
       <h1>Benchmark — measured in your browser</h1>
-      <p>The same four algorithms, once as F# compiled to WasmGC, once as hand-written JavaScript.
-         Best of five runs after a warm-up; both results must agree.</p>
+      <p>Thirteen kernels, each written once in F# (compiled to WasmGC by fsharp-wasm) and once in plain JavaScript, with the same algorithm and
+         the same order of operations. They run in a worker, in alternation; both results must be equal before a time counts.</p>
     </hgroup>
   </header>
 
   <main class="container">
-    <button id="run">Run the benchmark</button>
-    <table>
-      <thead><tr><th>Kernel</th><th class="num">JavaScript</th><th class="num">F# → WasmGC</th><th class="num">Ratio</th><th>Result</th></tr></thead>
-      <tbody id="rows"><tr><td colspan="5"><small>press “Run the benchmark”</small></td></tr></tbody>
-    </table>
-    <p><small>The F# source is <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/demos/bench/Bench.fs"><code>Bench.fs</code></a>.</small></p>
+    <div class="controls">
+      <label>Profile
+        <select id="profile">
+          <option value="quick">quick — about 15 s</option>
+          <option value="standard">standard — 1 to 2 minutes</option>
+        </select>
+      </label>
+      <button id="run">Run the benchmark</button>
+      <button id="stop" class="secondary" disabled>Stop</button>
+      <button id="save" class="outline" disabled>Download JSON</button>
+    </div>
+    <details class="kernels"><summary>Kernels</summary><div id="kernels"></div></details>
+
+    <progress id="progress" value="0" max="1" hidden></progress>
+    <p id="env" class="muted"></p>
+
+    <section class="viz" id="viz" aria-labelledby="chart-title" hidden>
+      <h2 id="chart-title">How much faster is the F# module?</h2>
+      <p class="sub">Ratio of the median times, JavaScript ÷ F# → WasmGC, on a log scale. The bar starts at 1× (same speed).</p>
+      <div class="legend"><span><i class="wasm"></i>F# → WasmGC faster</span><span><i class="js"></i>JavaScript faster</span></div>
+      <div id="chart"></div>
+      <div id="tip" hidden></div>
+    </section>
+    <p id="summary"></p>
+
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Kernel</th><th class="num">JavaScript</th><th class="num">F# → WasmGC</th><th class="num">Ratio</th><th class="num">First call</th><th>Result</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="6"><small>press “Run the benchmark”</small></td></tr></tbody>
+      </table>
+    </div>
+
+    <details>
+      <summary>How this is measured</summary>
+      <ul>
+        <li>Each kernel runs once cold (the first call: JIT, tier-up) and once discarded, then in alternation — JavaScript first, WasmGC first, … — until the
+            profile's time budget is spent (at least 3 / 7, at most 9 / 31 samples per side). The figure is the <b>median</b>; the grey range is the
+            interquartile range. “First call” is the cold run.</li>
+        <li>Sizes are fixed per profile, so runs are comparable; the quick profile uses about a fifth of the work of the standard one.</li>
+        <li>The JavaScript side is written the way a JavaScript programmer would write it (typed arrays, object nodes), not made slow on purpose.
+            The F# side is <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/demos/bench/Bench.fs"><code>Bench.fs</code></a>;
+            the JavaScript side is <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/demos/bench/kernels.js"><code>kernels.js</code></a>.</li>
+        <li>† The F# compiler fuses the three steps of the list pipeline into one loop that allocates nothing; JavaScript allocates three arrays. That row shows the optimisation,
+            not the VM, and is left out of the second mean.</li>
+        <li>Browser timers are coarse (0.1 ms and up, and rounded further in some browsers); the kernels are sized so that a run takes milliseconds, not microseconds.
+            Close other tabs, plug in a laptop, and run the standard profile for numbers worth quoting. Results from other machines are in
+            <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/docs/benchmarks.md"><code>docs/benchmarks.md</code></a>.</li>
+      </ul>
+    </details>
   </main>
 
   <script type="module">
-    import { runBench } from "./bench.js";
-    const button = document.getElementById("run"), rows = document.getElementById("rows");
-    button.addEventListener("click", async () => {
-      button.disabled = true; button.textContent = "running…"; rows.innerHTML = "";
-      await runBench(new URL("Bench.wasm", import.meta.url), ({ label, jsMs, wasmMs, ratio, same, result }) =>
-        rows.insertAdjacentHTML("beforeend",
-          `<tr><td>${label}</td><td class="num">${jsMs.toFixed(1)} ms</td><td class="num">${wasmMs.toFixed(1)} ms</td>` +
-          `<td class="num ${ratio >= 1 ? "win" : ""}">${ratio >= 1 ? ratio.toFixed(1) + "× faster" : (1 / ratio).toFixed(1) + "× slower"}</td>` +
-          `<td>${same ? "✓ " + result : "✗ results differ"}</td></tr>`));
-      button.disabled = false; button.textContent = "Run again";
+    import { runBenchmark, suite } from "./bench.js";
+    import { renderChart, renderTable, describeEnv, describeSummary, downloadJson } from "./render.js";
+
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    let rows = [], report = null, controller = null;
+
+    $("profile").value = params.get("profile") === "standard" ? "standard" : "quick";
+    const only = params.get("only")?.split(",");
+    for (const k of suite) {
+      const label = document.createElement("label"), box = document.createElement("input");
+      Object.assign(box, { type: "checkbox", checked: !only || only.includes(k.id), value: k.id });
+      label.append(box, " ", k.label);
+      $("kernels").append(label);
+    }
+    const selected = () => [...$("kernels").querySelectorAll("input:checked")].map((b) => b.value);
+
+    const draw = () => {
+      renderTable($("rows"), [...rows].sort((a, b) => suite.findIndex((k) => k.id === a.id) - suite.findIndex((k) => k.id === b.id)));
+      $("viz").hidden = rows.length === 0;
+      if (rows.length) renderChart($("chart"), rows, $("tip"));
+    };
+    new ResizeObserver(() => rows.length && renderChart($("chart"), rows, $("tip"))).observe($("viz"));
+
+    async function run() {
+      const ids = selected();
+      if (!ids.length) return;
+      Object.assign($("run"), { disabled: true, textContent: "running…" });
+      $("save").disabled = true; $("stop").disabled = false;
+      $("progress").hidden = false; $("progress").max = ids.length; $("progress").value = 0;
+      $("summary").textContent = ""; $("env").textContent = "loading the module…";
+      document.body.dataset.done = "false";
+      rows = []; report = null; controller = new AbortController();
+      try {
+        report = await runBenchmark(new URL("Bench.wasm", import.meta.url), {
+          profile: $("profile").value, only: ids, signal: controller.signal,
+          onStart: ({ env, wasm }) => { $("env").textContent = describeEnv(env, wasm); },
+          onRow: (row) => { rows.push(row); $("progress").value = rows.length; draw(); },
+        });
+        $("summary").textContent = describeSummary(report.summary);
+        $("save").disabled = false;
+      } catch (e) {
+        $("env").textContent = `failed: ${e.message}`;
+      }
+      Object.assign($("run"), { disabled: false, textContent: "Run again" });
+      $("stop").disabled = true; $("progress").hidden = true;
+      window.__bench = report;
       document.body.dataset.done = "true";
-    });
+    }
+
+    $("run").addEventListener("click", run);
+    $("stop").addEventListener("click", () => controller?.abort());
+    $("save").addEventListener("click", () => report && downloadJson(report));
+    if (params.has("autorun")) run();
   </script>
 </body>
 </html>

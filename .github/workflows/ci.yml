@@ -25,6 +25,12 @@ jobs:
       - name: Landing page, embedded demos, benchmark, links
         run: node tests/e2e/site.mjs
 
+      - name: The benchmark page (every kernel against its JavaScript twin)
+        run: E2E_ROOT=site node tests/e2e/bench.mjs
+
+      - name: The benchmark on Node (the same harness, from a terminal)
+        run: node demos/bench/run.mjs --profile quick --wasm site/demos/bench/Bench.wasm
+
       - name: Each demo's behaviour
         # tests/e2e/demos.mjs serves dist/ (a build with the compiler); here it is pointed at the committed site/
         run: node tests/e2e/demos.mjs

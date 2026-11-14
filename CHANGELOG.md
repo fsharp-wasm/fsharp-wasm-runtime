@@ -20,6 +20,14 @@ All notable changes to this project will be documented in this file.
   centred, the dashboard's tab bar is no longer spread over the page (its `class'` was dropped by an explicit `yield`).
 
 ### Added
+- Benchmarks, rebuilt (`demos/bench`, [`docs/benchmarks.md`](docs/benchmarks.md)): thirteen kernels (Mandelbrot, N-body, spectral norm, matrix
+  product, sieve, fannkuch-redux, CRC-32, Collatz, Fibonacci, binary trees, word count, quicksort, list pipeline) in F# and in JavaScript
+  with equal results (bit for bit, also for the doubles) before any time counts. The harness (`harness.js`, shared by the page, a worker, Node, Deno
+  and Bun) takes a cold call, a warm-up, then samples in alternation until a time budget is spent, and reports median and interquartile range,
+  environment, and the module's size, digest, compile and instantiate time. The page (`index.html`, `render.js`) runs it in a worker and draws a
+  ranked log-scale bar chart (tooltips, keyboard focus, light and dark, phone width), the table and a JSON download; `run.mjs` is the same from a
+  terminal (`--profile quick|standard`, `--only`, `--out`); `report.mjs` turns recorded reports into the tables of the docs.
+  `tests/e2e/bench.mjs` drives the page in Chromium. Measured results for Node 24, Deno 2, Bun 1 and Chromium 153 are in `docs/benchmarks/`.
 - Scene Gallery demo (`demos/graphics-gallery`): the thirteen scenes of `FSharp.Graphics.Scenes` (shapes, strokes, gradients,
   shadows, transforms, layout, clipping, layers, text, animation, interaction, a dashboard, a stress test) compiled to WasmGC
   from fsharp-wasm-graphics (`demo/FSharp.Graphics.Browser.Gallery`) and drawn onto one canvas. The module announces its

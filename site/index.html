@@ -76,16 +76,18 @@
 
 <section id="speed">
   <h2 class="sec">Speed — measured in your browser, right now</h2>
-  <p class="sub">The same four algorithms, written once in F# (compiled by fsharp-wasm) and once in plain JavaScript, run on your machine.</p>
+  <p class="sub">Thirteen algorithms, each written once in F# (compiled by fsharp-wasm) and once in plain JavaScript, run on your machine, in a worker.</p>
   <button id="run-bench">Run the benchmark</button>
   <table role="grid">
     <thead><tr><th>workload</th><th class="num">JavaScript</th><th class="num">F# → WasmGC</th><th class="num">ratio</th><th>same result</th></tr></thead>
     <tbody id="bench-rows"><tr><td colspan="5"><small>press “Run the benchmark”</small></td></tr></tbody>
   </table>
-  <small>Best of 5 runs after a warm-up, results compared for equality. Honest reading: V8's JIT is superb at tight float/int
-    loops, so expect parity there (Mandelbrot, sieve). The wasm wins where the language helps: native 64-bit integers (Collatz)
-    and list pipelines, which the compiler fuses into one loop with no intermediate lists. The F# is unmodified, idiomatic code
-    (<code>for</code> loops, <code>mutable</code>, <code>List.map |&gt; List.filter |&gt; List.fold</code>).</small>
+  <small>Median of alternating runs after a cold run and a warm-up; the two results must be equal before a time counts. Honest reading: V8's JIT is
+    superb at tight loops, so expect parity (Mandelbrot, CRC-32, word count) and sometimes a loss (the sieve: the compiler stores <code>bool[]</code> as 32-bit
+    elements, JavaScript's <code>Uint8Array</code> as bytes). The wasm wins where the language helps: calls (Fibonacci), 64-bit integers, and the list pipeline,
+    which the compiler fuses into one loop with no intermediate lists (that row measures the optimisation, not the VM). The F# is unmodified, idiomatic code.
+    <a href="demos/bench/index.html">The full benchmark page</a> has the chart, the standard profile with its spread, and a JSON export;
+    <a href="https://github.com/fsharp-wasm/fsharp-wasm-runtime/blob/main/docs/benchmarks.md">docs/benchmarks.md</a> has measured results for Node, Deno, Bun and Chromium.</small>
 </section>
 
 <section id="how">
@@ -122,7 +124,7 @@ let start () = run "counter-root" { Init = init; Update = update; View = view }<
     <a href="demos/counter/"><b>Counter</b><span>Elmish model–update–view</span></a>
     <a href="demos/todo/"><b>Todo list</b><span>add, complete, remove</span></a>
     <a href="demos/canvas-mandelbrot/"><b>Mandelbrot</b><span>canvas; F# next to plain JS, same picture</span></a>
-    <a href="demos/bench/"><b>Benchmark</b><span>four kernels, F# vs JavaScript, measured live</span></a>
+    <a href="demos/bench/"><b>Benchmark</b><span>thirteen kernels, F# vs JavaScript, measured live</span></a>
     <a href="demos/realtime-pubsub/"><b>Pub/Sub</b><span>a message bus wired from F#</span></a>
     <a href="demos/indexeddb-crud/"><b>IndexedDB</b><span>create, read, delete — asynchronous</span></a>
     <a href="demos/worker-actor/"><b>Web Worker</b><span>an actor on another thread</span></a>
@@ -169,7 +171,7 @@ let start () = run "counter-root" { Init = init; Update = update; View = view }<
       rows.insertAdjacentHTML('beforeend',
         `<tr><td>${label}</td><td class="num">${jsMs.toFixed(1)} ms</td><td class="num">${wasmMs.toFixed(1)} ms</td>` +
         `<td class="num ${ratio >= 1 ? 'win' : ''}">${ratio >= 1 ? ratio.toFixed(1) + '× faster' : (1 / ratio).toFixed(1) + '× slower'}</td>` +
-        `<td>${same ? '✓ ' + result : '✗ results differ'}</td></tr>`));
+        `<td>${same ? '✓ ' + (Number.isInteger(result) ? result : result.toPrecision(9)) : '✗ results differ'}</td></tr>`));
     button.disabled = false; button.textContent = 'Run again';
     window.__benchDone = true;
   });

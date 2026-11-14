@@ -1,56 +1,37 @@
-// The benchmark harness: the same four kernels as `Bench.fs`, written in JavaScript, timed against the F# module.
-// Used by this demo's page and by the landing page.
+// The page-side API of the benchmark: runs `harness.js` in a worker (in the page's thread where there are no workers) and
+// hands back the rows as they finish.  Used by this demo's page and by the landing page.
+export { suite } from './kernels.js';
 
-export const js = {
-  mandelbrot(n) {
-    let inside = 0;
-    for (let py = 0; py < n; py++) for (let px = 0; px < n; px++) {
-      const cr = 3.5 * px / n - 2.5, ci = 2.0 * py / n - 1.0;
-      let zr = 0, zi = 0, i = 0;
-      while (i < 200 && zr * zr + zi * zi <= 4.0) { const t = zr * zr - zi * zi + cr; zi = 2.0 * zr * zi + ci; zr = t; i++; }
-      if (i === 200) inside++;
-    }
-    return inside;
-  },
-  primes(n) {
-    const composite = new Uint8Array(n + 1);
-    let count = 0;
-    for (let i = 2; i <= n; i++) if (!composite[i]) { count++; for (let j = i * 2; j <= n; j += i) composite[j] = 1; }
-    return count;
-  },
-  collatz(n) {
-    let best = 0;
-    for (let s = 1; s <= n; s++) { let x = s, steps = 0; while (x !== 1) { x = x % 2 === 0 ? x / 2 : 3 * x + 1; steps++; } if (steps > best) best = steps; }
-    return best;
-  },
-  pipeline(n) {
-    return Array.from({ length: n }, (_, i) => i + 1).map((v) => v * 3).filter((v) => v % 2 === 0).reduce((a, v) => (a + v % 1000) | 0, 0);
-  },
-};
-
-export const work = [
-  ['Mandelbrot 700×700', 'mandelbrot', 700],
-  ['Primes ≤ 5,000,000', 'primes', 5_000_000],
-  ['Collatz < 300,000', 'collatz', 300_000],
-  ['List pipeline, 1,000,000', 'pipeline', 1_000_000],
-];
-
-/** Best of five runs after a warm-up, in milliseconds, with the result (to check both sides agree). */
-const best = (f, n) => {
-  f(n);
-  let t = Infinity, r;
-  for (let i = 0; i < 5; i++) { const t0 = performance.now(); r = f(n); t = Math.min(t, performance.now() - t0); }
-  return [t, r];
-};
-
-/** Run every kernel on both sides; `onRow` gets { label, jsMs, wasmMs, ratio, same, result } as each finishes. */
-export async function runBench(wasmUrl, onRow) {
-  // a program without `printfn` imports nothing; the stub is for one that does
-  const { instance } = await WebAssembly.instantiate(await (await fetch(wasmUrl)).arrayBuffer(), { env: { consolePrint() {} } });
-  for (const [label, name, n] of work) {
-    await new Promise((r) => setTimeout(r, 30));              // let the page paint between kernels
-    const [jsMs, rj] = best(js[name], n);
-    const [wasmMs, rw] = best(instance.exports[name], n);
-    onRow({ label, jsMs, wasmMs, ratio: jsMs / wasmMs, same: rj === rw, result: rw });
+/**
+ * Run the suite against the module at `wasmUrl`.
+ * Options: profile ('quick' | 'standard'), only (kernel ids), onStart({ env, wasm }), onRow(row), signal (AbortSignal).
+ * Resolves with the report (see harness.js `makeReport`); with the rows so far when `signal` aborts.
+ */
+export async function runBenchmark(wasmUrl, { profile = 'quick', only, onStart, onRow, signal } = {}) {
+  const url = new URL(wasmUrl, globalThis.document?.baseURI ?? import.meta.url).href;
+  if (typeof Worker === 'undefined') {
+    const h = await import('./harness.js');
+    const wasm = await h.loadWasm(url), env = h.environment();
+    onStart?.({ env, wasm: { bytes: wasm.bytes, compileMs: wasm.compileMs, instantiateMs: wasm.instantiateMs } });
+    const rows = await h.runSuite({ wasm: wasm.exports, profile, only, onRow, signal });
+    return h.makeReport({ profile, env, wasm, rows });
   }
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
+    const finish = (f, v) => { signal?.removeEventListener('abort', stop); worker.terminate(); f(v); };
+    const stop = () => worker.postMessage({ type: 'abort' });
+    signal?.addEventListener('abort', stop);
+    worker.onmessage = ({ data }) => {
+      if (data.type === 'start') onStart?.(data);
+      else if (data.type === 'row') onRow?.(data.row);
+      else if (data.type === 'done') finish(resolve, data.report);
+      else if (data.type === 'error') finish(reject, new Error(data.message));
+    };
+    worker.onerror = (e) => finish(reject, new Error(e.message || 'the benchmark worker failed'));
+    worker.postMessage({ type: 'run', wasmUrl: url, profile, only });
+  });
 }
+
+/** The first version of this API, still what the landing page calls: the quick profile, rows with `jsMs` and `wasmMs`. */
+export const runBench = (wasmUrl, onRow) =>
+  runBenchmark(wasmUrl, { profile: 'quick', onRow: (r) => onRow({ ...r, jsMs: r.js.median, wasmMs: r.wasm.median }) });
