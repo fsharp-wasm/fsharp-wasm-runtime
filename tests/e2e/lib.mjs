@@ -11,7 +11,8 @@ const { chromium } = await import('playwright').catch(() =>
 
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.css': 'text/css', '.json': 'application/json' };
 
-export const serve = (root = fileURLToPath(new URL(`../../${process.env.E2E_ROOT ?? 'dist'}`, import.meta.url))) =>
+/** A static file server over `root` (default: dist/ or $E2E_ROOT of this repository) on `port` (0: any free port). */
+export const serve = (root = fileURLToPath(new URL(`../../${process.env.E2E_ROOT ?? 'dist'}`, import.meta.url)), port = 0) =>
   new Promise((resolve) => {
     const server = http.createServer(async (req, res) => {
       try {
@@ -22,7 +23,7 @@ export const serve = (root = fileURLToPath(new URL(`../../${process.env.E2E_ROOT
         res.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream' });
         res.end(body);
       } catch { res.writeHead(404); res.end('not found'); }
-    }).listen(0, () => resolve({ server, base: `http://127.0.0.1:${server.address().port}` }));
+    }).listen(port, () => resolve({ server, base: `http://127.0.0.1:${server.address().port}` }));
   });
 
 export const launch = async () => {
