@@ -223,15 +223,16 @@ const ALL_DEMOS = [
         desc:   "All demos combined in one tabbed dashboard to stress-test the complete runtime.",
     },
     {
-        // The F# project lives in ANOTHER repository (fsharp-wasm-graphics); this repo holds its page and the glue
-        // (runtime/gfx.js).  Built when a checkout is found next to this one (or FSHARP_WASM_GRAPHICS_DIR); otherwise
-        // skipped, and the committed site/ keeps the prebuilt module.
-        name:   "graphics-editor",
-        repo:   "fsharp-wasm-graphics",
-        repoEnv: "FSHARP_WASM_GRAPHICS_DIR",
-        project: "demo/FSharp.Graphics.Browser",
-        title:  "GUI Builder — fsharp-wasm-graphics",
-        desc:   "A visual editor written in F# with the FSharp.Graphics widget library, drawn by the module onto one canvas.",
+        // The F# project lives in ANOTHER repository (fsharp-wasm-ide); this repo holds its page and the glue (runtime/gfx.js).
+        // Built when a checkout is found next to this one (or FSHARP_WASM_IDE_DIR); otherwise skipped, and the committed
+        // site/ keeps the prebuilt module.  coreDir: where that checkout keeps FSharp.Wasm.Core (FSHARP_WASM_CORE_DIR).
+        name:   "widget-editor",
+        repo:   "fsharp-wasm-ide",
+        repoEnv: "FSHARP_WASM_IDE_DIR",
+        project: "src/WidgetEditor.Browser",
+        coreDir: "lib/fsharp-wasm-core",
+        title:  "Widget Editor — fsharp-wasm-ide",
+        desc:   "A visual editor for FSharp.Graphics widget layouts, written in F# and drawn by the module onto one canvas.",
     },
     {
         // The second module of the same repository: the scenes of FSharp.Graphics.Scenes, selected from the page.
@@ -247,9 +248,13 @@ const ALL_DEMOS = [
 /** The project directory of a demo: in this repository, or in the checkout of the repository it belongs to. */
 function demoProjectDir(demo) {
     if (!demo.repo) return dirname(join(ROOT, demo.fsproj));
-    const checkout = process.env[demo.repoEnv] ?? resolve(ROOT, "..", demo.repo);
-    const dir = join(checkout, demo.project);
+    const dir = join(demoCheckout(demo), demo.project);
     return existsSync(dir) ? dir : null;
+}
+
+/** The checkout of the repository an external demo belongs to. */
+function demoCheckout(demo) {
+    return process.env[demo.repoEnv] ?? resolve(ROOT, "..", demo.repo);
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -293,8 +298,11 @@ function compileDemos(compiler, demos) {
           : compiler.mode === "dll"    ? `dotnet "${compiler.cliDll}" "${projectDir}" --outDir "${outDir}" --noCache`
           : compiler.mode === "dotnet" ? `dotnet run -c Release --project "${compiler.cliProj}" -- "${projectDir}" --outDir "${outDir}" --noCache`
           :                              `"${compiler.bin}" "${join(projectDir, "*.fsproj")}" --lang wasmgc -o "${outDir}"`;
+        // FSharp.Wasm.Core of the checkout the demo belongs to, unless the caller chose one
+        const coreDir = demo.coreDir && join(demoCheckout(demo), demo.coreDir);
+        const env = coreDir && existsSync(coreDir) ? { ...process.env, FSHARP_WASM_CORE_DIR: process.env.FSHARP_WASM_CORE_DIR ?? coreDir } : process.env;
         try {
-            execSync(cmd, { cwd: ROOT, stdio: "inherit" });
+            execSync(cmd, { cwd: ROOT, stdio: "inherit", env });
         } catch {
             console.error(`  ✗ ${demo.name} failed (compiler limitation — see above)`);
             failed.push(demo.name);

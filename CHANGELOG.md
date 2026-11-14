@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- The GUI builder demo is the **Widget Editor** of [fsharp-wasm-ide](https://github.com/fsharp-wasm/fsharp-wasm-ide) now
+  (`demos/widget-editor`, `WidgetEditor.wasm`; build with `FSHARP_WASM_IDE_DIR`, or a checkout next to this repository); the old
+  address `demos/graphics-editor/` forwards to it. `build.js` takes `coreDir` per external demo (where its checkout keeps
+  FSharp.Wasm.Core). The scene gallery module is rebuilt on `FSharp.Graphics.Canvas` of fsharp-wasm-graphics. `serve()` of
+  `tests/e2e/lib.mjs` takes an optional port.
+
 ### Fixed
 - Elmish views no longer rebuild the page on every message: the view is built off-document and merged into the live DOM
   (`morphChildrenOf` in `runtime/dom.js`), so a text field keeps focus, caret and selection while typing; children match
@@ -22,7 +29,7 @@ All notable changes to this project will be documented in this file.
   computed in sRGB) for the grayscale / sepia / invert layers; the frame loop of `mount` pauses while the canvas is off screen.
   Known limit: layer alpha, blur and matrix apply to each drawn shape, not to the composed group (overlapping children of a
   group show through each other).
-- GUI Builder demo (`demos/graphics-editor`): the F# project of fsharp-wasm-graphics (a visual editor on the `FSharp.Graphics`
+- GUI Builder demo (now `demos/widget-editor`): the F# project of fsharp-wasm-graphics (a visual editor on the `FSharp.Graphics`
   widget library) compiled to WasmGC and drawn onto one canvas through `runtime/gfx.js`, which also forwards pointer, wheel,
   key and size events to the module. The build compiles it when a checkout of fsharp-wasm-graphics is next to this
   repository (`FSHARP_WASM_GRAPHICS_DIR`), else the committed `site/` module is kept.
