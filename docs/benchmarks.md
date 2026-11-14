@@ -130,8 +130,8 @@ Median times of the first report of each runtime (JS / F# → WasmGC, ms; in bra
 - **Spread.** Node's three runs agree within a few percent on every kernel except the allocation- and string-heavy ones (binary trees
   0.82–0.91, word count 0.75–0.88, quicksort 1.11–1.28). Treat differences below 10–15 % — between runs or between runtimes — as noise.
 - **V8 (Node 24, Deno 2, Chromium 153).** The F# module is faster in 8–9 of 13 kernels; the geometric mean without the † row is 1.37, 1.51 and
-  1.48. It is a few large wins — Collatz ≈ 5× (native 64-bit integers against doubles, presumably), Fibonacci 2.3–3×, N-body 1.2–1.8×, spectral norm
-  (below) — next to modest gains (matrix product ≈ 1.5×, fannkuch 1.2–1.4×, quicksort 1.1–1.25×), near-ties (Mandelbrot 0.89–0.99, CRC-32 0.89–0.90,
+  1.48. It is a few large wins — Collatz ≈ 5× (native 64-bit integers against doubles, presumably), Fibonacci 2.3–3× and N-body 1.2–1.8× (both lose much of it
+  without V8's inlining, see below), spectral norm (below) — next to modest gains (matrix product ≈ 1.5×, fannkuch 1.2–1.4×, quicksort 1.1–1.25×), near-ties (Mandelbrot 0.89–0.99, CRC-32 0.89–0.90,
   binary trees 0.87–1.14) and losses (sieve 0.65–0.76; word count 0.85 on Node and Deno, 1.04 on Chromium). "Faster by about 1.4×" is a statement
   about this suite, not about programs.
 - **Bun (JavaScriptCore).** Geometric mean 1.00 without †. Loops are at parity (0.95–1.33; the sieve 0.71), calls 1.23×, 64-bit integers 1.9×, and the allocation
@@ -148,6 +148,33 @@ Median times of the first report of each runtime (JS / F# → WasmGC, ms; in bra
   ≲ 100 ms of work the JavaScript's first call is faster than the module's in 9 of 12 kernels on Node, 8 on Deno, 6 on Chromium and 4 on Bun (without †). The advantage of the module is a
   steady-state advantage. (A program that calls the same code many times, or runs for seconds, is in the steady state.)
 - **† (list pipeline): 16–82×.** An optimisation of the compiler against three allocated arrays; it says nothing about the VM.
+
+### How much of this is V8's inliner
+
+V8 inlines small Wasm functions when it optimises (TurboFan). The compiler leaves calls to ordinary small functions as they are (the WAT of `$fibRec` shows it), and V8's baseline tier (Liftoff) inlines nothing.
+The same Node 24 run with `node --no-wasm-inlining` (report: `docs/benchmarks/node-24-no-wasm-inlining.json`):
+
+| kernel | F# module, ms (default) | F# module, ms (`--no-wasm-inlining`) | ratio vs JS (default → no inlining) |
+|---|---:|---:|---:|
+| Mandelbrot | 63.1 | 65.1 | 1.01 → 1.01 |
+| N-body | 62.9 | 76.3 | 1.66 → 1.37 |
+| Spectral norm | 31.1 | 58.0 | 2.40 → 1.31 |
+| Matrix product | 65.4 | 65.0 | 1.55 → 1.52 |
+| Sieve | 71.6 | 77.3 | 0.66 → 0.67 |
+| Fannkuch-redux | 19.5 | 18.6 | 1.29 → 1.30 |
+| CRC-32 | 45.6 | 41.3 | 0.90 → 0.93 |
+| Collatz | 88.7 | 75.7 | 4.98 → 4.87 |
+| Fibonacci | 31.3 | 62.3 | 2.32 → 1.26 |
+| Binary trees | 127 | 141 | 0.91 → 0.93 |
+| Word count | 68.9 | 83.6 | 0.88 → 0.70 |
+| Quicksort | 146 | 144 | 1.23 → 1.18 |
+| List pipeline † | 2.9 | 2.6 | 74.89 → 81.30 |
+| **geometric mean without †** | | | **1.40 → 1.22** |
+
+Fibonacci, spectral norm, N-body and the word count depend on it, the loops that call nothing (Mandelbrot, matrix product, fannkuch, CRC-32, Collatz, quicksort)
+do not. About 0.2 of the geometric mean on V8 is therefore V8's inlining of the helpers the module calls, not the code the compiler emits — and V8's
+decision is not stable: the identical `fibRec` (the bytes of the function are the same) runs in 60 ms when the module is the 7 KB of `Bench.fs` alone and in
+36 ms in the 17 KB module of this benchmark; with `--no-wasm-inlining` both take 60 ms. Read the Fibonacci row accordingly: 2.3× with inlining, 1.3× without.
 
 ## What is not measured
 
@@ -168,9 +195,15 @@ Measured here, handed to [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-was
 1. **`bool[]` is `(array (mut i32))` — four bytes per element** (`byte[]` is the same). The sieve is memory-bound: JavaScript with an
    `Int32Array` needs the same 70 ms as the module, with a `Uint8Array` 46 ms (Node 24, n = 5 000 000). A packed `i8` array
    (`array.get_u` / `array.set`) would remove the gap.
-2. **`List.sortBy` was an insertion sort** (O(n²)): 20 000, 40 000 and 80 000 elements took 155, 433 and 1979 ms, and a string key did not compile. Fixed in
-   fsharp-wasm `7c628ff` (a stable merge sort, ordered by Fable's comparer: the same sizes take 10, 10 and 16 ms). `Array.sort`, `sortWith`,
+2. **`List.sortBy` was an insertion sort** (O(n²)): 20 000, 40 000 and 80 000 elements took 155, 433 and 1979 ms, and a string key did not compile. Fixed on the migration branch of
+   fsharp-wasm, `7c628ff` (a stable merge sort, ordered by Fable's comparer: the same sizes take 10, 10 and 16 ms). `Array.sort`, `sortWith`,
    `sortInPlace`, `List.sort` and `List.sortWith` were already merge sorts — this document said otherwise until the numbers were measured. The
    quicksort kernel is written out on both sides because the point is the same algorithm in both languages, not the library's sort.
 3. **The list pipeline is fused into one loop** — a real optimisation, and the reason for the † row.
 4. **64-bit integers are native** (`i64`); JavaScript has doubles (or `BigInt`, which is far slower), which is most of the Collatz result.
+5. **Small functions stay calls in the generated module.** The speed of calls into small helpers (`evalA`, `fibRec`, the string helpers) is whatever V8's optimising tier makes of
+   it: the geometric mean on Node falls from 1.40 to 1.22 with `--no-wasm-inlining`, and Liftoff, which runs first, inlines nothing (the first call of the
+   module is about 1.8× its steady state). An inlining pass for small functions in the compiler would make the speed predictable.
+6. **The F# optimizer does not help.** `--optimize+` (typed-tree inlining, constant folding) on the kernels alone: module 75 bytes larger, the per-kernel times
+   within noise (0.84–1.12; geometric mean against JavaScript 1.30 and 1.31 without, 1.27 and 1.29 with it, two runs each), and the runtime library's
+   `[<Emit>]` members (`CeBuilder`) no longer compile. It stays off.
