@@ -1,7 +1,7 @@
 {
   "schema": "inliner-ab-1",
   "date": "2026-11-14T12:55:05.616Z",
-  "note": "The same Bench.fs compiled by fsharp-wasm 8b454b9 without and with WASMGC_INLINE=1, standard profile, two runs each, interleaved; Node 24.22.3 and Bun 1.4.4 on one 4-vCPU VM. Medians of the F# module in ms per run, and the geometric mean against JavaScript without the fused list pipeline.",
+  "note": "The same Bench.fs compiled by fsharp-wasm 84a093c without and with WASMGC_INLINE=1, standard profile, two runs each, interleaved; Node 24.22.3 and Bun 1.4.4 on one 4-vCPU VM. Medians of the F# module in ms per run, and the geometric mean against JavaScript without the fused list pipeline.",
   "moduleBytes": {
     "off": 17685,
     "on": 17797

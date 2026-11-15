@@ -1,7 +1,7 @@
 {
   "schema": "packed-bytes-ab-1",
   "date": "2026-11-14T14:45:03.390Z",
-  "note": "The benchmark kernels (Bench.fs alone, without the runtime library) compiled by fsharp-wasm 2e63a0c with WASMGC_PACKED_BYTES=0 and with the packing, standard profile, two runs each, interleaved; Node 24.22.3 on one 4-vCPU VM. Medians of the F# module in ms per run, and the geometric mean against JavaScript without the fused list pipeline.",
+  "note": "The benchmark kernels (Bench.fs alone, without the runtime library) compiled by fsharp-wasm 73f34dd with WASMGC_PACKED_BYTES=0 and with the packing, standard profile, two runs each, interleaved; Node 24.22.3 on one 4-vCPU VM. Medians of the F# module in ms per run, and the geometric mean against JavaScript without the fused list pipeline.",
   "configs": {
     "unpacked": {
       "geomeanVm": [

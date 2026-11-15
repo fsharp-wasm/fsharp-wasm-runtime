@@ -73,7 +73,7 @@ Options of `run.mjs`: `--profile quick|standard`, `--only fib,crc32`, `--wasm <p
 ## Results
 
 Recorded on 14 November 2026 on **one machine**: a 4-vCPU virtual machine (Intel Xeon @ 2.10 GHz) in a cloud container, the standard profile,
-the same module on every runtime (17 706 bytes, SHA-256 `9c294196595e6395…`, built by fsharp-wasm `2e63a0c`). The container was otherwise idle apart from a few short git and API
+the same module on every runtime (17 706 bytes, SHA-256 `9c294196595e6395…`, built by fsharp-wasm `73f34dd`). The container was otherwise idle apart from a few short git and API
 calls while the runs were recorded. Node ran three times in a row, to show the run-to-run spread. The reports are in
 [`docs/benchmarks/`](benchmarks/); `node demos/bench/report.mjs docs/benchmarks/*.json` prints the tables below from them.
 
@@ -142,7 +142,7 @@ Median times of the first report of each runtime (JS / F# → WasmGC, ms; in bra
   6.7× (earlier recordings: 6.1–6.5×) and Node 2.3–2.4×; without this kernel the geometric means without † of Node, Deno, Bun and Chromium are 1.39, 1.36, 1.02 and 1.52.
   Writing the division as `>> 1` makes it *slower* on V8 (161 ms) and faster on JavaScriptCore (30 ms); the form in `kernels.js` is the textbook form of
   the formula, so that is what is measured.
-- **The sieve was a loss and is none now.** Until fsharp-wasm `2e63a0c` a `bool[]` was a 32-bit-element array (finding 1 below): 0.65–0.76 against JavaScript, exactly what
+- **The sieve was a loss and is none now.** Until fsharp-wasm `73f34dd` a `bool[]` was a 32-bit-element array (finding 1 below): 0.65–0.76 against JavaScript, exactly what
   JavaScript's own `Int32Array` gives. With packed 8-bit elements it is 1.06 (Node), 1.10 (Deno), 1.06 (Bun) and 1.19 (Chromium).
 - **First call.** On V8 the module's first call is about 1.7–1.8× its steady state (presumably Liftoff, then tier-up to TurboFan; median over the kernels: Node 1.68–1.81,
   Deno 1.80, Chromium 1.82; Bun 1.02); JavaScript's first call is close to — sometimes below — its steady state. For a kernel that is called once with
@@ -327,18 +327,18 @@ Reproduce: `E2E_ROOT=site node tests/e2e/network.mjs` (writes `docs/benchmarks/s
 Measured here, handed to [fsharp-wasm](https://github.com/fsharp-wasm/fsharp-wasm):
 
 1. **`bool[]` and `byte[]` were `(array (mut i32))` — four bytes per element — and are packed now.** The sieve was memory-bound: JavaScript with an
-   `Int32Array` needed the same 70 ms as the module, with a `Uint8Array` 46 ms (Node 24, n = 5 000 000). Fixed in fsharp-wasm `2e63a0c`: `(array (mut i8))`, read with
+   `Int32Array` needed the same 70 ms as the module, with a `Uint8Array` 46 ms (Node 24, n = 5 000 000). Fixed in fsharp-wasm `73f34dd`: `(array (mut i8))`, read with
    `array.get_u`, also for `ResizeArray<byte>`; the sieve takes 43–46 ms (68–70 before, two runs each, interleaved), the other kernels do not move
    ([`docs/benchmarks/packed-bytes-ab.json`](benchmarks/packed-bytes-ab.json)); the modules grow by 48–72 bytes. `WASMGC_PACKED_BYTES=0` brings the old layout back; `sbyte[]` stays 32-bit.
 2. **`List.sortBy` was an insertion sort** (O(n²)): 20 000, 40 000 and 80 000 elements took 155, 433 and 1979 ms, and a string key did not compile. Fixed on the migration branch of
-   fsharp-wasm, `7c628ff` (a stable merge sort, ordered by Fable's comparer: the same sizes take 10, 10 and 16 ms). `Array.sort`, `sortWith`,
+   fsharp-wasm, `130b2ca` (a stable merge sort, ordered by Fable's comparer: the same sizes take 10, 10 and 16 ms). `Array.sort`, `sortWith`,
    `sortInPlace`, `List.sort` and `List.sortWith` were already merge sorts — this document said otherwise until the numbers were measured. The
    quicksort kernel is written out on both sides because the point is the same algorithm in both languages, not the library's sort.
 3. **The list pipeline is fused into one loop** — a real optimisation, and the reason for the † row.
 4. **64-bit integers are native** (`i64`); JavaScript has doubles (or `BigInt`, which is far slower), which is most of the Collatz result.
 5. **Small functions stay calls in the generated module — and inlining them does not pay.** V8's inliner decides the speed of calls into small helpers
    (`evalA`, the string helpers): the geometric mean on Node falls from 1.40 to 1.22 with `--no-wasm-inlining`. An inlining pass was written
-   (fsharp-wasm `8b454b9`, opt-in with `WASMGC_INLINE=1`) and measured, two runs each ([`docs/benchmarks/inliner-ab.json`](benchmarks/inliner-ab.json)):
+   (fsharp-wasm `84a093c`, opt-in with `WASMGC_INLINE=1`) and measured, two runs each ([`docs/benchmarks/inliner-ab.json`](benchmarks/inliner-ab.json)):
 
    | | without the pass | with it |
    |---|---:|---:|
