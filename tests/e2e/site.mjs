@@ -11,7 +11,7 @@ await page.goto(`${base}/`);
 await page.waitForFunction(() => window.__ready === true);
 
 check('title', /WebAssembly GC/.test(await page.title()), await page.title());
-check('sponsor link', (await page.locator('a[href="https://github.com/sponsors/aiqs4"]').count()) >= 2);
+check('sponsor link', (await page.locator('a[href="https://github.com/sponsors/fsharp-wasm"]').count()) >= 2);
 
 // the demos embedded in the page run
 const frame = (title) => page.frameLocator(`iframe[title="${title}"]`);
