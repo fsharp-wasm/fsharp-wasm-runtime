@@ -47,8 +47,9 @@ const syncAttributes = (live, next) => {
 const syncControl = (live, next) => {
     if (isCheck(next)) { if (live.checked !== next.checked) live.checked = next.checked; return; }
     if (!("value" in next) || !next.hasAttribute("value")) return;
-    // a <textarea>'s `value` property is its text, not its `value` attribute: the stated value is the attribute
-    const stated = next.nodeName === "TEXTAREA" ? next.getAttribute("value") : next.value;
+    // the `value` property of a detached <textarea> is its (empty) text and that of a detached <select> is its first option:
+    // what the view states is the `value` attribute
+    const stated = next.nodeName === "TEXTAREA" || next.nodeName === "SELECT" ? next.getAttribute("value") : next.value;
     if (live.value !== stated) live.value = stated;
 };
 
