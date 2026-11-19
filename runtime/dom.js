@@ -46,7 +46,10 @@ const syncAttributes = (live, next) => {
  *  value the view states (`value' …`) is applied, and only when it differs (so the caret stays where it is). */
 const syncControl = (live, next) => {
     if (isCheck(next)) { if (live.checked !== next.checked) live.checked = next.checked; return; }
-    if ("value" in next && next.hasAttribute("value") && live.value !== next.value) live.value = next.value;
+    if (!("value" in next) || !next.hasAttribute("value")) return;
+    // a <textarea>'s `value` property is its text, not its `value` attribute: the stated value is the attribute
+    const stated = next.nodeName === "TEXTAREA" ? next.getAttribute("value") : next.value;
+    if (live.value !== stated) live.value = stated;
 };
 
 const morph = (live, next) => {
