@@ -16,6 +16,24 @@ let jsOnInput (id: Handle) (cb: string -> unit) : unit = nativeOnly
 [<Import("onChange",  "runtime/events.js")>]
 let jsOnChange (id: Handle) (cb: string -> unit) : unit = nativeOnly
 
+[<Import("onPointerDown",   "runtime/events.js")>]
+let jsOnPointerDown (id: Handle) (cb: float -> float -> unit) : unit = nativeOnly
+
+[<Import("onPointerMove",   "runtime/events.js")>]
+let jsOnPointerMove (id: Handle) (cb: float -> float -> unit) : unit = nativeOnly
+
+[<Import("onPointerUp",     "runtime/events.js")>]
+let jsOnPointerUp (id: Handle) (cb: float -> float -> unit) : unit = nativeOnly
+
+[<Import("onPointerCancel", "runtime/events.js")>]
+let jsOnPointerCancel (id: Handle) (cb: unit -> unit) : unit = nativeOnly
+
+[<Import("onKeyDown",       "runtime/events.js")>]
+let jsOnKeyDown (id: Handle) (cb: string -> unit) : unit = nativeOnly
+
+[<Import("measureSlots",    "runtime/events.js")>]
+let jsMeasureSlots (cb: float -> float -> float -> float -> float -> float -> unit) : unit = nativeOnly
+
 // ─── Click / Focus / Blur ────────────────────────────────────────────────────
 
 let onClick    (el: Element) (f: unit -> unit)   = let (El id) = el in jsOn id "click"    (fun _ -> f ())
@@ -60,3 +78,19 @@ let onDrop         (el: Element) (f: unit -> unit) = let (El id) = el in jsOn id
 // ─── Detach ───────────────────────────────────────────────────────────────────
 
 let off (el: Element) event = let (El id) = el in jsOff id event
+
+// ─── Dragging ────────────────────────────────────────────────
+
+/// A press on the element, with the pointer captured: the moves and the release come to the element wherever the pointer goes.  (x, y) in viewport pixels.
+let onPointerDown   (el: Element) (f: float -> float -> unit) = let (El id) = el in jsOnPointerDown id f
+let onPointerMove   (el: Element) (f: float -> float -> unit) = let (El id) = el in jsOnPointerMove id f
+let onPointerUp     (el: Element) (f: float -> float -> unit) = let (El id) = el in jsOnPointerUp id f
+let onPointerCancel (el: Element) (f: unit -> unit)           = let (El id) = el in jsOnPointerCancel id f
+/// A key press on the element, with the key (`"Escape"`, `"ArrowDown"`, `"a"`); `onKeyDown` above says only that one happened.
+let onKeyDownWith   (el: Element) (f: string -> unit)         = let (El id) = el in jsOnKeyDown id f
+
+/// The places a drag can drop, measured now: every element with a `data-slot` number, as (slot, x, y, width, height, nests), in document order.
+let measureSlots () : (int * float * float * float * float * bool) list =
+    let found = ResizeArray<int * float * float * float * float * bool>()
+    jsMeasureSlots (fun id x y w h nests -> found.Add((int id, x, y, w, h, nests > 0.5)))
+    List.ofSeq found

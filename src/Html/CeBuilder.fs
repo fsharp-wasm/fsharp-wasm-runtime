@@ -33,6 +33,11 @@ type HtmlItem =
     | EventItem  of (unit -> unit)
     | InputItem  of (string -> unit)
     | ChangeItem of (string -> unit)
+    | PointerDownItem   of (float -> float -> unit)
+    | PointerMoveItem   of (float -> float -> unit)
+    | PointerUpItem     of (float -> float -> unit)
+    | PointerCancelItem of (unit -> unit)
+    | KeyDownItem       of (string -> unit)
     | KidItem    of Node
 
 // ─── Element CE builder ───────────────────────────────────────────────────────
@@ -83,6 +88,11 @@ type ElementBuilder(tag: string) =
                 | EventItem f    -> Some (OnClick f)
                 | InputItem f    -> Some (OnInput f)
                 | ChangeItem f   -> Some (OnChange f)
+                | PointerDownItem f   -> Some (OnPointerDown f)
+                | PointerMoveItem f   -> Some (OnPointerMove f)
+                | PointerUpItem f     -> Some (OnPointerUp f)
+                | PointerCancelItem f -> Some (OnPointerCancel f)
+                | KeyDownItem f       -> Some (OnKeyDown f)
                 | _              -> None)
         let children =
             items |> List.choose (function KidItem n -> Some n | _ -> None)
@@ -179,6 +189,19 @@ let onSubmit  (f: unit -> unit)   : HtmlItem = EventItem f
 let onInput   (f: string -> unit) : HtmlItem = InputItem f
 [<CompiledName("htmlOnChange")>]
 let onChange  (f: string -> unit) : HtmlItem = ChangeItem f
+
+// Dragging (see runtime/events.js): a press captures the pointer, so the moves and the release come to this element wherever the pointer goes; (x, y) are the
+// viewport's pixels.  `Browser.Events.measureSlots ()` says where the `data-slot` elements are now.
+[<CompiledName("htmlOnPointerDown")>]
+let onPointerDown   (f: float -> float -> unit) : HtmlItem = PointerDownItem f
+[<CompiledName("htmlOnPointerMove")>]
+let onPointerMove   (f: float -> float -> unit) : HtmlItem = PointerMoveItem f
+[<CompiledName("htmlOnPointerUp")>]
+let onPointerUp     (f: float -> float -> unit) : HtmlItem = PointerUpItem f
+[<CompiledName("htmlOnPointerCancel")>]
+let onPointerCancel (f: unit -> unit)           : HtmlItem = PointerCancelItem f
+[<CompiledName("htmlOnKeyDown")>]
+let onKeyDown       (f: string -> unit)         : HtmlItem = KeyDownItem f
 
 // ─── Text shorthand functions ──────────────────────────────────────────────────
 // via Yield(Node), enabling the `h1 "Hello"` / `p "text"` syntax without braces.

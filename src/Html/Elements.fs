@@ -17,6 +17,11 @@ and Attr =
     | OnClick   of (unit -> unit)
     | OnInput   of (string -> unit)
     | OnChange  of (string -> unit)
+    | OnPointerDown   of (float -> float -> unit)
+    | OnPointerMove   of (float -> float -> unit)
+    | OnPointerUp     of (float -> float -> unit)
+    | OnPointerCancel of (unit -> unit)
+    | OnKeyDown       of (string -> unit)
 
 /// Render a Node tree into a parent Element.
 let rec renderInto (parent: Element) (node: Node) : Element =
@@ -44,6 +49,11 @@ and applyAttr (el: Element) (attr: Attr) =
     | OnClick f       -> onClick el f
     | OnInput f       -> onInput el f
     | OnChange f      -> onChange el f
+    | OnPointerDown f   -> onPointerDown el f
+    | OnPointerMove f   -> onPointerMove el f
+    | OnPointerUp f     -> onPointerUp el f
+    | OnPointerCancel f -> onPointerCancel el f
+    | OnKeyDown f       -> onKeyDownWith el f
 
 /// Make the children of `parent` show `nodes`.  The view is built off-document and merged into what is on the page:
 /// elements that stay are updated in place, so a focused input keeps focus, caret and selection through every render,

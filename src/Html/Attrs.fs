@@ -12,6 +12,11 @@ let attr_       k v = Attribute(k, v)
 let onClick_    f   = OnClick f
 let onInput_    f   = OnInput f
 let onChange_   f   = OnChange f
+let onPointerDown_   f = OnPointerDown f
+let onPointerMove_   f = OnPointerMove f
+let onPointerUp_     f = OnPointerUp f
+let onPointerCancel_ f = OnPointerCancel f
+let onKeyDown_       f = OnKeyDown f
 [<CompiledName("htmlAttrHref")>]
 let href        url = Attribute("href", url)
 [<CompiledName("htmlAttrSrc")>]

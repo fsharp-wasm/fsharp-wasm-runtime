@@ -35,3 +35,29 @@ export const off = (id, event) => {
 
 export const onInput  = (id, cb) => { const el = get(id); if (el) slot(el, "input",  "input:value",  (e) => cb(e.target.value)); };
 export const onChange = (id, cb) => { const el = get(id); if (el) slot(el, "change", "change:value", (e) => cb(e.target.value)); };
+
+// ─── Dragging: a press that is followed by the pointer, whatever the view re-renders in between ──────────────────────────────────────────────────
+// The press captures the pointer (so the moves and the release come to the same element even outside it) and focuses it (so a key — Escape — comes to it);
+// the element is kept across renders (adoptHandlers), so the capture survives the render each move causes.  Coordinates are the viewport's.
+export const onPointerDown = (id, cb) => {
+    const el = get(id);
+    if (el) slot(el, "pointerdown", "pointerdown:press", (e) => {
+        if (e.button !== 0) return;
+        el.setPointerCapture?.(e.pointerId);
+        el.focus?.({ preventScroll: true });
+        e.preventDefault();
+        cb(e.clientX, e.clientY);
+    });
+};
+export const onPointerMove   = (id, cb) => { const el = get(id); if (el) slot(el, "pointermove",   "pointermove:move",     (e) => cb(e.clientX, e.clientY)); };
+export const onPointerUp     = (id, cb) => { const el = get(id); if (el) slot(el, "pointerup",     "pointerup:release",    (e) => cb(e.clientX, e.clientY)); };
+export const onPointerCancel = (id, cb) => { const el = get(id); if (el) slot(el, "pointercancel", "pointercancel:cancel", () => cb()); };
+export const onKeyDown       = (id, cb) => { const el = get(id); if (el) slot(el, "keydown",       "keydown:key",          (e) => cb(e.key)); };
+
+/** The places a drag can drop: every element with a `data-slot` (its number), as (id, x, y, width, height, nests) in viewport coordinates, in document order. */
+export const measureSlots = (cb) => {
+    for (const el of document.querySelectorAll("[data-slot]")) {
+        const r = el.getBoundingClientRect();
+        cb(Number(el.dataset.slot), r.x, r.y, r.width, r.height, "nests" in el.dataset ? 1 : 0);
+    }
+};
