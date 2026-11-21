@@ -25,6 +25,9 @@ jobs:
       - name: Pointer events (a press on a kept element, the moves outside it, a key)
         run: node tests/e2e/events.mjs
 
+      - name: The DOM reconciler with SVG (the namespace, a kept element, the class)
+        run: node tests/e2e/dom.mjs
+
       - name: Landing page, embedded demos, benchmark, links
         run: node tests/e2e/site.mjs
 

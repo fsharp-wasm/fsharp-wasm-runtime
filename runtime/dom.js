@@ -5,7 +5,11 @@ import { adoptHandlers } from "./events.js";
 const handles = new WeakMap();
 const create  = (node) => { handles.set(node, save(node)); return handles.get(node); };
 
-export const createElement    = (tag)        => create(document.createElement(tag));
+const SVG_NS = "http://www.w3.org/2000/svg";
+/** The tags of SVG: such an element made by `createElement` is an unknown HTML element, which draws nothing, so it is created in the SVG namespace. */
+const SVG_TAGS = new Set(["svg", "g", "path", "circle", "ellipse", "line", "polyline", "polygon", "rect", "defs", "use", "symbol", "clipPath", "linearGradient", "radialGradient", "stop", "text", "tspan"]);
+
+export const createElement    = (tag)        => create(SVG_TAGS.has(tag) ? document.createElementNS(SVG_NS, tag) : document.createElement(tag));
 export const createTextNode   = (text)       => create(document.createTextNode(text));
 export const setTextContent   = (id, text)   => { const el = get(id); if (el) el.textContent = text; };
 export const setInnerHtml     = (id, html)   => { const el = get(id); if (el) el.innerHTML = html; };
@@ -15,7 +19,8 @@ export const removeElement    = (id)         => { const el = get(id); if (el) el
 // an empty name is "no attribute" (`disabled false` yields one), not an error
 export const setAttribute     = (id, key, value) => { const el = get(id); if (el && key) el.setAttribute(key, value); };
 export const removeAttribute  = (id, key)    => { const el = get(id); if (el) el.removeAttribute(key); };
-export const setClassName     = (id, cls)    => { const el = get(id); if (el) el.className = cls; };
+// the attribute, not `className`: that of an SVG element is not a string
+export const setClassName     = (id, cls)    => { const el = get(id); if (el) el.setAttribute("class", cls); };
 export const setStyle         = (id, prop, value) => { const el = get(id); if (el) el.style[prop] = value; };
 export const clearInnerHtml   = (id)         => { const el = get(id); if (el) el.innerHTML = ""; };
 export const querySelector    = (id, sel)    => { const el = get(id); if (!el) return 0; const found = el.querySelector(sel); return found ? save(found) : 0; };
