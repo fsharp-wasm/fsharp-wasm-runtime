@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- `gfx.js`: a canvas module gets the editing shortcuts as keys of the toolkit: Ctrl/Cmd+Z arrives as `Undo`, Ctrl/Cmd+Y and Ctrl/Cmd+Shift+Z as `Redo` (the browser's default is prevented for these only; every other chord with Ctrl, Cmd or Alt stays the browser's).
 - A sandboxed iframe and the page talk through `Browser.Events.onFrameMessage selector cb` (what the frame says, as JSON text, from that frame only, looked up at each message) and `postToFrame selector json`; `tests/e2e/frames.mjs` drives it in Chromium without a compiled module.
 - SVG in the `Browser.Html` DSL: `createElement` makes `svg`, `g`, `path`, `circle`, `ellipse`, `line`, `polyline`, `polygon`, `rect` (and a few more) in the SVG namespace, so `el "svg" { … }` draws; the reconciler keeps such an element through a render and updates its attributes (`viewBox` keeps its case), and a class is set as the attribute (an SVG element's `className` is not a string). `tests/e2e/dom.mjs` drives it in Chromium without a compiled module.
 - Dragging (`runtime/events.js`, `Browser.Events`, the `Browser.Html` DSL): `onPointerDown` captures the pointer on the element the page has and focuses it, so the moves, the

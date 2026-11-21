@@ -162,8 +162,17 @@ export function mount(instance, canvasId) {
     canvas.addEventListener("pointerleave", (e) => { const [x, y] = pos(e); ex.onPointer(3, x, y, e.button); });
     canvas.addEventListener("wheel", (e) => { e.preventDefault(); ex.onWheel(e.deltaX, e.deltaY); }, { passive: false });
 
-    // kind: 0 down, 1 up; browser shortcuts (Ctrl/Cmd/Alt chords) are left alone
+    // The editing shortcuts a module can own, under the toolkit's key names: Ctrl/Cmd+Z is "Undo", Ctrl/Cmd+Y and Ctrl/Cmd+Shift+Z are "Redo" (a key down only).  Every other chord
+    // with Ctrl, Cmd or Alt is the browser's and is left alone.
+    const shortcut = (e) => {
+        if (!(e.ctrlKey || e.metaKey) || e.altKey) return null;
+        const k = e.key.toLowerCase();
+        return k === "z" ? (e.shiftKey ? "Redo" : "Undo") : k === "y" ? "Redo" : null;
+    };
+    // kind: 0 down, 1 up
     const onKey = (kind) => (e) => {
+        const name = shortcut(e);
+        if (name) { if (kind === 0) { key = name; ex.onKey(0); e.preventDefault(); } return; }
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         key = e.key;
         ex.onKey(kind);
