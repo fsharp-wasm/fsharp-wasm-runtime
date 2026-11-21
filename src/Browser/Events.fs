@@ -31,6 +31,12 @@ let jsOnPointerCancel (id: Handle) (cb: unit -> unit) : unit = nativeOnly
 [<Import("onKeyDown",       "runtime/events.js")>]
 let jsOnKeyDown (id: Handle) (cb: string -> unit) : unit = nativeOnly
 
+[<Import("onFrameMessage",  "runtime/events.js")>]
+let jsOnFrameMessage (selector: string) (cb: string -> unit) : unit = nativeOnly
+
+[<Import("postToFrame",     "runtime/events.js")>]
+let jsPostToFrame (selector: string) (json: string) : unit = nativeOnly
+
 [<Import("swallowClick",    "runtime/events.js")>]
 let jsSwallowClick () : unit = nativeOnly
 
@@ -95,6 +101,13 @@ let onKeyDownWith   (el: Element) (f: string -> unit)         = let (El id) = el
 /// Call it when the page knows a pointer sequence was a drag, from the release handler or, when Escape ends the drag, while the pointer is still down: the click that the
 /// browser sends to the pressed element after a drag is not a click, and the next one is swallowed (it ends at that click, or at the next press or key).
 let swallowClick () : unit = jsSwallowClick ()
+
+/// What the iframe that `selector` finds says (`parent.postMessage` in the frame), as JSON text.  A preview in a sandboxed frame (`sandbox="allow-scripts"`) cannot touch the
+/// page: this is how the two talk.  The frame is looked up at each message, and the messages of other windows are not heard.
+let onFrameMessage (selector: string) (f: string -> unit) : unit = jsOnFrameMessage selector f
+
+/// Say something to the iframe that `selector` finds, as JSON text (nothing happens when there is none).
+let postToFrame (selector: string) (json: string) : unit = jsPostToFrame selector json
 
 /// The places a drag can drop, measured now: every element with a `data-slot` number, as (slot, x, y, width, height, nests), in document order.
 let measureSlots () : (int * float * float * float * float * bool) list =

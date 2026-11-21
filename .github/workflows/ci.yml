@@ -28,6 +28,9 @@ jobs:
       - name: The DOM reconciler with SVG (the namespace, a kept element, the class)
         run: node tests/e2e/dom.mjs
 
+      - name: Messages between the page and a sandboxed iframe
+        run: node tests/e2e/frames.mjs
+
       - name: Landing page, embedded demos, benchmark, links
         run: node tests/e2e/site.mjs
 

@@ -70,6 +70,19 @@ export const swallowClick = () => {
     for (const t of events) window.addEventListener(t, on, true);
 };
 
+/**
+ * What an iframe of the page says (`parent.postMessage`), as JSON text.  A preview runs in a sandboxed frame (`sandbox="allow-scripts"`): it cannot touch the page,
+ * and this is how the two talk.  The frame is looked up by `selector` at each message, because a render may have replaced it, and a message of any other window
+ * is not the frame's and is ignored.
+ */
+export const onFrameMessage = (selector, cb) => addEventListener("message", (e) => {
+    const f = document.querySelector(selector);
+    if (f && e.source === f.contentWindow) cb(JSON.stringify(e.data ?? null));
+});
+
+/** Say something (JSON text) to the iframe; nothing happens when there is none.  A sandboxed frame has no origin to name, so the target is "*". */
+export const postToFrame = (selector, json) => { document.querySelector(selector)?.contentWindow?.postMessage(JSON.parse(json), "*"); };
+
 /** The places a drag can drop: every element with a `data-slot` (its number), as (id, x, y, width, height, nests) in viewport coordinates, in document order. */
 export const measureSlots = (cb) => {
     for (const el of document.querySelectorAll("[data-slot]")) {
