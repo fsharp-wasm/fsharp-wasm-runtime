@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Dragging (`runtime/events.js`, `Browser.Events`, the `Browser.Html` DSL): `onPointerDown` captures the pointer on the element the page has and focuses it, so the moves, the
   release and a key (Escape) come to it wherever the pointer goes; `onPointerMove`, `onPointerUp`, `onPointerCancel`, `onKeyDown` (with the key), `measureSlots`
-  (where the `data-slot` elements are now) and `swallowClick` (the browser clicks the pressed element after a drag: the page swallows that one click).
+  (where the `data-slot` elements are now) and `swallowClick` (the browser clicks the pressed element after a drag, also after Escape has ended it: the page swallows that one click).
   `tests/e2e/events.mjs` drives it in Chromium without a compiled module.
 
 ### Changed

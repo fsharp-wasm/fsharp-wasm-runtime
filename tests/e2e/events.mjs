@@ -19,6 +19,7 @@ await page.evaluate(async () => {
   window.log = [];
   window.clicks = 0;
   window.swallow = false;                                       // what the page decides on release: was it a drag
+  window.swallowOnKey = false;                                  // … or on Escape in the middle of one
   live.addEventListener('click', () => window.clicks++);
   const log = (kind) => (x, y) => window.log.push(`${kind} ${Math.round(x ?? 0)} ${Math.round(y ?? 0)}`);
   // what a render does: build the element of the view with its handlers, merge it into the live one
@@ -26,7 +27,7 @@ await page.evaluate(async () => {
     const next = document.createElement('button');
     const id = save(next);
     onPointerDown(id, log('down')); onPointerMove(id, log('move')); onPointerUp(id, (x, y) => { log('up')(x, y); if (window.swallow) swallowClick(); }); onPointerCancel(id, () => window.log.push('cancel'));
-    onKeyDown(id, (key) => window.log.push(`key ${key}`));
+    onKeyDown(id, (key) => { window.log.push(`key ${key}`); if (window.swallowOnKey && key === 'Escape') swallowClick(); });
     adoptHandlers(live, next);
   };
   render(); render();                                            // the second render replaces the first one's handlers on the same element
@@ -53,8 +54,18 @@ check('the click after a drag is swallowed when the page says so', await page.ev
 await page.evaluate(() => { window.swallow = false; });
 await page.mouse.move(40, 35); await page.mouse.down(); await page.mouse.up();
 check('and only that one: the next click comes through', await page.evaluate(() => window.clicks) === 2);
+// Escape in the middle of a drag ends it, and the pointer is still down: the page swallows the click of the release that comes later
+await page.evaluate(() => { window.swallowOnKey = true; });
+await page.mouse.move(40, 35); await page.mouse.down(); await page.mouse.move(300, 300, { steps: 4 });
+await page.keyboard.press('Escape');
+await page.mouse.up();
+await page.waitForTimeout(100);
+check('Escape in the middle of a drag: the click of the release is swallowed too', await page.evaluate(() => window.clicks) === 2);
+await page.evaluate(() => { window.swallowOnKey = false; });
+await page.mouse.move(40, 35); await page.mouse.down(); await page.mouse.up();
+check('and the click after that comes through', await page.evaluate(() => window.clicks) === 3);
 await page.mouse.move(40, 35); await page.keyboard.press('Space');
-check('a key press on the element still clicks it', await page.evaluate(() => window.clicks) === 3);
+check('a key press on the element still clicks it', await page.evaluate(() => window.clicks) === 4);
 
 await browser.close(); server.close();
 console.log(failures() ? `\n${failures()} check(s) failed` : '\nevents: all checks passed');

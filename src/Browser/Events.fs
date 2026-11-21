@@ -92,7 +92,8 @@ let onPointerCancel (el: Element) (f: unit -> unit)           = let (El id) = el
 /// A key press on the element, with the key (`"Escape"`, `"ArrowDown"`, `"a"`); `onKeyDown` above says only that one happened.
 let onKeyDownWith   (el: Element) (f: string -> unit)         = let (El id) = el in jsOnKeyDown id f
 
-/// Call it from the release handler of a drag: the click that the browser sends to the pressed element after it is not a click, and the next one is swallowed.
+/// Call it when the page knows a pointer sequence was a drag, from the release handler or, when Escape ends the drag, while the pointer is still down: the click that the
+/// browser sends to the pressed element after a drag is not a click, and the next one is swallowed (it ends at that click, or at the next press or key).
 let swallowClick () : unit = jsSwallowClick ()
 
 /// The places a drag can drop, measured now: every element with a `data-slot` number, as (slot, x, y, width, height, nests), in document order.
