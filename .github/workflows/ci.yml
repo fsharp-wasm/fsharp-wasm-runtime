@@ -22,6 +22,9 @@ jobs:
           npm ci --ignore-scripts
           npx playwright install --with-deps chromium
 
+      - name: Pointer events (a press on a kept element, the moves outside it, a key)
+        run: node tests/e2e/events.mjs
+
       - name: Landing page, embedded demos, benchmark, links
         run: node tests/e2e/site.mjs
 

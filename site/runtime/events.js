@@ -43,8 +43,9 @@ export const onPointerDown = (id, cb) => {
     const el = get(id);
     if (el) slot(el, "pointerdown", "pointerdown:press", (e) => {
         if (e.button !== 0) return;
-        el.setPointerCapture?.(e.pointerId);
-        el.focus?.({ preventScroll: true });
+        const live = e.currentTarget;                              // the element on the page: `el` is the one the render built, which the merge discards
+        live.setPointerCapture?.(e.pointerId);
+        live.focus?.({ preventScroll: true });
         e.preventDefault();
         cb(e.clientX, e.clientY);
     });
