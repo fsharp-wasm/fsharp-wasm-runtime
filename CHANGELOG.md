@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Dragging (`runtime/events.js`, `Browser.Events`, the `Browser.Html` DSL): `onPointerDown` captures the pointer on the element the page has and focuses it, so the moves, the
+  release and a key (Escape) come to it wherever the pointer goes; `onPointerMove`, `onPointerUp`, `onPointerCancel`, `onKeyDown` (with the key), `measureSlots`
+  (where the `data-slot` elements are now) and `swallowClick` (the browser clicks the pressed element after a drag: the page swallows that one click).
+  `tests/e2e/events.mjs` drives it in Chromium without a compiled module.
+
 ### Changed
 - The GUI builder demo is the **Widget Editor** of [fsharp-wasm-ide](https://github.com/fsharp-wasm/fsharp-wasm-ide) now
   (`demos/widget-editor`, `WidgetEditor.wasm`; build with `FSHARP_WASM_IDE_DIR`, or a checkout next to this repository); the old

@@ -55,6 +55,17 @@ export const onPointerUp     = (id, cb) => { const el = get(id); if (el) slot(el
 export const onPointerCancel = (id, cb) => { const el = get(id); if (el) slot(el, "pointercancel", "pointercancel:cancel", () => cb()); };
 export const onKeyDown       = (id, cb) => { const el = get(id); if (el) slot(el, "keydown",       "keydown:key",          (e) => cb(e.key)); };
 
+/**
+ * The click that ends a drag is not a click.  A captured pointer ends where it started, so the browser clicks the element that was pressed even after the pointer
+ * went elsewhere.  The page calls this from its release handler when it took the sequence for a drag; the next click, and only that one, is swallowed (a key press,
+ * which clicks too, comes after the timer has removed it).
+ */
+export const swallowClick = () => {
+    const stop = (e) => { e.stopImmediatePropagation(); e.preventDefault(); };
+    window.addEventListener("click", stop, { capture: true, once: true });
+    setTimeout(() => window.removeEventListener("click", stop, { capture: true }), 0);
+};
+
 /** The places a drag can drop: every element with a `data-slot` (its number), as (id, x, y, width, height, nests) in viewport coordinates, in document order. */
 export const measureSlots = (cb) => {
     for (const el of document.querySelectorAll("[data-slot]")) {

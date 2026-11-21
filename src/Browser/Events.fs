@@ -31,6 +31,9 @@ let jsOnPointerCancel (id: Handle) (cb: unit -> unit) : unit = nativeOnly
 [<Import("onKeyDown",       "runtime/events.js")>]
 let jsOnKeyDown (id: Handle) (cb: string -> unit) : unit = nativeOnly
 
+[<Import("swallowClick",    "runtime/events.js")>]
+let jsSwallowClick () : unit = nativeOnly
+
 [<Import("measureSlots",    "runtime/events.js")>]
 let jsMeasureSlots (cb: float -> float -> float -> float -> float -> float -> unit) : unit = nativeOnly
 
@@ -88,6 +91,9 @@ let onPointerUp     (el: Element) (f: float -> float -> unit) = let (El id) = el
 let onPointerCancel (el: Element) (f: unit -> unit)           = let (El id) = el in jsOnPointerCancel id f
 /// A key press on the element, with the key (`"Escape"`, `"ArrowDown"`, `"a"`); `onKeyDown` above says only that one happened.
 let onKeyDownWith   (el: Element) (f: string -> unit)         = let (El id) = el in jsOnKeyDown id f
+
+/// Call it from the release handler of a drag: the click that the browser sends to the pressed element after it is not a click, and the next one is swallowed.
+let swallowClick () : unit = jsSwallowClick ()
 
 /// The places a drag can drop, measured now: every element with a `data-slot` number, as (slot, x, y, width, height, nests), in document order.
 let measureSlots () : (int * float * float * float * float * bool) list =
