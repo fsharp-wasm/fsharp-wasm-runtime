@@ -1,32 +1,32 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>fsharp-wasm — F# compiled to WebAssembly GC</title>
 <meta name="description" content="A real F# → WasmGC compiler, differential-tested against .NET, and the 100-line runtime that puts it in your browser. This page is F#.">
 <link rel="stylesheet" href="vendor/pico.min.css">
+<script src="runtime/frame.js" data-footer></script>
 <style>
-  :root { --accent: #7cf5c0; }
-  body { background: #0b1020; }
+  :root { --accent: var(--fw-primary); }
   .hero { padding: 5rem 0 3rem; text-align: center; }
   .hero h1 { font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; margin-bottom: 1rem; }
   .hero h1 em { font-style: normal; color: var(--accent); }
   .hero p.lead { max-width: 46rem; margin: 0 auto 2rem; font-size: 1.2rem; opacity: .85; }
   .cta a[role=button] { margin: .25rem; }
-  .sponsor { background: var(--accent); border-color: var(--accent); color: #0b1020; font-weight: 700; }
+  .sponsor { background: var(--accent); border-color: var(--accent); color: var(--fw-on-primary); font-weight: 700; }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; margin: 2rem 0; }
-  .stat { text-align: center; padding: 1.2rem; border: 1px solid #24304f; border-radius: 12px; }
+  .stat { text-align: center; padding: 1.2rem; border: 1px solid var(--fw-line); border-radius: 12px; }
   .stat b { display: block; font-size: 2rem; color: var(--accent); }
   .stat span { opacity: .75; font-size: .9rem; }
   section { margin: 4rem 0; }
   h2.sec { margin-bottom: .25rem; }
   p.sub { opacity: .75; margin-bottom: 1.5rem; }
   .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 1rem; align-items: start; }
-  .demos iframe { width: 100%; border: 1px solid #24304f; border-radius: 12px; background: #fff; }
+  .demos iframe { width: 100%; border: 1px solid var(--fw-line); border-radius: 12px; background: #fff; }
   .demos iframe.wide { grid-column: 1 / -1; }
   .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .75rem; }
-  .gallery a { display: block; padding: .9rem 1rem; border: 1px solid #24304f; border-radius: 12px; text-decoration: none; }
+  .gallery a { display: block; padding: .9rem 1rem; border: 1px solid var(--fw-line); border-radius: 12px; text-decoration: none; }
   .gallery a:hover { border-color: var(--accent); }
   .gallery b { display: block; } .gallery span { opacity: .7; font-size: .85rem; }
   table td.num, table th.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -36,7 +36,6 @@
   .steps article { margin: 0; }
   .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
   .tiers article { margin: 0; }
-  footer { opacity: .6; text-align: center; padding: 3rem 0; font-size: .9rem; }
 </style>
 </head>
 <body>
@@ -156,7 +155,7 @@ let start () = run "counter-root" { Init = init; Update = update; View = view }<
   <p class="cta" style="margin-top:2rem;text-align:center"><a role="button" class="sponsor" href="https://github.com/sponsors/fsharp-wasm">♥ Become a sponsor</a></p>
 </section>
 
-<footer><p>Needs WebAssembly GC and the JS String Builtins: Chrome / Edge 130+, Firefox 134+.</p>fsharp-wasm · F# → WebAssembly GC · MIT · built with itself</footer>
+<p class="hint"><small>Needs WebAssembly GC and the JS String Builtins: Chrome / Edge 130+, Firefox 134+.</small></p>
 </main>
 
 <script type="module">

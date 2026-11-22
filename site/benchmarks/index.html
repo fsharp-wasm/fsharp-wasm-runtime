@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Benchmarks — speed, size, network</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <script src="../runtime/frame.js" data-here="Benchmarks" data-footer></script>
   <style>
     table { font-size: .875rem; }
     td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -50,7 +51,8 @@
     <hgroup>
       <h1>Benchmarks — speed, size, network</h1>
       <p>Measured, recorded and published as they are: the raw reports are linked below each table. Speed compares the same thirteen algorithms in F# (compiled to
-         WasmGC by fsharp-wasm) and in JavaScript; size and network are the cost of shipping the compiled modules.</p>
+         WasmGC by fsharp-wasm) and in JavaScript; size and network are the cost of shipping the compiled modules. The same tables are on
+         <a href="https://fsharp-wasm.github.io/benchmarks">fsharp-wasm.github.io/benchmarks</a>; this page also draws the chart and measures your own connection.</p>
     </hgroup>
   </header>
 
@@ -98,7 +100,7 @@
     <div class="scroll"><table><thead><tr><th>Module</th><th class="num">raw</th><th class="num">sent as gzip</th><th class="num">request (none / gzip / brotli asked)</th></tr></thead><tbody id="host-body"></tbody></table></div>
     <p class="note" id="host-files"></p>
 
-    <h3>Load times on your connection</h3>
+    <h3 id="live">Load times on your connection</h3>
     <p class="note">Fetches every module of this site now (cache bypassed) and compiles it — the real line between you and this host, with whatever encoding it sends.</p>
     <div class="controls"><button id="live-run">Measure</button><span class="note" id="live-conn"></span></div>
     <div class="scroll"><table><thead><tr><th>Module</th><th class="num">on the wire</th><th class="num">download</th><th class="num">speed</th><th class="num">compile</th></tr></thead><tbody id="live-body"></tbody></table></div>
