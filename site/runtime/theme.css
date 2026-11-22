@@ -10,6 +10,7 @@
   --fw-font: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --fw-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --fw-primary: #6d28d9;
+  --fw-primary-rgb: 109, 40, 217;
   --fw-secondary: #4f46e5;
   --fw-accent: #8b5cf6;
   --fw-on-primary: #fff;
@@ -29,6 +30,7 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --fw-primary: #8b5cf6;
+    --fw-primary-rgb: 139, 92, 246;
     --fw-secondary: #6d28d9;
     --fw-accent: #a78bfa;
     --fw-heading: #f7f8f8;
@@ -43,6 +45,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --fw-primary: #8b5cf6;
+  --fw-primary-rgb: 139, 92, 246;
   --fw-secondary: #6d28d9;
   --fw-accent: #a78bfa;
   --fw-heading: #f7f8f8;
@@ -92,13 +95,37 @@ body { background: var(--fw-page); color: var(--fw-text); font-family: var(--fw-
 h1, h2, h3, h4, h5, h6 { letter-spacing: -.01em; }
 ::selection { background: color-mix(in srgb, var(--fw-accent) 30%, transparent); }
 
-/* the site's buttons are pills */
-button, [role="button"], input[type="submit"], input[type="button"] { border-radius: 9999px; font-weight: 600; }
+/* the site's buttons are pills (a Bootstrap .btn keeps its own shape: the designer is a tool with many small controls) */
+button:not(.btn), [role="button"], input[type="submit"], input[type="button"] { border-radius: 9999px; font-weight: 600; }
 .secondary, [role="button"].secondary, button.secondary {
   --pico-background-color: transparent;
   background: transparent; color: var(--fw-text); border: 1px solid var(--fw-line);
 }
 .secondary:hover { border-color: var(--fw-muted); }
+
+/* ── Bootstrap 5.3 (the newsletter designer) mapped onto the properties ── */
+:root:root {
+  --bs-body-font-family: var(--fw-font);
+  --bs-font-monospace: var(--fw-mono);
+  --bs-primary: var(--fw-primary);
+  --bs-primary-rgb: var(--fw-primary-rgb);
+  --bs-link-color: var(--fw-primary);
+  --bs-link-color-rgb: var(--fw-primary-rgb);
+  --bs-link-hover-color: var(--fw-secondary);
+  --bs-focus-ring-color: color-mix(in srgb, var(--fw-accent) 30%, transparent);
+}
+.btn-primary {
+  --bs-btn-bg: var(--fw-primary); --bs-btn-border-color: var(--fw-primary);
+  --bs-btn-hover-bg: var(--fw-secondary); --bs-btn-hover-border-color: var(--fw-secondary);
+  --bs-btn-active-bg: var(--fw-secondary); --bs-btn-active-border-color: var(--fw-secondary);
+  --bs-btn-disabled-bg: var(--fw-primary); --bs-btn-disabled-border-color: var(--fw-primary);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--fw-primary); --bs-btn-border-color: var(--fw-primary);
+  --bs-btn-hover-bg: var(--fw-primary); --bs-btn-hover-border-color: var(--fw-primary);
+  --bs-btn-active-bg: var(--fw-primary); --bs-btn-active-border-color: var(--fw-primary);
+  --bs-btn-disabled-color: var(--fw-primary); --bs-btn-disabled-border-color: var(--fw-primary);
+}
 
 /* ── the bar: the site's header, for the pages of the platform that are not the site ── */
 .fw-bar {
