@@ -52,6 +52,25 @@ export const begin = (w, h, r) => {
     cx.clearRect(0, 0, w, h);
 };
 
+/**
+ * Redraw only a part of the canvas: clip to it and clear it, then the commands that touch it are drawn, and `regionEnd` gives the clip back.  The rectangle (in CSS px) is
+ * widened to whole device pixels, so that its edges are not blended with what is outside and the pixels inside come out as in a frame that is drawn whole.
+ */
+export const region = (x, y, w, h) => {
+    const x0 = Math.floor(x * ratio), y0 = Math.floor(y * ratio);
+    const x1 = Math.ceil((x + w) * ratio), y1 = Math.ceil((y + h) * ratio);
+    cx.save();
+    cx.setTransform(1, 0, 0, 1, 0, 0);
+    cx.beginPath();
+    cx.rect(x0, y0, x1 - x0, y1 - y0);
+    cx.clip();
+    cx.clearRect(x0, y0, x1 - x0, y1 - y0);
+    cx.setTransform(ratio, 0, 0, ratio, 0, 0);
+};
+export const regionEnd = () => cx.restore();
+/** 1 when the page asks for every frame to be drawn whole (`?fullframes`): to compare the pictures of the two ways in a test. */
+export const fullFrames = () => (new URLSearchParams(location.search).has("fullframes") ? 1 : 0);
+
 export const save      = () => cx.save();
 export const restore   = () => cx.restore();
 export const transform = (a, b, c, d, e, f) => cx.transform(a, b, c, d, e, f);
