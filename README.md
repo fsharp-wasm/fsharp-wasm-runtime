@@ -1,5 +1,9 @@
 # fsharp-wasm-runtime
 
+<!-- platform -->
+> **Part of the [fsharp-wasm platform](https://fsharp-wasm.github.io/projects/)**: the browser. Builds on [core](https://github.com/fsharp-wasm/fsharp-wasm-core). Used by [ide](https://github.com/fsharp-wasm/fsharp-wasm-ide), [backend](https://github.com/fsharp-wasm/fsharp-wasm-backend) (the canvas client), [newsletter](https://github.com/fsharp-wasm/fsharp-wasm-newsletter).
+> [All projects](https://fsharp-wasm.github.io/projects/) · [Roadmap](https://fsharp-wasm.github.io/docs/roadmap/) · [Tests](https://fsharp-wasm.github.io/tests/) · [Benchmarks](https://fsharp-wasm.github.io/benchmarks/) · [Live demos](https://fsharp-wasm.github.io/demos/)
+
 The official browser runtime for F# compiled to WebAssembly GC (.NET 10 / F# 10).
 
 Write **100% F#** browser applications with clean `Browser.*` APIs.
