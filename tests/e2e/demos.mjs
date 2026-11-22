@@ -203,7 +203,8 @@ await demo('full-dashboard', async (page) => {
 // events at canvas coordinates and judged by what the canvas shows.  Skipped when this build did not include it.
 if ((await fetch(`${base}/demos/widget-editor/index.html`)).ok)
   await demo('widget-editor', async (page) => {
-    await page.setViewportSize({ width: 1280, height: 1100 });
+    // the canvas (720 px) has to fit the viewport below the page's bar and heading, or the page scrolls when it takes the focus and the coordinates measured here are stale
+    await page.setViewportSize({ width: 1280, height: 1200 });
     await page.waitForTimeout(500);
     const box = await page.locator('#gfx').boundingBox();
     const at = (x, y) => [box.x + x, box.y + y];

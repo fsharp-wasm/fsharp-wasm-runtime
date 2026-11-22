@@ -1,0 +1,133 @@
+/* theme.css — the look of the fsharp-wasm platform, in one place: the colours, the type and the bar that the site fsharp-wasm.github.io has, as custom properties (--fw-*) and as the
+ * mapping of Pico CSS (the demo pages) onto them.  The editors, the newsletter designer and the Ghost pages read the same properties, so a page of the platform looks like the site
+ * whichever stack draws it.  Light by default, dark when the system asks for it or the page says data-theme="dark".
+ *
+ * The values are the site's own (src/components/CustomStyles.astro in fsharp-wasm.github.io): change them there and here together. */
+
+/* The site's typeface is Inter; a machine that has it uses it, the others their own sans-serif (the font file is not shipped from here: its licence, the SIL OFL, is not on the list of this project's). */
+
+:root {
+  --fw-font: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fw-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fw-primary: #6d28d9;
+  --fw-secondary: #4f46e5;
+  --fw-accent: #8b5cf6;
+  --fw-on-primary: #fff;
+  --fw-heading: #000;
+  --fw-text: #101010;
+  --fw-muted: rgb(16 16 16 / 66%);
+  --fw-page: #fff;
+  --fw-surface: #f8fafc;
+  --fw-line: #e2e8f0;
+  --fw-radius: .5rem;
+  --fw-shadow: 0 .375rem 1.5rem 0 rgb(140 152 164 / 13%);
+  --fw-bar-height: 4rem;
+  color-scheme: light;
+}
+/* the dark values, once for the system asking and once for a page that says so (CSS has no way to write them once) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --fw-primary: #8b5cf6;
+    --fw-secondary: #6d28d9;
+    --fw-accent: #a78bfa;
+    --fw-heading: #f7f8f8;
+    --fw-text: #e5ecf6;
+    --fw-muted: rgb(229 236 246 / 66%);
+    --fw-page: #050414;
+    --fw-surface: #0d0c24;
+    --fw-line: #24304f;
+    --fw-shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --fw-primary: #8b5cf6;
+  --fw-secondary: #6d28d9;
+  --fw-accent: #a78bfa;
+  --fw-heading: #f7f8f8;
+  --fw-text: #e5ecf6;
+  --fw-muted: rgb(229 236 246 / 66%);
+  --fw-page: #050414;
+  --fw-surface: #0d0c24;
+  --fw-line: #24304f;
+  --fw-shadow: none;
+}
+
+/* ── Pico CSS (the demo pages) mapped onto the properties; `:root:root` is as specific as Pico's own selectors, and this file comes after Pico ── */
+:root:root {
+  --pico-font-family: var(--fw-font);
+  --pico-font-family-monospace: var(--fw-mono);
+  --pico-background-color: var(--fw-page);
+  --pico-color: var(--fw-text);
+  --pico-muted-color: var(--fw-muted);
+  --pico-muted-border-color: var(--fw-line);
+  --pico-h1-color: var(--fw-heading);
+  --pico-h2-color: var(--fw-heading);
+  --pico-h3-color: var(--fw-heading);
+  --pico-h4-color: var(--fw-heading);
+  --pico-h5-color: var(--fw-heading);
+  --pico-h6-color: var(--fw-heading);
+  --pico-primary: var(--fw-primary);
+  --pico-primary-background: var(--fw-primary);
+  --pico-primary-border: var(--fw-primary);
+  --pico-primary-underline: color-mix(in srgb, var(--fw-primary) 50%, transparent);
+  --pico-primary-hover: var(--fw-secondary);
+  --pico-primary-hover-background: var(--fw-secondary);
+  --pico-primary-hover-border: var(--fw-secondary);
+  --pico-primary-hover-underline: var(--fw-secondary);
+  --pico-primary-focus: color-mix(in srgb, var(--fw-accent) 40%, transparent);
+  --pico-primary-inverse: var(--fw-on-primary);
+  --pico-form-element-focus-color: var(--fw-primary);
+  --pico-form-element-active-border-color: var(--fw-primary);
+  --pico-card-background-color: var(--fw-surface);
+  --pico-card-sectioning-background-color: var(--fw-surface);
+  --pico-card-border-color: var(--fw-line);
+  --pico-card-box-shadow: var(--fw-shadow);
+  --pico-border-radius: var(--fw-radius);
+  --pico-typography-spacing-vertical: 1.25rem;
+}
+
+body { background: var(--fw-page); color: var(--fw-text); font-family: var(--fw-font); }
+h1, h2, h3, h4, h5, h6 { letter-spacing: -.01em; }
+::selection { background: color-mix(in srgb, var(--fw-accent) 30%, transparent); }
+
+/* the site's buttons are pills */
+button, [role="button"], input[type="submit"], input[type="button"] { border-radius: 9999px; font-weight: 600; }
+.secondary, [role="button"].secondary, button.secondary {
+  --pico-background-color: transparent;
+  background: transparent; color: var(--fw-text); border: 1px solid var(--fw-line);
+}
+.secondary:hover { border-color: var(--fw-muted); }
+
+/* ── the bar: the site's header, for the pages of the platform that are not the site ── */
+.fw-bar {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; gap: 1.5rem;
+  min-height: var(--fw-bar-height); padding: 0 1.25rem; box-sizing: border-box;
+  background: color-mix(in srgb, var(--fw-page) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--fw-line);
+  box-shadow: var(--fw-shadow);
+  font: 500 .9rem/1.2 var(--fw-font);
+}
+/* Pico gives links and every <nav> padding and negative margins: the bar's are a row of their own */
+.fw-bar a { margin: 0; padding: 0; color: var(--fw-text); text-decoration: none; }
+.fw-bar a:hover { color: var(--fw-primary); }
+.fw-brand { display: flex; align-items: center; gap: .5rem; font-size: 1.25rem; font-weight: 700; white-space: nowrap; }
+.fw-brand img { width: 1.75rem; height: 1.75rem; border-radius: .25rem; }
+.fw-brand b { color: var(--fw-primary); font-weight: 700; }
+.fw-brand i { color: var(--fw-accent); font-style: normal; }
+.fw-bar .fw-here { padding-left: .75rem; border-left: 1px solid var(--fw-line); color: var(--fw-muted); white-space: nowrap; }
+.fw-bar nav.fw-links { display: flex; justify-content: flex-start; align-items: center; gap: 1.25rem; margin: 0 auto 0 .5rem; padding: 0; }
+.fw-bar a.fw-gh { margin-left: auto; padding: .5rem 1rem; border: 1px solid var(--fw-line); border-radius: 9999px; white-space: nowrap; }
+.fw-bar a.fw-gh:hover { border-color: var(--fw-muted); color: var(--fw-text); }
+/* an application: the bar takes less of the height it needs for itself */
+.fw-bar.fw-compact { --fw-bar-height: 2.5rem; padding: 0 .75rem; gap: 1rem; font-size: .8rem; }
+.fw-compact .fw-brand { font-size: 1rem; }
+.fw-compact .fw-brand img { width: 1.25rem; height: 1.25rem; }
+.fw-bar.fw-compact a.fw-gh { padding: .3rem .7rem; }
+@media (max-width: 40rem) { .fw-bar nav.fw-links, .fw-bar .fw-here { display: none; } }
+
+.fw-foot { padding: 3rem 1.25rem; text-align: center; font: .85rem/1.5 var(--fw-font); color: var(--fw-muted); border-top: 1px solid var(--fw-line); }
+.fw-foot a { color: var(--fw-primary); }

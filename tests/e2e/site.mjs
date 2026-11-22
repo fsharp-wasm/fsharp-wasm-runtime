@@ -12,6 +12,7 @@ await page.waitForFunction(() => window.__ready === true);
 
 check('title', /WebAssembly GC/.test(await page.title()), await page.title());
 check('sponsor link', (await page.locator('a[href="https://github.com/sponsors/fsharp-wasm"]').count()) >= 2);
+check('the bar of the platform leads to the site', (await page.locator('.fw-bar a.fw-brand[href="https://fsharp-wasm.github.io/"]').count()) === 1);
 
 // the demos embedded in the page run
 const frame = (title) => page.frameLocator(`iframe[title="${title}"]`);
@@ -20,6 +21,7 @@ for (const t of ['Counter', 'Todo list', 'Mandelbrot: F# vs JavaScript', 'Dashbo
 
 const counter = frame('Counter');
 await counter.locator('.count-display').waitFor({ timeout: 15000 });
+check('an embedded demo has the look but not the bar', (await counter.locator('.fw-bar').count()) === 0 && (await counter.locator('body').evaluate((b) => getComputedStyle(b).getPropertyValue('--fw-primary') !== '' || getComputedStyle(document.documentElement).getPropertyValue('--fw-primary') !== '')));
 await counter.locator('button:has-text("+")').click();
 await counter.locator('button:has-text("+")').click();
 check('embedded counter counts', (await counter.locator('.count-display').textContent()) === '2');
