@@ -31,6 +31,9 @@ jobs:
       - name: Messages between the page and a sandboxed iframe
         run: node tests/e2e/frames.mjs
 
+      - name: HTTP requests (method, headers, body, an error status, no answer at all)
+        run: node tests/e2e/net.mjs
+
       - name: Landing page, embedded demos, benchmark, links
         run: node tests/e2e/site.mjs
 

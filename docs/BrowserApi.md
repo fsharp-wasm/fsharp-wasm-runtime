@@ -178,14 +178,17 @@ Browser.Components.define "my-widget" (fun root ->
 
 ## Browser.Net
 
-HTTP Fetch and WebSocket.
+HTTP and WebSocket.  A module cannot wait for a promise, so every answer comes to a callback; `request` gives it the status (0 when no answer arrived at all) and the body.
 
 ```fsharp
 type WebSocket                         // Typed WebSocket wrapper
 
-val fetchText : string -> string
-val fetchJson : string -> Handle
-val postJson : string -> obj -> Handle
+val request : httpMethod: string -> url: string -> body: string -> headers: (string * string) list -> (int -> string -> unit) -> unit
+val get : string -> (int -> string -> unit) -> unit
+val post : string -> string -> (int -> string -> unit) -> unit   // the body is JSON text
+val fetchText : string -> (string -> unit) -> unit
+val fetchJson : string -> (Handle -> unit) -> unit
+val postJson : string -> string -> (Handle -> unit) -> unit
 val wsOpen : string -> WebSocket
 val wsSend : WebSocket -> string -> unit
 val wsOnMessage : WebSocket -> (string -> unit) -> unit

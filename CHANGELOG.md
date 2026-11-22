@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- `Browser.Net.request method url body headers cb` (`runtime/net.js`): one HTTP request of any method, with headers and a body; the answer is the callback's `status` and `body` as text, and a status of 0 when no answer arrived at all (the network failed, CORS refused), so a failure is a value to match on. `get` and `post` are the short forms. `tests/e2e/net.mjs` drives it in Chromium without a compiled module (method, headers, body, an error status, no answer, JSON).
 - `gfx.js`: a canvas module gets the editing shortcuts as keys of the toolkit: Ctrl/Cmd+Z arrives as `Undo`, Ctrl/Cmd+Y and Ctrl/Cmd+Shift+Z as `Redo` (the browser's default is prevented for these only; every other chord with Ctrl, Cmd or Alt stays the browser's).
 - A sandboxed iframe and the page talk through `Browser.Events.onFrameMessage selector cb` (what the frame says, as JSON text, from that frame only, looked up at each message) and `postToFrame selector json`; `tests/e2e/frames.mjs` drives it in Chromium without a compiled module.
 - SVG in the `Browser.Html` DSL: `createElement` makes `svg`, `g`, `path`, `circle`, `ellipse`, `line`, `polyline`, `polygon`, `rect` (and a few more) in the SVG namespace, so `el "svg" { … }` draws; the reconciler keeps such an element through a render and updates its attributes (`viewBox` keeps its case), and a class is set as the attribute (an SVG element's `className` is not a string). `tests/e2e/dom.mjs` drives it in Chromium without a compiled module.
@@ -14,6 +15,7 @@ All notable changes to this project will be documented in this file.
   `tests/e2e/events.mjs` drives it in Chromium without a compiled module.
 
 ### Changed
+- **`Browser.Net.fetchText`, `fetchJson` and `postJson` take a callback** (`fetchText url (fun text -> …)`). They returned a promise where the F# type promised a value (a module cannot wait for a promise), so no program could have used them, and `postJson` encoded its body a second time. `fetchJson` gives the callback a handle to the parsed value, the nil handle when the body is not JSON.
 - The GUI builder demo is the **Widget Editor** of [fsharp-wasm-ide](https://github.com/fsharp-wasm/fsharp-wasm-ide) now
   (`demos/widget-editor`, `WidgetEditor.wasm`; build with `FSHARP_WASM_IDE_DIR`, or a checkout next to this repository); the old
   address `demos/graphics-editor/` forwards to it. `build.js` takes `coreDir` per external demo (where its checkout keeps
