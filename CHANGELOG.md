@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
   `tests/e2e/events.mjs` drives it in Chromium without a compiled module.
 
 ### Changed
+- `src/FSharpWasmRuntime.fsproj` takes the `Fable.Core` stubs of `FSharp.Wasm.Core` when `FSHARP_WASM_CORE_DIR` points at a checkout of fsharp-wasm-core, and keeps its own copy of `Interop.fs` otherwise. A program that uses the runtime and another library of the platform (the canvas client of the Ghost Todo: widgets, the protocol and `Browser.Net`) had two modules named `Fable.Core` and did not compile; the core's copy has everything of this one and the `Export` attribute.
 - **`Browser.Net.fetchText`, `fetchJson` and `postJson` take a callback** (`fetchText url (fun text -> …)`). They returned a promise where the F# type promised a value (a module cannot wait for a promise), so no program could have used them, and `postJson` encoded its body a second time. `fetchJson` gives the callback a handle to the parsed value, the nil handle when the body is not JSON.
 - The GUI builder demo is the **Widget Editor** of [fsharp-wasm-ide](https://github.com/fsharp-wasm/fsharp-wasm-ide) now
   (`demos/widget-editor`, `WidgetEditor.wasm`; build with `FSHARP_WASM_IDE_DIR`, or a checkout next to this repository); the old

@@ -25,8 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Fable.Core stubs (Import attribute, nativeOnly) — no NuGet needed -->
-    <Compile Include="Interop.fs" />
+    <!-- Fable.Core stubs (Import attribute, nativeOnly) — no NuGet needed.  A program that also uses another library of the platform must have one set of them (two modules
+         named Fable.Core in one program do not compile), so with a checkout of fsharp-wasm-core (FSHARP_WASM_CORE_DIR) these are the stubs of FSharp.Wasm.Core, which has
+         everything of the copy beside this file and the Export attribute; without one, the copy keeps this project buildable on its own. -->
+    <Compile Include="$(FSHARP_WASM_CORE_DIR)/FSharp.Wasm.Core/Interop.fs" Condition="'$(FSHARP_WASM_CORE_DIR)' != ''" />
+    <Compile Include="Interop.fs" Condition="'$(FSHARP_WASM_CORE_DIR)' == ''" />
 
     <!-- Browser core modules -->
     <Compile Include="Browser/Core.fs" />
