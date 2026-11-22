@@ -6,8 +6,9 @@
  *
  * site/ holds the landing page (index.html, hand-written) and the *prebuilt* demos, so deploying it needs no
  * compiler: the .wasm files are committed.  Only what a browser needs is copied — each demo's page, its .wasm and its
- * scripts, plus the shared runtime glue — never the compiler's side products (.wat, WIT, embedded components).
+ * scripts, plus the shared runtime glue — never the compiler's side products (.wat, WIT, embedded components).  The modules are copied without their name section.
  */
+import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 
@@ -48,7 +49,11 @@ for (const demo of readdirSync(join(DIST, "demos"))) {
     mkdirSync(to, { recursive: true });
     for (const file of readdirSync(from).filter(deployable)) {
         cpSync(join(from, file), join(to, file));
-        if (file.endsWith(".wasm")) wasm++;
+        if (file.endsWith(".wasm")) {
+            // The name section is for debuggers and profilers; a page does not need it, and it is a third to a half of a small module (measured 2026-11-22).  dist/ keeps it.
+            execFileSync("wasm-tools", ["strip", "-d", "^name$", join(to, file), "-o", join(to, file)]);
+            wasm++;
+        }
     }
 }
 for (const demo of kept.keys()) {
