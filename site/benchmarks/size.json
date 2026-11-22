@@ -1,6 +1,6 @@
 {
   "schema": "size-1",
-  "date": "2026-11-22T20:37:25.486Z",
+  "date": "2026-11-22T21:22:47.051Z",
   "env": {
     "chromium": "153.0.8010.12",
     "os": "linux x64",
@@ -46,9 +46,9 @@
       "id": "graphics-gallery/SceneGallery.wasm",
       "demo": "graphics-gallery",
       "file": "SceneGallery.wasm",
-      "raw": 94339,
-      "gzip": 37873,
-      "brotli": 31406
+      "raw": 106773,
+      "gzip": 42574,
+      "brotli": 35296
     },
     {
       "id": "indexeddb-crud/IndexedDbCrud.wasm",
@@ -94,9 +94,9 @@
       "id": "widget-editor/WidgetEditor.wasm",
       "demo": "widget-editor",
       "file": "WidgetEditor.wasm",
-      "raw": 164275,
-      "gzip": 59023,
-      "brotli": 46861
+      "raw": 176025,
+      "gzip": 63413,
+      "brotli": 50213
     },
     {
       "id": "worker-actor/WorkerActor.wasm",
@@ -114,9 +114,9 @@
         {
           "path": "/demos/graphics-gallery/SceneGallery.wasm",
           "type": "fetch",
-          "raw": 94339,
-          "gzip": 37873,
-          "brotli": 31406
+          "raw": 106773,
+          "gzip": 42574,
+          "brotli": 35296
         },
         {
           "path": "/vendor/pico.min.css",
@@ -163,9 +163,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -372,9 +372,9 @@
         }
       ],
       "total": {
-        "raw": 338403,
-        "gzip": 114150,
-        "brotli": 95456
+        "raw": 351851,
+        "gzip": 119200,
+        "brotli": 99653
       },
       "externalRequests": 1
     },
@@ -532,9 +532,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -699,9 +699,9 @@
         }
       ],
       "total": {
-        "raw": 74028,
-        "gzip": 30466,
-        "brotli": 26012
+        "raw": 75042,
+        "gzip": 30815,
+        "brotli": 26319
       },
       "externalRequests": 1
     },
@@ -718,9 +718,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -885,9 +885,9 @@
         }
       ],
       "total": {
-        "raw": 87922,
-        "gzip": 34800,
-        "brotli": 29131
+        "raw": 88936,
+        "gzip": 35149,
+        "brotli": 29438
       },
       "externalRequests": 1
     },
@@ -897,16 +897,16 @@
         {
           "path": "/demos/graphics-gallery/SceneGallery.wasm",
           "type": "fetch",
-          "raw": 94339,
-          "gzip": 37873,
-          "brotli": 31406
+          "raw": 106773,
+          "gzip": 42574,
+          "brotli": 35296
         },
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -1064,9 +1064,9 @@
         }
       ],
       "total": {
-        "raw": 156999,
-        "gzip": 63531,
-        "brotli": 53272
+        "raw": 170447,
+        "gzip": 68581,
+        "brotli": 57469
       },
       "externalRequests": 1
     },
@@ -1083,9 +1083,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -1250,9 +1250,9 @@
         }
       ],
       "total": {
-        "raw": 79183,
-        "gzip": 32340,
-        "brotli": 27480
+        "raw": 80197,
+        "gzip": 32689,
+        "brotli": 27787
       },
       "externalRequests": 1
     },
@@ -1269,9 +1269,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -1436,9 +1436,9 @@
         }
       ],
       "total": {
-        "raw": 75193,
-        "gzip": 31038,
-        "brotli": 26527
+        "raw": 76207,
+        "gzip": 31387,
+        "brotli": 26834
       },
       "externalRequests": 1
     },
@@ -1455,9 +1455,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -1622,9 +1622,9 @@
         }
       ],
       "total": {
-        "raw": 77188,
-        "gzip": 31708,
-        "brotli": 27008
+        "raw": 78202,
+        "gzip": 32057,
+        "brotli": 27315
       },
       "externalRequests": 1
     },
@@ -1634,9 +1634,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -1801,9 +1801,9 @@
         }
       ],
       "total": {
-        "raw": 67015,
-        "gzip": 27407,
-        "brotli": 23505
+        "raw": 68029,
+        "gzip": 27756,
+        "brotli": 23812
       },
       "externalRequests": 1
     },
@@ -1820,9 +1820,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -1980,9 +1980,9 @@
         }
       ],
       "total": {
-        "raw": 72741,
-        "gzip": 29998,
-        "brotli": 25695
+        "raw": 73755,
+        "gzip": 30347,
+        "brotli": 26002
       },
       "externalRequests": 1
     },
@@ -1992,16 +1992,16 @@
         {
           "path": "/demos/widget-editor/WidgetEditor.wasm",
           "type": "fetch",
-          "raw": 164275,
-          "gzip": 59023,
-          "brotli": 46861
+          "raw": 176025,
+          "gzip": 63413,
+          "brotli": 50213
         },
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -2159,9 +2159,9 @@
         }
       ],
       "total": {
-        "raw": 224732,
-        "gzip": 83810,
-        "brotli": 68021
+        "raw": 237496,
+        "gzip": 88549,
+        "brotli": 71680
       },
       "externalRequests": 1
     },
@@ -2178,9 +2178,9 @@
         {
           "path": "/runtime/gfx.js",
           "type": "script",
-          "raw": 9620,
-          "gzip": 3798,
-          "brotli": 3222
+          "raw": 10634,
+          "gzip": 4147,
+          "brotli": 3529
         },
         {
           "path": "/runtime/theme.css",
@@ -2352,9 +2352,9 @@
         }
       ],
       "total": {
-        "raw": 76095,
-        "gzip": 31458,
-        "brotli": 26886
+        "raw": 77109,
+        "gzip": 31807,
+        "brotli": 27193
       },
       "externalRequests": 1
     }

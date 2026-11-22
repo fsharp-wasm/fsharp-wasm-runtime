@@ -1,6 +1,6 @@
 {
   "schema": "network-1",
-  "date": "2026-11-22T20:37:25.486Z",
+  "date": "2026-11-22T21:22:47.051Z",
   "env": {
     "chromium": "153.0.8010.12",
     "os": "linux x64",
@@ -58,68 +58,68 @@
         "local": {
           "identity": {
             "wireBytes": 10586,
-            "downloadMs": 4.300000000046566,
-            "compileMs": 0.5
+            "downloadMs": 4.800000000279397,
+            "compileMs": 0.39999999990686774
           },
           "gzip": {
             "wireBytes": 4591,
-            "downloadMs": 4.199999999953434,
-            "compileMs": 0.39999999990686774
+            "downloadMs": 3.2999999998137355,
+            "compileMs": 0.40000000037252903
           },
           "br": {
             "wireBytes": 4116,
-            "downloadMs": 4.300000000046566,
-            "compileMs": 0.4000000001396984
+            "downloadMs": 4.699999999720603,
+            "compileMs": 0.5
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 10586,
-            "downloadMs": 28,
-            "compileMs": 0.39999999990686774
+            "downloadMs": 27,
+            "compileMs": 0.3000000002793968
           },
           "gzip": {
             "wireBytes": 4591,
-            "downloadMs": 26.899999999906868,
+            "downloadMs": 25.699999999720603,
             "compileMs": 0.5
           },
           "br": {
             "wireBytes": 4116,
-            "downloadMs": 25.5999999998603,
-            "compileMs": 0.4000000001396984
+            "downloadMs": 25.100000000093132,
+            "compileMs": 0.39999999990686774
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 10586,
-            "downloadMs": 101.80000000004657,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 100.39999999990687,
+            "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 4591,
-            "downloadMs": 95.5,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 95.60000000009313,
+            "compileMs": 0.40000000037252903
           },
           "br": {
             "wireBytes": 4116,
-            "downloadMs": 95.69999999995343,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 93.40000000037253,
+            "compileMs": 0.5
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 10586,
-            "downloadMs": 214.30000000004657,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 208.60000000009313,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 4591,
-            "downloadMs": 184.5,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 184.6999999997206,
+            "compileMs": 0.5
           },
           "br": {
             "wireBytes": 4116,
-            "downloadMs": 177.5,
+            "downloadMs": 174.5,
             "compileMs": 0.6000000000931323
           }
         },
@@ -127,16 +127,16 @@
           "identity": {
             "wireBytes": 10586,
             "downloadMs": 427.70000000018626,
-            "compileMs": 0.8999999999068677
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 4591,
-            "downloadMs": 352,
+            "downloadMs": 351.8000000002794,
             "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 4116,
-            "downloadMs": 336.39999999990687,
+            "downloadMs": 350.20000000018626,
             "compileMs": 0.5
           }
         }
@@ -153,85 +153,85 @@
         "local": {
           "identity": {
             "wireBytes": 6538,
-            "downloadMs": 3.800000000046566,
-            "compileMs": 0.30000000004656613
+            "downloadMs": 4.2000000001862645,
+            "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 2630,
-            "downloadMs": 4.100000000093132,
-            "compileMs": 0.30000000004656613
+            "downloadMs": 3.7000000001862645,
+            "compileMs": 0.2999999998137355
           },
           "br": {
             "wireBytes": 2377,
-            "downloadMs": 4.400000000139698,
-            "compileMs": 0.5
+            "downloadMs": 3.3999999999068677,
+            "compileMs": 0.39999999990686774
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 6538,
-            "downloadMs": 26.5,
+            "downloadMs": 26,
             "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 2630,
-            "downloadMs": 26.9000000001397,
-            "compileMs": 0.5
+            "downloadMs": 25.899999999906868,
+            "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 2377,
-            "downloadMs": 27.300000000046566,
+            "downloadMs": 25.399999999906868,
             "compileMs": 0.39999999990686774
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 6538,
-            "downloadMs": 97,
+            "downloadMs": 96.89999999990687,
             "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 2630,
-            "downloadMs": 94,
+            "downloadMs": 92.70000000018626,
             "compileMs": 0.5
           },
           "br": {
             "wireBytes": 2377,
-            "downloadMs": 94,
-            "compileMs": 0.5
+            "downloadMs": 92,
+            "compileMs": 0.6000000000931323
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 6538,
-            "downloadMs": 192.19999999995343,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 185.1999999997206,
+            "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 2630,
-            "downloadMs": 169.5,
+            "downloadMs": 169.89999999990687,
             "compileMs": 0.5
           },
           "br": {
             "wireBytes": 2377,
-            "downloadMs": 169.69999999995343,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 169.6999999997206,
+            "compileMs": 0.6000000000931323
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 6538,
-            "downloadMs": 382.0999999998603,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 367.20000000018626,
+            "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 2630,
-            "downloadMs": 335.4000000001397,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 336,
+            "compileMs": 0.5
           },
           "br": {
             "wireBytes": 2377,
-            "downloadMs": 321.5,
+            "downloadMs": 321.6999999997206,
             "compileMs": 0.5
           }
         }
@@ -248,86 +248,86 @@
         "local": {
           "identity": {
             "wireBytes": 12915,
-            "downloadMs": 4.2000000001862645,
+            "downloadMs": 3.6000000000931323,
             "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 5440,
-            "downloadMs": 4,
+            "downloadMs": 3.3999999999068677,
             "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 4641,
-            "downloadMs": 3.699999999953434,
+            "downloadMs": 4.399999999906868,
             "compileMs": 0.5
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 12915,
-            "downloadMs": 28.899999999906868,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 28.399999999906868,
+            "compileMs": 0.39999999990686774
           },
           "gzip": {
             "wireBytes": 5440,
-            "downloadMs": 26.800000000046566,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 25.699999999720603,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 4641,
-            "downloadMs": 25.800000000046566,
+            "downloadMs": 25.800000000279397,
             "compileMs": 0.5
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 12915,
-            "downloadMs": 102.30000000004657,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 102.10000000009313,
+            "compileMs": 0.7000000001862645
           },
           "gzip": {
             "wireBytes": 5440,
-            "downloadMs": 95.60000000009313,
-            "compileMs": 0.7999999998137355
+            "downloadMs": 94.3000000002794,
+            "compileMs": 0.6999999997206032
           },
           "br": {
             "wireBytes": 4641,
-            "downloadMs": 96.30000000004657,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 95.29999999981374,
+            "compileMs": 0.5
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 12915,
-            "downloadMs": 222.70000000018626,
+            "downloadMs": 220.6999999997206,
             "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 5440,
-            "downloadMs": 183.5,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 184.5,
+            "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 4641,
-            "downloadMs": 185,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 178.6999999997206,
+            "compileMs": 0.8000000002793968
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 12915,
-            "downloadMs": 428.39999999990687,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 429,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 5440,
-            "downloadMs": 366.79999999981374,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 352.29999999981374,
+            "compileMs": 0.599999999627471
           },
           "br": {
             "wireBytes": 4641,
-            "downloadMs": 366.0999999998603,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 366.79999999981374,
+            "compileMs": 0.7000000001862645
           }
         }
       }
@@ -343,86 +343,86 @@
         "local": {
           "identity": {
             "wireBytes": 26825,
-            "downloadMs": 4.199999999953434,
+            "downloadMs": 3.3000000002793968,
             "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 9784,
-            "downloadMs": 3.7000000001862645,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 4.2000000001862645,
+            "compileMs": 0.599999999627471
           },
           "br": {
             "wireBytes": 7768,
-            "downloadMs": 4.099999999860302,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 6,
+            "compileMs": 1.1999999997206032
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 26825,
-            "downloadMs": 32.10000000009313,
-            "compileMs": 0.7999999998137355
+            "downloadMs": 32.60000000009313,
+            "compileMs": 0.6999999997206032
           },
           "gzip": {
             "wireBytes": 9784,
-            "downloadMs": 28.600000000093132,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 27.100000000093132,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 7768,
-            "downloadMs": 28.100000000093132,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 27.399999999906868,
+            "compileMs": 0.6999999997206032
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 26825,
-            "downloadMs": 114,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 116.09999999962747,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 9784,
-            "downloadMs": 99.10000000009313,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 98.79999999981374,
+            "compileMs": 1
           },
           "br": {
             "wireBytes": 7768,
-            "downloadMs": 99.60000000009313,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 96.89999999990687,
+            "compileMs": 0.6999999997206032
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 26825,
-            "downloadMs": 289.5999999998603,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 282.89999999990687,
+            "compileMs": 0.6999999997206032
           },
           "gzip": {
             "wireBytes": 9784,
-            "downloadMs": 206.60000000009313,
-            "compileMs": 0.9000000001396984
+            "downloadMs": 207,
+            "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 7768,
-            "downloadMs": 197.5999999998603,
-            "compileMs": 0.8999999999068677
+            "downloadMs": 199.89999999990687,
+            "compileMs": 0.7999999998137355
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 26825,
-            "downloadMs": 566.8000000000466,
-            "compileMs": 1
+            "downloadMs": 581.1000000000931,
+            "compileMs": 0.8000000002793968
           },
           "gzip": {
             "wireBytes": 9784,
-            "downloadMs": 412.9000000001397,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 412.60000000009313,
+            "compileMs": 0.6999999997206032
           },
           "br": {
             "wireBytes": 7768,
-            "downloadMs": 397.30000000004657,
-            "compileMs": 0.8999999999068677
+            "downloadMs": 382.60000000009313,
+            "compileMs": 0.7999999998137355
           }
         }
       }
@@ -431,93 +431,93 @@
       "id": "graphics-gallery/SceneGallery.wasm",
       "demo": "graphics-gallery",
       "file": "SceneGallery.wasm",
-      "raw": 94339,
-      "gzip": 37873,
-      "brotli": 31406,
+      "raw": 106773,
+      "gzip": 42574,
+      "brotli": 35296,
       "results": {
         "local": {
           "identity": {
-            "wireBytes": 94339,
-            "downloadMs": 4.199999999953434,
-            "compileMs": 1.1000000000931323
+            "wireBytes": 106773,
+            "downloadMs": 3.7999999998137355,
+            "compileMs": 1
           },
           "gzip": {
-            "wireBytes": 37873,
+            "wireBytes": 42574,
             "downloadMs": 4.5,
-            "compileMs": 1.3000000000465661
+            "compileMs": 1.2000000001862645
           },
           "br": {
-            "wireBytes": 31406,
-            "downloadMs": 6.5,
+            "wireBytes": 35296,
+            "downloadMs": 7,
             "compileMs": 1.3999999999068677
           }
         },
         "wifi": {
           "identity": {
-            "wireBytes": 94339,
-            "downloadMs": 52.5999999998603,
-            "compileMs": 1.2000000001862645
-          },
-          "gzip": {
-            "wireBytes": 37873,
-            "downloadMs": 37.800000000046566,
+            "wireBytes": 106773,
+            "downloadMs": 56.1999999997206,
             "compileMs": 1.3999999999068677
           },
+          "gzip": {
+            "wireBytes": 42574,
+            "downloadMs": 38.39999999990687,
+            "compileMs": 1.2000000001862645
+          },
           "br": {
-            "wireBytes": 31406,
-            "downloadMs": 37.10000000009313,
-            "compileMs": 1.3000000000465661
+            "wireBytes": 35296,
+            "downloadMs": 36.39999999990687,
+            "compileMs": 1.2000000001862645
           }
         },
         "4g": {
           "identity": {
-            "wireBytes": 94339,
-            "downloadMs": 176.5,
-            "compileMs": 1.3000000000465661
+            "wireBytes": 106773,
+            "downloadMs": 186.89999999990687,
+            "compileMs": 1.3000000002793968
           },
           "gzip": {
-            "wireBytes": 37873,
-            "downloadMs": 126.0999999998603,
-            "compileMs": 1.3999999999068677
+            "wireBytes": 42574,
+            "downloadMs": 130.09999999962747,
+            "compileMs": 1.2999999998137355
           },
           "br": {
-            "wireBytes": 31406,
-            "downloadMs": 122,
-            "compileMs": 1.2000000001862645
+            "wireBytes": 35296,
+            "downloadMs": 126.10000000009313,
+            "compileMs": 1.3000000002793968
           }
         },
         "slow-4g": {
           "identity": {
-            "wireBytes": 94339,
-            "downloadMs": 633.3999999999069,
-            "compileMs": 1.3000000000465661
+            "wireBytes": 106773,
+            "downloadMs": 694.2999999998137,
+            "compileMs": 1.3000000002793968
           },
           "gzip": {
-            "wireBytes": 37873,
-            "downloadMs": 349.30000000004657,
-            "compileMs": 1.4000000001396984
+            "wireBytes": 42574,
+            "downloadMs": 372.1999999997206,
+            "compileMs": 1.3999999999068677
           },
           "br": {
-            "wireBytes": 31406,
-            "downloadMs": 318.39999999990687,
-            "compileMs": 1.6000000000931323
+            "wireBytes": 35296,
+            "downloadMs": 333,
+            "compileMs": 1.3999999999068677
           }
         },
         "3g": {
           "identity": {
-            "wireBytes": 94339,
-            "downloadMs": 1288.1000000000931,
-            "compileMs": 1.5
+            "wireBytes": 106773,
+            "downloadMs": 1412.0999999996275,
+            "compileMs": 1.2999999998137355
           },
           "gzip": {
-            "wireBytes": 37873,
-            "downloadMs": 704.6999999999534,
-            "compileMs": 1.3999999999068677
+            "wireBytes": 42574,
+            "downloadMs": 750.0999999996275,
+            "compileMs": 1.5
           },
           "br": {
-            "wireBytes": 31406,
-            "downloadMs": 641.9000000001397,
-            "compileMs": 1.3999999999068677
+            "wireBytes": 35296,
+            "downloadMs": 673.8999999999069,
+            "compileMs": 1.5
           }
         }
       }
@@ -533,86 +533,86 @@
         "local": {
           "identity": {
             "wireBytes": 18036,
-            "downloadMs": 4.2999999998137355,
-            "compileMs": 0.4000000001396984
+            "downloadMs": 3.6999999997206032,
+            "compileMs": 0.39999999990686774
           },
           "gzip": {
             "wireBytes": 7303,
-            "downloadMs": 4.5,
-            "compileMs": 0.5
+            "downloadMs": 3.1999999997206032,
+            "compileMs": 0.40000000037252903
           },
           "br": {
             "wireBytes": 6099,
-            "downloadMs": 4.899999999906868,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 4.2999999998137355,
+            "compileMs": 0.6000000000931323
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 18036,
-            "downloadMs": 30.199999999953434,
-            "compileMs": 0.7000000001862645
+            "downloadMs": 31,
+            "compileMs": 0.7999999998137355
           },
           "gzip": {
             "wireBytes": 7303,
-            "downloadMs": 27.5,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 25.800000000279397,
+            "compileMs": 0.5
           },
           "br": {
             "wireBytes": 6099,
-            "downloadMs": 27.799999999813735,
-            "compileMs": 0.7000000001862645
+            "downloadMs": 26.399999999906868,
+            "compileMs": 0.5
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 18036,
-            "downloadMs": 107.5,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 108,
+            "compileMs": 0.6999999997206032
           },
           "gzip": {
             "wireBytes": 7303,
-            "downloadMs": 97.80000000004657,
+            "downloadMs": 97.09999999962747,
             "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 6099,
-            "downloadMs": 97.19999999995343,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 97,
+            "compileMs": 0.6999999997206032
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 18036,
-            "downloadMs": 251.19999999995343,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 251.8000000002794,
+            "compileMs": 0.8000000002793968
           },
           "gzip": {
             "wireBytes": 7303,
-            "downloadMs": 192.19999999995343,
-            "compileMs": 0.8999999999068677
+            "downloadMs": 185.59999999962747,
+            "compileMs": 0.7000000001862645
           },
           "br": {
             "wireBytes": 6099,
-            "downloadMs": 186.0999999998603,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 191.5,
+            "compileMs": 1
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 18036,
-            "downloadMs": 505.39999999990687,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 490.89999999990687,
+            "compileMs": 0.7000000001862645
           },
           "gzip": {
             "wireBytes": 7303,
-            "downloadMs": 381.70000000018626,
+            "downloadMs": 381.6999999997206,
             "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 6099,
-            "downloadMs": 367.0999999998603,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 381.79999999981374,
+            "compileMs": 0.7000000001862645
           }
         }
       }
@@ -628,86 +628,86 @@
         "local": {
           "identity": {
             "wireBytes": 14036,
-            "downloadMs": 3.800000000046566,
-            "compileMs": 0.5
+            "downloadMs": 4,
+            "compileMs": 0.39999999990686774
           },
           "gzip": {
             "wireBytes": 5995,
-            "downloadMs": 3.800000000046566,
+            "downloadMs": 3.6000000000931323,
             "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 5147,
-            "downloadMs": 4.800000000046566,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 4.5,
+            "compileMs": 0.6000000000931323
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 14036,
-            "downloadMs": 29.800000000046566,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 29.899999999906868,
+            "compileMs": 0.599999999627471
           },
           "gzip": {
             "wireBytes": 5995,
-            "downloadMs": 26.899999999906868,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 26.800000000279397,
+            "compileMs": 0.5
           },
           "br": {
             "wireBytes": 5147,
-            "downloadMs": 27.0999999998603,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 25.899999999906868,
+            "compileMs": 0.5
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 14036,
-            "downloadMs": 103.89999999990687,
+            "downloadMs": 103.3000000002794,
             "compileMs": 0.7999999998137355
           },
           "gzip": {
             "wireBytes": 5995,
-            "downloadMs": 97.20000000018626,
-            "compileMs": 0.7999999998137355
+            "downloadMs": 96.5,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 5147,
-            "downloadMs": 96.5,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 95.40000000037253,
+            "compileMs": 0.6999999997206032
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 14036,
-            "downloadMs": 228.80000000004657,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 222.89999999990687,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 5995,
-            "downloadMs": 191.69999999995343,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 185.79999999981374,
+            "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 5147,
-            "downloadMs": 177.5,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 177.8000000002794,
+            "compileMs": 0.7000000001862645
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 14036,
-            "downloadMs": 458.0999999998603,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 444.60000000009313,
+            "compileMs": 0.6999999997206032
           },
           "gzip": {
             "wireBytes": 5995,
-            "downloadMs": 382.30000000004657,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 366.8000000002794,
+            "compileMs": 0.6999999997206032
           },
           "br": {
             "wireBytes": 5147,
-            "downloadMs": 366.5,
-            "compileMs": 0.7999999998137355
+            "downloadMs": 352.60000000009313,
+            "compileMs": 0.6000000000931323
           }
         }
       }
@@ -723,86 +723,86 @@
         "local": {
           "identity": {
             "wireBytes": 16105,
-            "downloadMs": 4.2000000001862645,
+            "downloadMs": 3.3999999999068677,
             "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 6697,
-            "downloadMs": 3.8999999999068677,
+            "downloadMs": 3.8000000002793968,
             "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 5646,
-            "downloadMs": 4.699999999953434,
-            "compileMs": 0.5
+            "downloadMs": 3.8000000002793968,
+            "compileMs": 0.40000000037252903
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 16105,
-            "downloadMs": 29.300000000046566,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 28.899999999906868,
+            "compileMs": 0.599999999627471
           },
           "gzip": {
             "wireBytes": 6697,
-            "downloadMs": 28,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 26.699999999720603,
+            "compileMs": 0.5
           },
           "br": {
             "wireBytes": 5646,
-            "downloadMs": 26.300000000046566,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 26.09999999962747,
+            "compileMs": 0.6000000000931323
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 16105,
-            "downloadMs": 105.80000000004657,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 104.1999999997206,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 6697,
-            "downloadMs": 96.9000000001397,
-            "compileMs": 0.7000000001862645
+            "downloadMs": 96.3000000002794,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 5646,
             "downloadMs": 95.70000000018626,
-            "compileMs": 0.6999999999534339
+            "compileMs": 0.7999999998137355
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 16105,
-            "downloadMs": 237.19999999995343,
-            "compileMs": 0.8999999999068677
+            "downloadMs": 230.79999999981374,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 6697,
-            "downloadMs": 192.10000000009313,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 192.3000000002794,
+            "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 5646,
-            "downloadMs": 177.89999999990687,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 178.20000000018626,
+            "compileMs": 0.5
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 16105,
-            "downloadMs": 472.80000000004657,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 474.1999999997206,
+            "compileMs": 0.6999999997206032
           },
           "gzip": {
             "wireBytes": 6697,
-            "downloadMs": 380.89999999990687,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 366.40000000037253,
+            "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 5646,
-            "downloadMs": 366.89999999990687,
-            "compileMs": 0.9000000001396984
+            "downloadMs": 351.20000000018626,
+            "compileMs": 0.6999999997206032
           }
         }
       }
@@ -818,86 +818,86 @@
         "local": {
           "identity": {
             "wireBytes": 6964,
-            "downloadMs": 3.7999999998137355,
+            "downloadMs": 3.599999999627471,
             "compileMs": 0.39999999990686774
           },
           "gzip": {
             "wireBytes": 2884,
-            "downloadMs": 4.199999999953434,
-            "compileMs": 0.30000000004656613
+            "downloadMs": 3.2999999998137355,
+            "compileMs": 0.20000000018626451
           },
           "br": {
             "wireBytes": 2552,
-            "downloadMs": 3.8999999999068677,
-            "compileMs": 0.39999999990686774
+            "downloadMs": 3.400000000372529,
+            "compileMs": 0.20000000018626451
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 6964,
-            "downloadMs": 27.0999999998603,
-            "compileMs": 0.39999999990686774
+            "downloadMs": 27.200000000186265,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 2884,
-            "downloadMs": 25.800000000046566,
-            "compileMs": 0.5
+            "downloadMs": 25.700000000186265,
+            "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 2552,
-            "downloadMs": 25.699999999953434,
-            "compileMs": 0.5
+            "downloadMs": 27.300000000279397,
+            "compileMs": 0.2999999998137355
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 6964,
-            "downloadMs": 97.10000000009313,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 96.70000000018626,
+            "compileMs": 0.40000000037252903
           },
           "gzip": {
             "wireBytes": 2884,
-            "downloadMs": 94.60000000009313,
-            "compileMs": 0.5
+            "downloadMs": 92.8000000002794,
+            "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 2552,
-            "downloadMs": 92.69999999995343,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 94.10000000009313,
+            "compileMs": 0.599999999627471
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 6964,
-            "downloadMs": 185.69999999995343,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 185.60000000009313,
+            "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 2884,
-            "downloadMs": 170.80000000004657,
-            "compileMs": 0.5
+            "downloadMs": 177.20000000018626,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 2552,
-            "downloadMs": 163.5,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 163.6999999997206,
+            "compileMs": 0.6000000000931323
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 6964,
-            "downloadMs": 382,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 380.60000000009313,
+            "compileMs": 0.8999999999068677
           },
           "gzip": {
             "wireBytes": 2884,
-            "downloadMs": 350.10000000009313,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 336.1999999997206,
+            "compileMs": 0.5
           },
           "br": {
             "wireBytes": 2552,
-            "downloadMs": 321.5,
-            "compileMs": 0.39999999990686774
+            "downloadMs": 334,
+            "compileMs": 0.5
           }
         }
       }
@@ -913,86 +913,86 @@
         "local": {
           "identity": {
             "wireBytes": 13019,
-            "downloadMs": 3.300000000046566,
+            "downloadMs": 3.8000000002793968,
             "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 5560,
-            "downloadMs": 4.100000000093132,
-            "compileMs": 0.30000000004656613
+            "downloadMs": 4.2999999998137355,
+            "compileMs": 0.2999999998137355
           },
           "br": {
             "wireBytes": 4789,
-            "downloadMs": 4.300000000046566,
+            "downloadMs": 3.599999999627471,
             "compileMs": 0.5
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 13019,
-            "downloadMs": 28.800000000046566,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 29,
+            "compileMs": 0.599999999627471
           },
           "gzip": {
             "wireBytes": 5560,
-            "downloadMs": 26.300000000046566,
+            "downloadMs": 25.800000000279397,
             "compileMs": 0.5
           },
           "br": {
             "wireBytes": 4789,
-            "downloadMs": 27.100000000093132,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 26.200000000186265,
+            "compileMs": 0.5
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 13019,
-            "downloadMs": 102.60000000009313,
+            "downloadMs": 102.20000000018626,
             "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 5560,
-            "downloadMs": 95.80000000004657,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 96.10000000009313,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 4789,
-            "downloadMs": 95.69999999995343,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 95,
+            "compileMs": 0.6000000000931323
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 13019,
-            "downloadMs": 222.5999999998603,
-            "compileMs": 0.6000000000931323
+            "downloadMs": 221.79999999981374,
+            "compileMs": 0.7000000001862645
           },
           "gzip": {
             "wireBytes": 5560,
-            "downloadMs": 184.69999999995343,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 178.90000000037253,
+            "compileMs": 0.7000000001862645
           },
           "br": {
             "wireBytes": 4789,
-            "downloadMs": 179.5999999998603,
+            "downloadMs": 184.39999999990687,
             "compileMs": 0.6000000000931323
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 13019,
-            "downloadMs": 439.60000000009313,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 429,
+            "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 5560,
-            "downloadMs": 351.30000000004657,
-            "compileMs": 0.7999999998137355
+            "downloadMs": 354.8000000002794,
+            "compileMs": 0.7000000001862645
           },
           "br": {
             "wireBytes": 4789,
-            "downloadMs": 365.89999999990687,
-            "compileMs": 0.7000000001862645
+            "downloadMs": 366.10000000009313,
+            "compileMs": 0.6000000000931323
           }
         }
       }
@@ -1001,93 +1001,93 @@
       "id": "widget-editor/WidgetEditor.wasm",
       "demo": "widget-editor",
       "file": "WidgetEditor.wasm",
-      "raw": 164275,
-      "gzip": 59023,
-      "brotli": 46861,
+      "raw": 176025,
+      "gzip": 63413,
+      "brotli": 50213,
       "results": {
         "local": {
           "identity": {
-            "wireBytes": 164275,
-            "downloadMs": 6.599999999860302,
-            "compileMs": 1.6999999999534339
+            "wireBytes": 176025,
+            "downloadMs": 4.300000000279397,
+            "compileMs": 1.599999999627471
           },
           "gzip": {
-            "wireBytes": 59023,
-            "downloadMs": 5.800000000046566,
-            "compileMs": 1.7999999998137355
+            "wireBytes": 63413,
+            "downloadMs": 5,
+            "compileMs": 1.6000000000931323
           },
           "br": {
-            "wireBytes": 46861,
-            "downloadMs": 5.300000000046566,
-            "compileMs": 1.6999999999534339
+            "wireBytes": 50213,
+            "downloadMs": 5,
+            "compileMs": 1.6999999997206032
           }
         },
         "wifi": {
           "identity": {
-            "wireBytes": 164275,
-            "downloadMs": 72.80000000004657,
-            "compileMs": 2.0999999998603016
+            "wireBytes": 176025,
+            "downloadMs": 75.3000000002794,
+            "compileMs": 1.7999999998137355
           },
           "gzip": {
-            "wireBytes": 59023,
-            "downloadMs": 44,
-            "compileMs": 1.8000000000465661
+            "wireBytes": 63413,
+            "downloadMs": 43.89999999990687,
+            "compileMs": 2.1000000000931323
           },
           "br": {
-            "wireBytes": 46861,
-            "downloadMs": 42.5,
-            "compileMs": 2
+            "wireBytes": 50213,
+            "downloadMs": 43.89999999990687,
+            "compileMs": 1.8999999999068677
           }
         },
         "4g": {
           "identity": {
-            "wireBytes": 164275,
-            "downloadMs": 238.80000000004657,
-            "compileMs": 1.9000000001396984
+            "wireBytes": 176025,
+            "downloadMs": 249,
+            "compileMs": 1.8000000002793968
           },
           "gzip": {
-            "wireBytes": 59023,
-            "downloadMs": 147.60000000009313,
-            "compileMs": 2.300000000046566
+            "wireBytes": 63413,
+            "downloadMs": 151.1999999997206,
+            "compileMs": 2.1000000000931323
           },
           "br": {
-            "wireBytes": 46861,
-            "downloadMs": 136.89999999990687,
-            "compileMs": 2.1000000000931323
+            "wireBytes": 50213,
+            "downloadMs": 135.60000000009313,
+            "compileMs": 2
           }
         },
         "slow-4g": {
           "identity": {
-            "wireBytes": 164275,
-            "downloadMs": 978.4000000001397,
-            "compileMs": 2.300000000046566
+            "wireBytes": 176025,
+            "downloadMs": 1037.7000000001863,
+            "compileMs": 2.1999999997206032
           },
           "gzip": {
-            "wireBytes": 59023,
-            "downloadMs": 453.29999999981374,
-            "compileMs": 2.0999999998603016
+            "wireBytes": 63413,
+            "downloadMs": 475.29999999981374,
+            "compileMs": 1.8999999999068677
           },
           "br": {
-            "wireBytes": 46861,
-            "downloadMs": 393.19999999995343,
-            "compileMs": 2.1000000000931323
+            "wireBytes": 50213,
+            "downloadMs": 408.09999999962747,
+            "compileMs": 1.8000000002793968
           }
         },
         "3g": {
           "identity": {
-            "wireBytes": 164275,
-            "downloadMs": 1995.6000000000931,
-            "compileMs": 2
+            "wireBytes": 176025,
+            "downloadMs": 2117.8000000002794,
+            "compileMs": 1.8000000002793968
           },
           "gzip": {
-            "wireBytes": 59023,
-            "downloadMs": 918.5999999998603,
-            "compileMs": 1.8999999999068677
+            "wireBytes": 63413,
+            "downloadMs": 964.8999999999069,
+            "compileMs": 2
           },
           "br": {
-            "wireBytes": 46861,
-            "downloadMs": 795.5,
-            "compileMs": 2
+            "wireBytes": 50213,
+            "downloadMs": 826,
+            "compileMs": 2.2000000001862645
           }
         }
       }
@@ -1103,85 +1103,85 @@
         "local": {
           "identity": {
             "wireBytes": 14722,
-            "downloadMs": 4.199999999953434,
-            "compileMs": 0.5999999998603016
+            "downloadMs": 3.2000000001862645,
+            "compileMs": 0.39999999990686774
           },
           "gzip": {
             "wireBytes": 6230,
-            "downloadMs": 4.099999999860302,
-            "compileMs": 0.4000000001396984
+            "downloadMs": 3.7000000001862645,
+            "compileMs": 0.39999999990686774
           },
           "br": {
             "wireBytes": 5348,
-            "downloadMs": 4.100000000093132,
+            "downloadMs": 3,
             "compileMs": 0.39999999990686774
           }
         },
         "wifi": {
           "identity": {
             "wireBytes": 14722,
-            "downloadMs": 28.800000000046566,
+            "downloadMs": 29.5,
             "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 6230,
-            "downloadMs": 27.4000000001397,
-            "compileMs": 0.7000000001862645
+            "downloadMs": 26.700000000186265,
+            "compileMs": 0.6999999997206032
           },
           "br": {
             "wireBytes": 5348,
-            "downloadMs": 26.699999999953434,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 25.699999999720603,
+            "compileMs": 0.5
           }
         },
         "4g": {
           "identity": {
             "wireBytes": 14722,
-            "downloadMs": 103.9000000001397,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 103.89999999990687,
+            "compileMs": 0.5
           },
           "gzip": {
             "wireBytes": 6230,
-            "downloadMs": 97.80000000004657,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 97,
+            "compileMs": 0.7999999998137355
           },
           "br": {
             "wireBytes": 5348,
-            "downloadMs": 96.5999999998603,
-            "compileMs": 0.7000000001862645
+            "downloadMs": 95.89999999990687,
+            "compileMs": 0.6000000000931323
           }
         },
         "slow-4g": {
           "identity": {
             "wireBytes": 14722,
-            "downloadMs": 229.39999999990687,
-            "compileMs": 1
+            "downloadMs": 230,
+            "compileMs": 0.599999999627471
           },
           "gzip": {
             "wireBytes": 6230,
-            "downloadMs": 192.10000000009313,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 185.89999999990687,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 5348,
-            "downloadMs": 184.5999999998603,
-            "compileMs": 0.6999999999534339
+            "downloadMs": 177.89999999990687,
+            "compileMs": 0.6000000000931323
           }
         },
         "3g": {
           "identity": {
             "wireBytes": 14722,
-            "downloadMs": 444.19999999995343,
+            "downloadMs": 443.89999999990687,
             "compileMs": 0.6000000000931323
           },
           "gzip": {
             "wireBytes": 6230,
-            "downloadMs": 367.80000000004657,
-            "compileMs": 0.8000000000465661
+            "downloadMs": 371.10000000009313,
+            "compileMs": 0.6000000000931323
           },
           "br": {
             "wireBytes": 5348,
-            "downloadMs": 351.79999999981374,
+            "downloadMs": 352,
             "compileMs": 0.7000000001862645
           }
         }
