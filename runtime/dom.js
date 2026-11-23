@@ -29,6 +29,10 @@ export const getValue         = (id)         => { const el = get(id); return el 
 export const setValue         = (id, v)      => { const el = get(id); if (el) el.value = v; };
 export const focus            = (id)         => { const el = get(id); if (el) el.focus(); };
 export const scrollIntoView   = (id)         => { const el = get(id); if (el) el.scrollIntoView({ behavior: "smooth" }); };
+/** Scroll the page by (dx, dy) CSS px at once, as a drag does that is near the edge of the window. */
+export const scrollBy           = (dx, dy)     => { window.scrollBy({ left: dx, top: dy, behavior: "instant" }); };
+/** The height of the window's viewport in CSS px. */
+export const viewportHeight     = ()           => window.innerHeight;
 
 // ─── Reconciliation ──────────────────────────────────────────────────────────
 
