@@ -146,6 +146,9 @@ export const text = (s, x, y, size, weight, r, g, b, a) => {
 /** Advance width of a string; the F# text engine builds layouts from the advance of each character. */
 export const measure = (s, size, weight) => { cx.font = font(size, weight); return cx.measureText(s).width; };
 
+/** A clock with fractions of a millisecond (`performance.now()`): what a module needs to measure what a message or a build costs. */
+export const now = () => performance.now();
+
 export const cursor     = (k) => { cv.style.cursor = CURSORS[k] ?? "default"; };
 /**
  * Tell the page something that is not drawing: a `gfx` event on the canvas, `detail = { kind, a, b }`.  A module can send
