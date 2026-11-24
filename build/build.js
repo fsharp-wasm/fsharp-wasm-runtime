@@ -199,6 +199,12 @@ const ALL_DEMOS = [
         desc:   "F# actor pattern running inside a Web Worker, communicating via message passing.",
     },
     {
+        name:   "actor-orchestra",
+        fsproj: "demos/actor-orchestra/ActorOrchestra.fsproj",
+        title:  "Actor Orchestra",
+        desc:   "An Erlang-style orchestra for data scientists: a supervised pool of Web Workers, mailboxes, a pure orchestrator and an Elmish loop; kill a worker mid-run and every chunk is still counted once.",
+    },
+    {
         name:   "web-component",
         fsproj: "demos/web-component/WebComponent.fsproj",
         title:  "Web Component",

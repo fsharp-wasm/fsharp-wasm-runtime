@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actor Orchestra — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="../../runtime/ui.css">
+  <script src="../../runtime/embed.js"></script>
+  <script src="../../runtime/frame.js" data-here="Actor Orchestra"></script>
+  <style>
+    .bar { height: 10px; border-radius: 6px; background: var(--pico-muted-border-color); overflow: hidden; margin-bottom: 1rem; }
+    .bar-fill { height: 100%; background: var(--pico-primary); transition: width .15s linear; }
+    tr.worker.down td:nth-child(2) { color: var(--pico-del-color); }
+    tr.worker.ready td:nth-child(2) { color: var(--pico-ins-color); }
+    ul.log { font-family: var(--pico-font-family-monospace); font-size: .85rem; list-style: none; padding: 0; }
+    td button { margin: 0 .25rem 0 0; padding: .1rem .6rem; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>Actor Orchestra</h1>
+      <p>An Erlang-style orchestra for a Monte Carlo estimate of π: a supervised pool of four Web Workers, a mailbox per worker,
+         an orchestrator that is a pure state machine, and an Elmish loop that draws it. Kill or crash a worker mid-run and watch
+         the supervisor start it again; every chunk is still counted exactly once.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <div id="orchestra-root"></div>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    // `window.__instance`: the module, for the end-to-end test
+    window.__instance = await boot({ wasm: new URL("ActorOrchestra.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

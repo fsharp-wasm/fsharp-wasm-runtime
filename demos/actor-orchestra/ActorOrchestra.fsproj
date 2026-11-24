@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The processes come from fsharp-wasm-core (FSharp.Wasm.Actors).  FSHARP_WASM_CORE_DIR is a checkout of that repository, as for the other projects that use the core;
+       without it the checkout next to this one is taken. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Demo.ActorOrchestra</AssemblyName>
+    <NoWarn>$(NoWarn);NU1900</NoWarn>
+    <CoreRepo Condition="'$(FSHARP_WASM_CORE_DIR)' != ''">$(FSHARP_WASM_CORE_DIR)</CoreRepo>
+    <CoreRepo Condition="'$(CoreRepo)' == ''">$(MSBuildThisFileDirectory)../../../fsharp-wasm-core</CoreRepo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/FSharpWasmRuntime.fsproj" />
+    <ProjectReference Include="$(CoreRepo)/FSharp.Wasm.Actors/FSharp.Wasm.Actors.fsproj" />
+    <Compile Include="ActorOrchestra.fs" />
+  </ItemGroup>
+
+</Project>

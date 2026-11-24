@@ -182,6 +182,7 @@ fsharp-wasm-runtime/
 | Realtime Pub/Sub | A message bus wired from F# |
 | IndexedDB CRUD | Persistent key-value storage |
 | Worker Actor | Web Worker message passing |
+| Actor Orchestra | An Erlang-style orchestra: supervised Web Workers, mailboxes and a pure orchestrator for a Monte Carlo estimate of π; kill or crash a worker mid-run ([docs/actors.md](docs/actors.md)) |
 | WebGPU Basic | GPU availability check + canvas |
 | Benchmark | Thirteen kernels, F# vs JavaScript, timed in a worker; chart, spreads, JSON export — results in [docs/benchmarks.md](docs/benchmarks.md) |
 | Benchmarks (results) | Speed, size and network load times, recorded and public: [`/benchmarks/`](site/benchmarks/index.html), [docs/benchmarks.md](docs/benchmarks.md) |

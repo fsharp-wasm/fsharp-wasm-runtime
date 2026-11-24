@@ -22,6 +22,7 @@ import * as storageModule   from "./storage.js";
 import * as cookiesModule   from "./cookies.js";
 import * as pubsubModule    from "./pubsub.js";
 import * as workersModule   from "./workers.js";
+import * as actorsModule    from "./actors.js";
 import * as timingModule    from "./timing.js";
 import * as indexeddbModule from "./indexeddb.js";
 import * as gpuModule       from "./gpu.js";
@@ -88,6 +89,7 @@ function imports() {
         "runtime/cookies.js":    cookiesModule,
         "runtime/pubsub.js":     pubsubModule,
         "runtime/workers.js":    workersModule,
+        "runtime/actors.js":     actorsModule,
         "runtime/timing.js":     timingModule,
         "runtime/indexeddb.js":  indexeddbModule,
         "runtime/gpu.js":        gpuModule,

@@ -43,6 +43,7 @@
     <Compile Include="Browser/Cookies.fs" />
     <Compile Include="Browser/IndexedDb.fs" />
     <Compile Include="Browser/Workers.fs" />
+    <Compile Include="Browser/Actors.fs" />
     <Compile Include="Browser/Timing.fs" />
     <Compile Include="Browser/Gpu.fs" />
     <Compile Include="Browser/Pointer.fs" />
