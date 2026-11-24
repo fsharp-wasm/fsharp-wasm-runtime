@@ -197,6 +197,15 @@ fsharp-wasm-runtime/
 - [Contributing](docs/Contributing.md)
 - [Roadmap](docs/Roadmap.md)
 
+## Contributing
+
+Welcome. [CONTRIBUTING](https://github.com/fsharp-wasm/.github/blob/develop/CONTRIBUTING.md) is the organisation's guide and [AGENTS.md](AGENTS.md) says how the platform is worked on (the compiler comes first: a fault found here
+is fixed in the compiler, not worked around here).
+
+- **Run the tests:** `npm run test:e2e` drives every demo in Chromium (build the demos first: `npm run build`, which needs the compiler).
+- **A good first contribution:** Run the end-to-end suite in Firefox or WebKit (Playwright) and report what differs: only Chromium is covered today. Issues labelled [`good first issue`](https://github.com/fsharp-wasm/fsharp-wasm-runtime/labels/good%20first%20issue) are the places to start.
+- **A change** goes to `develop` as a pull request, with a test that fails without it. Open an issue first for anything larger than a fix.
+
 ## License
 
 [Apache License 2.0](LICENSE) — see [NOTICE](NOTICE).
