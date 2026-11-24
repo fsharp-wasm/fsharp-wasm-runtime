@@ -182,7 +182,13 @@ export function mount(instance, canvasId) {
     canvas.addEventListener("pointerup", (e) => { const [x, y] = pos(e); ex.onPointer(1, x, y, e.button); });
     canvas.addEventListener("pointermove", (e) => { const [x, y] = pos(e); ex.onPointer(2, x, y, e.button); });
     canvas.addEventListener("pointerleave", (e) => { const [x, y] = pos(e); ex.onPointer(3, x, y, e.button); });
-    canvas.addEventListener("wheel", (e) => { e.preventDefault(); ex.onWheel(e.deltaX, e.deltaY); }, { passive: false });
+    // The module is told the wheel in notches, as the desktop hosts tell it (positive Y is up, positive X is right): a browser says pixels (about 100 to a notch), or lines (3 to
+    // a notch), or pages, and its positive Y is down.  Raw pixels made a widget scroll by thousands of pixels a notch, and the wrong way.
+    canvas.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const notch = e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 0.1 : 100;
+        ex.onWheel(e.deltaX / notch, -e.deltaY / notch);
+    }, { passive: false });
 
     // The editing shortcuts a module can own, under the toolkit's key names: Ctrl/Cmd+Z is "Undo", Ctrl/Cmd+Y and Ctrl/Cmd+Shift+Z are "Redo" (a key down only).  Every other chord
     // with Ctrl, Cmd or Alt is the browser's and is left alone.
