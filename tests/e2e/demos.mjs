@@ -199,6 +199,23 @@ await demo('full-dashboard', async (page) => {
   check('state survives tab switches', (await text(page, '.count-display')) === '1');
 });
 
+// The accounting grid (F# project of fsharp-wasm-accounting): a million journal lines as a pivot table, on one canvas; the module's own tests drive it (its repository's tests/e2e/grid.mjs), this
+// checks that the page on the site loads it, paints it, and that a click on a caret changes what is drawn.  Skipped when this build did not include it.
+if ((await fetch(`${base}/demos/accounting-grid/index.html`)).ok)
+  await demo('accounting-grid', async (page) => {
+    await page.setViewportSize({ width: 1400, height: 1500 });
+    await page.waitForFunction(() => window.__module?.exports?.lines || document.getElementById('gfx')?.width > 0, null, { timeout: 60000 }).catch(() => {});
+    await page.waitForTimeout(1500);
+    const box = await page.locator('#gfx').boundingBox();
+    const look = () => canvasLook(page);
+    const first = await look();
+    check('the pivot table is painted', first.colours > 12, `${first.colours} colours`);
+    const before = first.h;
+    await page.mouse.click(box.x + 16 + 30, box.y + 182 + 32 + 2 * 28 + 14);        // the caret of the group "Product sales"
+    await page.waitForTimeout(400);
+    check('a click on the caret of a group opens it: another picture', (await look()).h !== before);
+  });
+
 // The widget editor (F# project of fsharp-wasm-ide) draws everything on one canvas, so it is driven by pointer and key
 // events at canvas coordinates and judged by what the canvas shows.  Skipped when this build did not include it.
 if ((await fetch(`${base}/demos/widget-editor/index.html`)).ok)

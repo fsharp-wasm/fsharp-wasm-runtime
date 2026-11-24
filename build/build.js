@@ -235,6 +235,16 @@ const ALL_DEMOS = [
         desc:   "A visual editor for FSharp.Graphics widget layouts, written in F# and drawn by the module onto one canvas.",
     },
     {
+        // The F# project lives in fsharp-wasm-accounting; this repo holds its page.  Built when a checkout is found next to this one (or FSHARP_WASM_ACCOUNTING_DIR).
+        name:   "accounting-grid",
+        repo:   "fsharp-wasm-accounting",
+        repoEnv: "FSHARP_WASM_ACCOUNTING_DIR",
+        project: "src/Accounting.Browser",
+        coreDir: "lib/fsharp-wasm-core",
+        title:  "Accounting grid — fsharp-wasm-accounting",
+        desc:   "A ledger of a million journal lines as a pivot table that folds to its totals, turns, and opens the lines behind a cell as a tab; drawn onto one canvas.",
+    },
+    {
         // The second module of the same repository: the scenes of FSharp.Graphics.Scenes, selected from the page.
         name:   "graphics-gallery",
         repo:   "fsharp-wasm-graphics",

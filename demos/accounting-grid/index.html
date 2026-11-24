@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accounting grid — fsharp-wasm-accounting</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    #gfx { display: block; width: 100%; height: min(82vh, 820px); min-height: 420px; border-radius: var(--pico-border-radius);
+           background: #0f172a; outline: none; touch-action: none; }
+    #gfx:focus-visible { box-shadow: 0 0 0 3px var(--pico-primary-focus); }
+    .hint { font-size: .85rem; opacity: .7; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+  <script src="../../runtime/frame.js" data-compact data-here="Accounting grid"></script>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <a href="../../index.html">← All Demos</a>
+      <span>F# → WasmGC</span>
+    </nav>
+    <hgroup>
+      <h1>Accounting grid — fsharp-wasm-accounting</h1>
+      <p>A ledger of one million journal lines as a pivot table, written in F# and compiled to WebAssembly GC. Rows and columns fold to their totals, the table turns
+         (accounts, cost centres, periods), and the lines behind a cell open as a tab. The whole interface is drawn by the module onto one canvas; JavaScript only forwards
+         pointer, wheel, key and size events.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+
+    <canvas id="gfx" tabindex="0" aria-label="Accounting grid canvas"></canvas>
+    <p class="hint">Click a <em>caret</em> to open or fold a row or a column; arrow keys move, <kbd>Space</kbd> folds the row, <kbd>Shift</kbd>+<kbd>Space</kbd> the column,
+      <kbd>Enter</kbd> (or a second click) opens the lines behind the cell as a tab, the wheel scrolls (<kbd>Shift</kbd> sideways). The number of lines, the time the table took to turn
+      and the cost of a frame are in the <a href="https://github.com/fsharp-wasm/fsharp-wasm-accounting#what-it-costs">README</a>.</p>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    import { mount } from "../../runtime/gfx.js";
+
+    const instance = await boot({ wasm: new URL("AccountingGrid.wasm", import.meta.url), entry: "start" });
+    if (instance) mount(instance, "gfx");
+  </script>
+</body>
+</html>

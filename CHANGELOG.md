@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- `gfx.js` told the module the wheel in the browser's raw pixels (about 100 to a notch, positive for down); the widgets take notches with positive Y up, as the desktop hosts give them, and move 36 px a notch, so a notch down moved a `ScrollView` or a grid by thousands of pixels and the wrong way. The host converts pixels, lines and pages to notches. Found by measuring the scrolling of the accounting grid.
+
 ### Added
+- `demos/accounting-grid`: the accounting grid of fsharp-wasm-accounting, a million journal lines as a pivot table that folds to its totals, turns and opens the lines behind a cell as a tab (`AccountingGrid.wasm`, 213 KB; build with `FSHARP_WASM_ACCOUNTING_DIR`, or a checkout next to this repository). The thirteenth demo.
+- `gfx.js`: `now()`, a clock with fractions of a millisecond (`performance.now()`), for a module that measures what a message or a build costs.
 - `Browser.Net.request method url body headers cb` (`runtime/net.js`): one HTTP request of any method, with headers and a body; the answer is the callback's `status` and `body` as text, and a status of 0 when no answer arrived at all (the network failed, CORS refused), so a failure is a value to match on. `get` and `post` are the short forms. `tests/e2e/net.mjs` drives it in Chromium without a compiled module (method, headers, body, an error status, no answer, JSON).
 - `gfx.js`: a canvas module gets the editing shortcuts as keys of the toolkit: Ctrl/Cmd+Z arrives as `Undo`, Ctrl/Cmd+Y and Ctrl/Cmd+Shift+Z as `Redo` (the browser's default is prevented for these only; every other chord with Ctrl, Cmd or Alt stays the browser's).
 - A sandboxed iframe and the page talk through `Browser.Events.onFrameMessage selector cb` (what the frame says, as JSON text, from that frame only, looked up at each message) and `postToFrame selector json`; `tests/e2e/frames.mjs` drives it in Chromium without a compiled module.
