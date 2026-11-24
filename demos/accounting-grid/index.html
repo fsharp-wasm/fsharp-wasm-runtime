@@ -33,16 +33,26 @@
 
     <canvas id="gfx" tabindex="0" aria-label="Accounting grid canvas"></canvas>
     <p class="hint">Click a <em>caret</em> to open or fold a row or a column; arrow keys move, <kbd>Space</kbd> folds the row, <kbd>Shift</kbd>+<kbd>Space</kbd> the column,
-      <kbd>Enter</kbd> (or a second click) opens the lines behind the cell as a tab, the wheel scrolls (<kbd>Shift</kbd> sideways). The number of lines, the time the table took to turn
+      <kbd>Enter</kbd> (or a second click) opens the lines behind the cell as a tab, the wheel scrolls (<kbd>Shift</kbd> sideways). Drawn with <strong id="renderer">…</strong>;
+      <a href="?renderer=webgpu">WebGPU</a> or <a href="?">Canvas 2D</a>. The number of lines, the time the table took to turn
       and the cost of a frame are in the <a href="https://github.com/fsharp-wasm/fsharp-wasm-accounting#what-it-costs">README</a>.</p>
   </main>
 
   <script type="module">
     import { boot } from "../../runtime/boot.js";
-    import { mount } from "../../runtime/gfx.js";
+    import * as canvas2d from "../../runtime/gfx.js";
 
-    const instance = await boot({ wasm: new URL("AccountingGrid.wasm", import.meta.url), entry: "start" });
-    if (instance) mount(instance, "gfx");
+    // ?renderer=webgpu draws the same module with WebGPU (runtime/gfx-gpu.js); without a GPU the page says so and draws with Canvas 2D.  ?offscreen keeps the canvas empty and
+    // leaves the picture to window.__gpu.readPixels() (the test of the renderer reads it there).
+    const params = new URLSearchParams(location.search);
+    let host = canvas2d, imports, name = "Canvas 2D";
+    if (params.get("renderer") === "webgpu") {
+      const gpu = await import("../../runtime/gfx-gpu.js");
+      if (await gpu.ready("gfx", { present: !params.has("offscreen") })) { host = gpu; imports = { "runtime/gfx.js": gpu }; name = "WebGPU"; window.__gpu = gpu; }
+      else name = "Canvas 2D (no WebGPU in this browser)";
+    }
+    const instance = await boot({ wasm: new URL("AccountingGrid.wasm", import.meta.url), entry: "start", imports });
+    if (instance) { host.mount(instance, "gfx"); window.__instance = instance; document.getElementById("renderer").textContent = name; }
   </script>
 </body>
 </html>

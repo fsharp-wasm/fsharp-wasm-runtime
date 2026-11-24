@@ -45,8 +45,11 @@ export const serve = (root = fileURLToPath(new URL(`../../${process.env.E2E_ROOT
     }).listen(port, () => resolve({ server, base: `http://127.0.0.1:${server.address().port}` }));
   });
 
-export const launch = async () => {
-  const browser = await chromium.launch();
+/** Flags that give headless Chromium a WebGPU adapter without a GPU (SwiftShader): pixels can be checked, GPU speed cannot be measured. */
+export const GPU_FLAGS = ['--enable-unsafe-webgpu', '--enable-features=Vulkan,WebGPU', '--use-angle=swiftshader', '--use-webgpu-adapter=swiftshader', '--ignore-gpu-blocklist'];
+
+export const launch = async (args = []) => {
+  const browser = await chromium.launch({ args });
   const page = await browser.newPage();
   // E2E_CPU_THROTTLE=6: run the page six times slower — a CI runner's timing, to reproduce a race that only a slow machine shows
   if (process.env.E2E_CPU_THROTTLE) await (await page.context().newCDPSession(page)).send('Emulation.setCPUThrottlingRate', { rate: Number(process.env.E2E_CPU_THROTTLE) });

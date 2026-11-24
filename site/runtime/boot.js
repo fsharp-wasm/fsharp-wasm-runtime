@@ -45,27 +45,12 @@ import * as gfxModule      from "./gfx.js";
  *
  * Each JS glue module is mapped to its canonical import path.
  */
-function buildImports(getInstance) {
+function buildImports(getInstance, replace = {}) {
     // when the JS function standing for a closure is garbage collected, the module frees the closure's table slot
     const released = new FinalizationRegistry((id) => getInstance().exports.__cbFree(id));
     return {
-        "runtime/core.js":       coreModule,
-        "runtime/dom.js":        domModule,
-        "runtime/events.js":     eventsModule,
-        "runtime/canvas.js":     canvasModule,
-        "runtime/net.js":        netModule,
-        "runtime/storage.js":    storageModule,
-        "runtime/cookies.js":    cookiesModule,
-        "runtime/pubsub.js":     pubsubModule,
-        "runtime/workers.js":    workersModule,
-        "runtime/timing.js":     timingModule,
-        "runtime/indexeddb.js":  indexeddbModule,
-        "runtime/gpu.js":        gpuModule,
-        "runtime/clipboard.js":  clipboardModule,
-        "runtime/location.js":   locationModule,
-        "runtime/pointer.js":    pointerModule,
-        "runtime/components.js": componentsModule,
-        "runtime/gfx.js":       gfxModule,
+        ...imports(),
+        ...replace,
         // `printfn`: the module passes an opaque string and exports `__str_len` / `__str_at` to read it
         "env": {
             consolePrint: (s) => {
@@ -91,6 +76,29 @@ function buildImports(getInstance) {
     };
 }
 
+/** The glue modules by the path the compiler imports them under (a page can replace one: see `boot`). */
+function imports() {
+    return {
+        "runtime/core.js":       coreModule,
+        "runtime/dom.js":        domModule,
+        "runtime/events.js":     eventsModule,
+        "runtime/canvas.js":     canvasModule,
+        "runtime/net.js":        netModule,
+        "runtime/storage.js":    storageModule,
+        "runtime/cookies.js":    cookiesModule,
+        "runtime/pubsub.js":     pubsubModule,
+        "runtime/workers.js":    workersModule,
+        "runtime/timing.js":     timingModule,
+        "runtime/indexeddb.js":  indexeddbModule,
+        "runtime/gpu.js":        gpuModule,
+        "runtime/clipboard.js":  clipboardModule,
+        "runtime/location.js":   locationModule,
+        "runtime/pointer.js":    pointerModule,
+        "runtime/components.js": componentsModule,
+        "runtime/gfx.js":       gfxModule,
+    };
+}
+
 /** Engine-provided string functions: `wasm:js-string` is imported by name from the module, no glue object needed. */
 const COMPILE_OPTIONS = { builtins: ["js-string"] };
 
@@ -100,10 +108,11 @@ const COMPILE_OPTIONS = { builtins: ["js-string"] };
  * @param {object} options
  * @param {URL}    options.wasm   - URL to the .wasm file (use `new URL("X.wasm", import.meta.url)`)
  * @param {string} options.entry  - name of the exported F# function to call after load
+ * @param {object} [options.imports] - glue modules to use instead of the ones here, by import path: `{ "runtime/gfx.js": gpuHost }`
  * @returns {Promise<WebAssembly.Instance|undefined>} the instance (undefined when loading failed), so a page can
  *          wire events to further exports
  */
-export async function boot({ wasm, entry }) {
+export async function boot({ wasm, entry, imports: replace }) {
     const statusEl = document.getElementById("status");
     function setStatus(html) { if (statusEl) statusEl.innerHTML = html; }
 
@@ -111,7 +120,7 @@ export async function boot({ wasm, entry }) {
 
     try {
         let instance;
-        const imports  = buildImports(() => instance);
+        const imports  = buildImports(() => instance, replace);
         const response = await fetch(wasm);
 
         if (!response.ok) {

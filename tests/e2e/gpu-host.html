@@ -1,0 +1,110 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>gfx-gpu.js against gfx.js</title>
+<!-- One drawing script, run by the Canvas 2D host and by the WebGPU host; tests/e2e/gpu.mjs compares the two pictures. -->
+<canvas id="a"></canvas><canvas id="b"></canvas><canvas id="read"></canvas>
+<script type="module">
+// the reference is its own instance of gfx.js (another URL): the GPU host takes the first one for the cursor and the measuring, and the two would share their canvas
+import * as g2d from '/runtime/gfx.js?reference';
+import * as gpu from '/runtime/gfx-gpu.js';
+
+const W = 420, BAND = 110;
+// each feature in a band of its own, so that a difference says which feature it is in
+const bands = [
+  ['fill', (g) => {                                               // rects, rounded rects, per-corner radii
+    g.solid(30, 41, 59, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.solid(37, 99, 235, 255); g.pathBegin(); g.roundRect(14, 14, 120, 80, 0, 0, 0, 0); g.fill();
+    g.solid(34, 197, 94, 255); g.pathBegin(); g.roundRect(150, 14, 120, 80, 14, 14, 14, 14); g.fill();
+    g.solid(239, 68, 68, 230); g.pathBegin(); g.roundRect(286, 14, 120, 80, 40, 4, 20, 0); g.fill();
+  }],
+  ['stroke', (g) => {
+    g.solid(241, 245, 249, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.strokeStyle(15, 23, 42, 255, 2, 0, 0, 4); g.pathBegin(); g.roundRect(14.5, 14.5, 120, 80, 0, 0, 0, 0); g.stroke();
+    g.strokeStyle(37, 99, 235, 255, 4, 0, 0, 4); g.pathBegin(); g.roundRect(150, 14, 120, 80, 16, 16, 16, 16); g.stroke();
+    g.strokeStyle(220, 38, 38, 255, 1, 0, 0, 4); g.pathBegin(); g.ellipse(346, 54, 56, 36); g.stroke();
+  }],
+  ['ellipse', (g) => {
+    g.solid(15, 23, 42, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.solid(250, 204, 21, 255); g.pathBegin(); g.ellipse(70, 55, 44, 44); g.fill();
+    g.solid(56, 189, 248, 255); g.pathBegin(); g.ellipse(190, 55, 60, 32); g.fill();
+    g.solid(244, 114, 182, 200); g.pathBegin(); g.ellipse(320, 55, 24, 40); g.fill();
+  }],
+  ['gradient', (g) => {
+    g.solid(255, 255, 255, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.gradLinear(14, 0, 200, 0); g.gradStop(0, 37, 99, 235, 255); g.gradStop(0.5, 168, 85, 247, 255); g.gradStop(1, 244, 63, 94, 255); g.gradUse();
+    g.pathBegin(); g.roundRect(14, 14, 190, 80, 12, 12, 12, 12); g.fill();
+    g.gradRadial(320, 54, 46); g.gradStop(0, 255, 255, 255, 255); g.gradStop(0.6, 56, 189, 248, 255); g.gradStop(1, 15, 23, 42, 255); g.gradUse();
+    g.pathBegin(); g.ellipse(320, 54, 46, 46); g.fill();
+  }],
+  ['shadow', (g) => {
+    g.solid(241, 245, 249, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.shadowBegin(0, 6, 16, 15, 23, 42, 90); g.solid(0, 0, 0, 255); g.pathBegin(); g.roundRect(30, 20, 150, 64, 12, 12, 12, 12); g.fill(); g.shadowEnd();
+    g.solid(255, 255, 255, 255); g.pathBegin(); g.roundRect(30, 20, 150, 64, 12, 12, 12, 12); g.fill();
+    g.shadowBegin(2, 2, 8, 0, 0, 0, 120); g.solid(0, 0, 0, 255); g.pathBegin(); g.ellipse(310, 52, 36, 36); g.fill(); g.shadowEnd();
+    g.solid(250, 204, 21, 255); g.pathBegin(); g.ellipse(310, 52, 36, 36); g.fill();
+  }],
+  ['clip and transform', (g) => {
+    g.solid(255, 255, 255, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.save(); g.clip(14, 14, 160, 80);
+    g.solid(37, 99, 235, 255); g.pathBegin(); g.roundRect(-20, -20, 260, 70, 0, 0, 0, 0); g.fill();
+    g.solid(34, 197, 94, 255); g.pathBegin(); g.roundRect(100, 40, 200, 90, 20, 20, 20, 20); g.fill();
+    g.restore();
+    g.save(); g.transform(0.9659, 0.2588, -0.2588, 0.9659, 280, 14);               // a rotated thick line, as the sink draws a line
+    g.solid(220, 38, 38, 255); g.pathBegin(); g.roundRect(-5, -5, 90, 10, 5, 5, 5, 5); g.fill(); g.restore();
+    g.save(); g.transform(2, 0, 0, 2, 200, 40); g.solid(15, 23, 42, 255); g.pathBegin(); g.roundRect(0, 0, 30, 20, 3, 3, 3, 3); g.fill(); g.restore();
+  }],
+  ['text', (g) => {
+    g.solid(255, 255, 255, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.text('Accounting grid 1,000,000', 14, 30, 16, 400, 15, 23, 42, 255);
+    g.text('Revenue  4,812,330.50', 14, 56, 12, 400, 71, 85, 105, 255);
+    g.text('Bold heading', 14, 84, 20, 700, 37, 99, 235, 255);
+    g.text('Translucent 0123', 230, 84, 18, 400, 220, 38, 38, 140);
+  }],
+  ['layer alpha and polygon', (g) => {
+    g.solid(15, 23, 42, 255); g.pathBegin(); g.roundRect(0, 0, W, BAND, 0, 0, 0, 0); g.fill();
+    g.save(); g.layer(0.5, 0, 0);
+    g.solid(250, 204, 21, 255); g.pathBegin(); g.roundRect(14, 14, 120, 80, 8, 8, 8, 8); g.fill();
+    g.solid(56, 189, 248, 255); g.pathBegin(); g.roundRect(70, 30, 120, 60, 8, 8, 8, 8); g.fill(); g.restore();
+    g.solid(244, 114, 182, 255); g.pathBegin(); g.moveTo(260, 90); g.lineTo(320, 14); g.lineTo(380, 90); g.closePath(); g.fill();
+  }],
+];
+
+const draw = (g, ratio) => {
+  g.begin(W, BAND * bands.length, ratio);
+  bands.forEach(([, f], i) => { g.save(); g.transform(1, 0, 0, 1, 0, i * BAND); g.clip(0, 0, W, BAND); f(g); g.restore(); });
+};
+
+window.run = async (ratio) => {
+  const H = BAND * bands.length;
+  for (const id of ['a', 'b']) { const c = document.getElementById(id); c.style.width = W + 'px'; c.style.height = H + 'px'; }
+  g2d.init('a');
+  const ok = await gpu.ready('b', { present: false });              // the GPU host does not present: a canvas that has been presented cannot be read here (see runtime/gfx-gpu.js `settled`)
+  if (!ok) return { gpu: false };
+  gpu.init('b');
+  gpu.gpuStatsReset();
+  draw(g2d, ratio);
+  draw(gpu, ratio);
+  gpu.flush();
+  const bw = Math.round(W * ratio), bh = Math.round(H * ratio);
+  const A = document.getElementById('a').getContext('2d', { willReadFrequently: true }).getImageData(0, 0, bw, bh).data;
+  const { data: B } = await gpu.readPixels();
+  const rows = BAND * ratio;
+  const report = bands.map(([name], i) => {
+    let sum = 0, big = 0, max = 0, px = 0;
+    for (let y = i * rows; y < (i + 1) * rows; y++) for (let x = 0; x < bw; x++) {
+      const o = (y * bw + x) * 4;
+      const d = Math.max(Math.abs(A[o] - B[o]), Math.abs(A[o + 1] - B[o + 1]), Math.abs(A[o + 2] - B[o + 2]));
+      sum += d; px++; if (d > 40) big++; if (d > max) max = d;
+    }
+    return { name, mean: +(sum / px).toFixed(3), bigShare: +(big / px).toFixed(4), max };
+  });
+  // both pictures side by side, for a person to look at
+  const read = document.getElementById('read');
+  read.width = bw * 2; read.height = bh;
+  const rc = read.getContext('2d');
+  rc.putImageData(new ImageData(new Uint8ClampedArray(A), bw, bh), 0, 0);
+  rc.putImageData(new ImageData(new Uint8ClampedArray(B), bw, bh), bw, 0);
+  window.__png = { a: read.toDataURL() };
+  return { gpu: true, report, stats: gpu.gpuStats() };
+};
+</script>

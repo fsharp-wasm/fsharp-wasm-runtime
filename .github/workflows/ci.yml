@@ -43,6 +43,17 @@ jobs:
       - name: The benchmark on Node (the same harness, from a terminal)
         run: node demos/bench/run.mjs --profile quick --wasm site/demos/bench/Bench.wasm
 
+      # WebGPU without a GPU: Chromium's software adapter (SwiftShader).  The pictures of the GPU host are compared with Canvas 2D's, pixel by pixel; speed is not measured here.
+      - name: The WebGPU host against Canvas 2D (every feature, at pixel ratio 1 and 2)
+        run: node tests/e2e/gpu.mjs
+        env:
+          E2E_GPU_REQUIRED: 1
+
+      - name: The accounting grid drawn by both hosts (first frame, scrolled, a cell selected)
+        run: node tests/e2e/gpu-grid.mjs
+        env:
+          E2E_GPU_REQUIRED: 1
+
       - name: Each demo's behaviour
         # tests/e2e/demos.mjs serves dist/ (a build with the compiler); here it is pointed at the committed site/
         run: node tests/e2e/demos.mjs

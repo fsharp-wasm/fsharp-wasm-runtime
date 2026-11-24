@@ -9,7 +9,7 @@
  * the module (`onResize`, `onPointer`, `onWheel`, `onKey`, `frame`) and runs the frame loop.
  */
 
-const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+export const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 const BLEND = [
     "source-over", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn",
     "hard-light", "soft-light", "difference", "exclusion",
@@ -36,6 +36,14 @@ const font = (size, weight) => `${weight} ${size}px ${FONT}`;
 export const init = (id) => {
     cv = document.getElementById(id);
     cx = cv.getContext("2d");
+};
+/**
+ * For a host that draws the canvas itself (gfx-gpu.js): take the canvas for the parts that are not drawing (the cursor, `announce`, `mount`) and measure text on a context
+ * of its own, so that the canvas stays free for another kind of context.
+ */
+export const attach = (id) => {
+    cv = document.getElementById(id);
+    cx = new OffscreenCanvas(1, 1).getContext("2d");
 };
 
 /** Start a frame: size the backing store for the device pixel ratio, reset the state, clear. */
