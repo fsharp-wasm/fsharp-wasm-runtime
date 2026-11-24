@@ -251,6 +251,15 @@ const ALL_DEMOS = [
         desc:   "A ledger of a million journal lines as a pivot table that folds to its totals, turns, and opens the lines behind a cell as a tab; drawn onto one canvas.",
     },
     {
+        // The F# project lives in fsharp-wasm-embedded (the universal shell); this repo holds its page.  Built when a checkout is found next to this one (or FSHARP_WASM_EMBEDDED_DIR).
+        name:   "wasmos",
+        repo:   "fsharp-wasm-embedded",
+        repoEnv: "FSHARP_WASM_EMBEDDED_DIR",
+        project: "demos/wasmos/Browser",
+        title:  "WasmOS — fsharp-wasm-embedded",
+        desc:   "One F# program, four systems: a small desktop with windows, a launcher and five apps that looks like Windows, macOS, Android or a Linux desktop.",
+    },
+    {
         // The second module of the same repository: the scenes of FSharp.Graphics.Scenes, selected from the page.
         name:   "graphics-gallery",
         repo:   "fsharp-wasm-graphics",

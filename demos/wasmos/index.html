@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WasmOS — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="../../runtime/ui.css">
+  <script src="../../runtime/embed.js"></script>
+  <script src="../../runtime/frame.js" data-here="WasmOS"></script>
+  <style>
+    /* The module draws no pixels of its own: it states the DOM (a top bar, a desktop with windows, a launcher, a menu) and the class of the screen, and this sheet makes it Windows,
+       macOS, Android or a Linux desktop.  The sizes of the screens are the module's (it sets them on the screen element); everything else that is a look is here. */
+    .wasmos { overflow-x: auto; padding: .25rem 0 1.5rem; }
+    .skins { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin: 0 0 1rem; }
+    .skin { margin: 0; padding: .35rem 1rem; border-radius: 999px; }
+    .skin[aria-pressed="false"] { background: transparent; color: var(--pico-primary); }
+
+    .stage { box-sizing: border-box; position: relative; margin: 0 auto; display: grid; overflow: hidden; border-radius: 12px; box-shadow: 0 24px 60px rgba(0,0,0,.35);
+             font: 14px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--fg); background: var(--wall);
+             transition: width .3s ease, height .3s ease, border-radius .3s ease;
+             --fg: #1d1d1f; --panel: rgba(250,250,252,.86); --panel-fg: #1d1d1f; --win-bg: #fff; --win-fg: #1d1d1f; --line: rgba(0,0,0,.14);
+             --title-bg: #f1f1f1; --title-fg: #1d1d1f; --title-h: 36px; --win-radius: 8px; }
+    .stage.dark { --fg: #f5f5f7; --panel: rgba(32,32,36,.88); --panel-fg: #f5f5f7; --win-bg: #2a2a2f; --win-fg: #f2f2f2; --line: rgba(255,255,255,.16); --title-bg: #1f1f23; --title-fg: #f2f2f2; }
+    .stage button { font: inherit; cursor: pointer; }
+    .stage :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .stage > .topbar { grid-area: top; }
+    .stage > .desktop { grid-area: desk; position: relative; overflow: hidden; min-width: 0; min-height: 0; }
+    .stage > .launcher { grid-area: bar; }
+
+    /* the four screens: where the bars are, what is behind the windows */
+    .skin-windows  { grid-template-areas: "desk" "bar"; grid-template-rows: 1fr 48px; grid-template-columns: 1fr;
+                     --wall: radial-gradient(circle at 72% 28%, #5ab0ff 0, #1f74e6 34%, #0a2c78 100%); --title-bg: #f3f3f3; }
+    .skin-windows.dark { --title-bg: #202020; }
+    .skin-macos    { grid-template-areas: "top" "desk"; grid-template-rows: 28px 1fr; grid-template-columns: 1fr; --win-radius: 11px;
+                     --wall: linear-gradient(135deg, #5b3df5 0%, #b84fd8 46%, #ff8a5c 100%); --title-bg: linear-gradient(#ececec, #dadada); --title-h: 34px; }
+    .skin-macos.dark { --title-bg: linear-gradient(#3a3a3f, #2c2c30); }
+    .skin-android  { grid-template-areas: "top" "desk" "bar"; grid-template-rows: 32px 1fr 52px; grid-template-columns: 1fr; border: 10px solid #101012; border-radius: 40px; --win-radius: 0;
+                     --wall: linear-gradient(180deg, #1c2b4a 0%, #3d2a5c 60%, #7a3b5c 100%); --title-bg: var(--accent); --title-fg: #fff; --title-h: 48px; font-family: Roboto, system-ui, sans-serif; }
+    .skin-linux    { grid-template-areas: "top top" "bar desk"; grid-template-rows: 28px 1fr; grid-template-columns: 64px 1fr; --win-radius: 10px;
+                     --wall: linear-gradient(135deg, #2c001e 0%, #5e2750 46%, #e95420 100%); --title-bg: #ebebeb; --title-h: 40px; }
+    .skin-linux.dark { --title-bg: #303030; }
+
+    /* the icons on the desktop */
+    .icons { position: absolute; top: 14px; left: 14px; bottom: 14px; display: flex; flex-direction: column; flex-wrap: wrap; align-content: flex-start; gap: 10px; }
+    .dicon { width: 78px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 2px; background: transparent; border: 0; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6); border-radius: 8px; }
+    .dicon:hover { background: rgba(255,255,255,.16); }
+    .skin-android .icons { left: 10px; right: 10px; top: 22px; bottom: auto; flex-direction: row; justify-content: center; gap: 14px 10px; }
+    .skin-android .dicon { width: 76px; }
+    .icon { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; color: #fff; font-weight: 700; font-size: 19px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.18); }
+    .skin-android .dicon .icon { width: 52px; height: 52px; border-radius: 50%; font-size: 23px; }
+    .icon.app-notes { background: linear-gradient(#ffd54f, #f2a20c); }
+    .icon.app-todo { background: linear-gradient(#5fd38d, #1f9d57); }
+    .icon.app-primes { background: linear-gradient(#7e9bff, #4a55d9); }
+    .icon.app-tasks { background: linear-gradient(#ff8a80, #d8453a); }
+    .icon.app-settings { background: linear-gradient(#9aa4b2, #5d6674); }
+    .label { font-size: 12px; }
+
+    /* windows */
+    .win { position: absolute; display: flex; flex-direction: column; min-width: 0; background: var(--win-bg); color: var(--win-fg); border-radius: var(--win-radius); overflow: hidden;
+           box-shadow: 0 14px 36px rgba(0,0,0,.38), 0 0 0 1px var(--line); transition: opacity .16s, transform .16s, box-shadow .16s; }
+    .win:not(.focused) { box-shadow: 0 6px 16px rgba(0,0,0,.22), 0 0 0 1px var(--line); }
+    .win:not(.focused) .titlebar { opacity: .72; }
+    .win.min { opacity: 0; transform: translateY(36px) scale(.92); pointer-events: none; visibility: hidden; transition: opacity .16s, transform .16s, visibility 0s .16s; }
+    .win.max { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; border-radius: 0; }
+    .titlebar { display: flex; align-items: stretch; flex: none; height: var(--title-h); background: var(--title-bg); color: var(--title-fg); user-select: none; border-bottom: 1px solid var(--line); }
+    .drag { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 0 10px; cursor: grab; touch-action: none; }
+    .titlebar .icon { width: 18px; height: 18px; font-size: 11px; border-radius: 5px; box-shadow: none; }
+    .title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .ctls { display: flex; }
+    .ctl { position: relative; border: 0; background: transparent; color: inherit; padding: 0; margin: 0; }
+    .ctl::before { content: ""; position: absolute; inset: 0; margin: auto; }
+    .content { flex: 1; min-height: 0; overflow: auto; }
+    .grip { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; touch-action: none; }
+    .grip::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 8px; height: 8px; border-right: 2px solid var(--line); border-bottom: 2px solid var(--line); }
+    .win.max .grip { display: none; }
+
+    /* window controls: Windows, right, flat; macOS, left, three lights; Linux, right, round; Android has none (the navigation bar is the control) */
+    .skin-windows .ctl { width: 46px; }
+    .skin-windows .ctl:hover { background: rgba(127,127,127,.22); }
+    .skin-windows .ctl.close:hover { background: #e81123; color: #fff; }
+    .skin-windows .ctl.min::before { width: 11px; height: 1px; background: currentColor; }
+    .skin-windows .ctl.max::before { width: 9px; height: 9px; border: 1px solid currentColor; }
+    .skin-windows .ctl.close::before { content: "×"; font-size: 20px; line-height: 1; width: auto; height: auto; }
+    .skin-macos .ctls { order: -1; align-items: center; gap: 8px; padding: 0 12px; }
+    .skin-macos .ctl { width: 12px; height: 12px; border-radius: 50%; }
+    .skin-macos .ctl.close { order: 0; background: #ff5f57; } .skin-macos .ctl.min { order: 1; background: #febc2e; } .skin-macos .ctl.max { order: 2; background: #28c840; }
+    .skin-macos .drag { justify-content: center; padding-right: 64px; } .skin-macos .titlebar .icon { display: none; } .skin-macos .title { font-weight: 500; }
+    .skin-linux .ctls { align-items: center; gap: 6px; padding: 0 10px; }
+    .skin-linux .ctl { width: 24px; height: 24px; border-radius: 50%; background: rgba(127,127,127,.2); }
+    .skin-linux .ctl:hover { background: rgba(127,127,127,.4); }
+    .skin-linux .ctl.min::before { width: 9px; height: 1.5px; background: currentColor; }
+    .skin-linux .ctl.max::before { width: 8px; height: 8px; border: 1.5px solid currentColor; }
+    .skin-linux .ctl.close::before { content: "×"; font-size: 16px; line-height: 1; }
+    .skin-linux .drag { justify-content: center; padding-left: 90px; } .skin-linux .titlebar .icon { display: none; }
+    .skin-android .win { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; border-radius: 0; }
+    .skin-android .win:not(.focused) { display: none; }
+    .skin-android .ctls, .skin-android .grip { display: none; } .skin-android .drag { cursor: default; }
+    .skin-android .titlebar .icon { display: none; } .skin-android .title { font-size: 18px; font-weight: 500; }
+
+    /* the bars */
+    .skin-macos .topbar { display: flex; align-items: center; gap: 14px; padding: 0 14px; background: rgba(255,255,255,.34); backdrop-filter: blur(18px); color: #111; font-size: 13px; }
+    .skin-macos.dark .topbar { background: rgba(0,0,0,.35); color: #f5f5f7; }
+    .skin-macos .logo { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 5px; background: currentColor; }
+    .skin-macos .logo { background: #111; color: #fff; font-size: 10px; font-weight: 700; }
+    .skin-macos.dark .logo { background: #f5f5f7; color: #111; }
+    .menus { display: flex; gap: 14px; } .spacer { flex: 1; }
+    .skin-android .topbar { display: flex; align-items: center; gap: 8px; padding: 0 22px; color: #fff; font-size: 13px; font-weight: 500; }
+    .skin-linux .topbar { display: flex; align-items: center; padding: 0 12px; background: #151517; color: #f2f2f2; font-size: 13px; }
+    .activities { border: 0; background: transparent; color: inherit; padding: 2px 10px; border-radius: 999px; } .activities:hover { background: rgba(255,255,255,.14); }
+    .signal { width: 14px; height: 11px; background: linear-gradient(to top, currentColor 0 100%) 0 100% / 3px 40% no-repeat, linear-gradient(to top, currentColor 0 100%) 5px 100% / 3px 60% no-repeat, linear-gradient(to top, currentColor 0 100%) 10px 100% / 3px 100% no-repeat; }
+    .battery { position: relative; width: 22px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; }
+    .battery::before { content: ""; position: absolute; inset: 1.5px; right: 5px; background: currentColor; border-radius: 1px; }
+    .battery::after { content: ""; position: absolute; right: -4px; top: 2px; width: 2px; height: 4px; background: currentColor; border-radius: 0 1px 1px 0; }
+
+    .launcher { display: flex; align-items: center; }
+    .start, .item, .nav { border: 0; background: transparent; color: inherit; }
+    .item { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; padding: 0; }
+    .item .label { display: none; }
+    .item.running::after { content: ""; position: absolute; bottom: 3px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: currentColor; opacity: .8; }
+    .items { display: flex; gap: 4px; }
+    .tray { margin-left: auto; padding: 0 14px; font-size: 12px; }
+    .skin-windows .launcher { justify-content: center; gap: 4px; position: relative; background: var(--panel); backdrop-filter: blur(24px); border-top: 1px solid var(--line); color: var(--panel-fg); }
+    .skin-windows .tray { position: absolute; right: 0; }
+    .skin-windows .item.running::after { width: 14px; height: 3px; border-radius: 2px; margin-left: -7px; background: var(--accent); opacity: 1; }
+    .skin-windows .item.active { background: rgba(127,127,127,.2); } .skin-windows .item:hover { background: rgba(127,127,127,.16); }
+    .skin-windows .start { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; }
+    .skin-windows .start:hover { background: rgba(127,127,127,.16); }
+    .skin-macos .start::before { content: ""; width: 26px; height: 26px; background: radial-gradient(circle, #6b5cf0 3.2px, transparent 3.6px) 0 0 / 9px 9px, radial-gradient(circle, #ff8a5c 3.2px, transparent 3.6px) 4px 4px / 9px 9px; }
+    .skin-windows .start::before { content: ""; width: 20px; height: 20px;
+      background: linear-gradient(var(--accent), var(--accent)) 0 0 / 9px 9px no-repeat, linear-gradient(var(--accent), var(--accent)) 11px 0 / 9px 9px no-repeat,
+                  linear-gradient(var(--accent), var(--accent)) 0 11px / 9px 9px no-repeat, linear-gradient(var(--accent), var(--accent)) 11px 11px / 9px 9px no-repeat; }
+    .skin-macos .launcher { grid-area: auto; position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 5000; gap: 6px; padding: 6px 10px;
+                            background: rgba(255,255,255,.3); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,.4); border-radius: 20px; }
+    .skin-macos.dark .launcher { background: rgba(20,20,24,.45); border-color: rgba(255,255,255,.16); }
+    .skin-macos .item { width: 52px; height: 52px; transition: transform .14s ease; } .skin-macos .item:hover { transform: translateY(-9px) scale(1.28); z-index: 1; }
+    .skin-macos .item .icon { width: 48px; height: 48px; border-radius: 12px; font-size: 22px; }
+    .skin-macos .start { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,.5); display: grid; place-items: center; } .skin-macos .tray { display: none; }
+    .skin-linux .launcher { flex-direction: column; justify-content: flex-start; gap: 6px; padding: 8px 0; background: rgba(21,21,23,.82); color: #fff; }
+    .skin-linux .items { flex-direction: column; } .skin-linux .tray { display: none; }
+    .skin-linux .start { order: 99; margin-top: auto; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; }
+    .skin-linux .start::before { content: ""; width: 20px; height: 20px; background: radial-gradient(circle, #fff 2px, transparent 2.5px) 0 0 / 7px 7px; }
+    .skin-linux .item.running::after { left: -9px; bottom: 50%; margin: 0; width: 3px; height: 14px; border-radius: 2px; transform: translateY(50%); }
+    .skin-linux .item.active { background: rgba(255,255,255,.16); }
+    .skin-android .launcher { justify-content: space-around; padding: 0 20px; background: rgba(0,0,0,.28); color: #fff; }
+    .skin-android .nav { position: relative; width: 56px; height: 40px; border-radius: 20px; } .skin-android .nav:hover { background: rgba(255,255,255,.14); }
+    .skin-android .nav::before { content: ""; position: absolute; inset: 0; margin: auto; }
+    .skin-android .nav.back::before { width: 0; height: 0; border: 9px solid transparent; border-right: 14px solid #fff; border-left: 0; }
+    .skin-android .nav.home::before { width: 14px; height: 14px; border: 2px solid #fff; border-radius: 50%; }
+    .skin-android .nav.recents::before { width: 13px; height: 13px; border: 2px solid #fff; border-radius: 3px; }
+    .skin-android .nav.apps::before { width: 16px; height: 16px; background: radial-gradient(circle, #fff 1.7px, transparent 2px) 0 0 / 6px 6px; }
+
+    /* the menu: the start menu, the launchpad, the app drawer, the activities overview */
+    .menu { position: absolute; z-index: 6000; background: var(--panel); color: var(--panel-fg); backdrop-filter: blur(26px); box-shadow: 0 18px 44px rgba(0,0,0,.4); box-sizing: border-box; }
+    .stage h3 { color: inherit; font-family: inherit; }
+    .menu h3 { margin: 0 0 12px; font-size: 13px; font-weight: 600; opacity: .7; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 12px; }
+    .tile { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; border: 0; border-radius: 10px; background: transparent; color: inherit; }
+    .tile:hover { background: rgba(127,127,127,.2); }
+    .skin-windows .menu { left: 50%; bottom: 10px; width: min(520px, 94%); transform: translateX(-50%); padding: 18px; border-radius: 12px; border: 1px solid var(--line); }
+    .skin-macos .menu, .skin-linux .menu, .skin-android .menu { inset: 0; border-radius: 0; display: flex; flex-direction: column; justify-content: center; padding: 36px 64px; background: rgba(18,16,30,.62); color: #fff; }
+    .skin-android .menu { padding: 28px 20px; justify-content: flex-start; background: rgba(18,18,30,.94); } .skin-linux .menu { background: rgba(35,8,30,.86); }
+
+    /* the apps */
+    .body { box-sizing: border-box; height: 100%; display: flex; flex-direction: column; gap: 10px; padding: 12px; }
+    .body h3 { margin: 4px 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; opacity: .65; }
+    .body p { margin: 0; }
+    .foot { font-size: 12px; opacity: .65; }
+    .row { display: flex; gap: 8px; align-items: center; } .row.wrap { flex-wrap: wrap; }
+    .btn { margin: 0; padding: 6px 13px; border: 1px solid var(--line); border-radius: 7px; background: rgba(127,127,127,.12); color: inherit; }
+    .btn:hover { background: rgba(127,127,127,.22); } .btn.small { padding: 2px 9px; font-size: 12px; }
+    .btn[aria-pressed="true"] { background: var(--accent); border-color: transparent; color: #fff; }
+    .body input[type="text"] { flex: 1; margin: 0; padding: 6px 9px; height: auto; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: inherit; font: inherit; }
+    .notes-text { flex: 1; width: 100%; box-sizing: border-box; margin: 0; resize: none; padding: 9px; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: inherit; font: inherit; }
+    .todos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; overflow: auto; }
+    .todos li { display: flex; align-items: center; gap: 8px; margin: 0; padding: 4px 2px; }
+    .todos .text { flex: 1; } .todos .done .text { text-decoration: line-through; opacity: .55; }
+    .check { width: 20px; height: 20px; padding: 0; border: 2px solid var(--line); border-radius: 50%; background: transparent; color: #fff; font-size: 12px; line-height: 1; }
+    .check[aria-pressed="true"] { background: var(--accent); border-color: transparent; }
+    .remove { border: 0; background: transparent; color: inherit; opacity: .5; font-size: 18px; line-height: 1; } .remove:hover { opacity: 1; }
+    .swatch { width: 28px; height: 28px; padding: 0; border-radius: 50%; border: 2px solid transparent; } .swatch[aria-pressed="true"] { outline: 2px solid var(--win-fg); outline-offset: 2px; }
+    .result strong { display: block; font-size: 2rem; line-height: 1.1; }
+    .tasks-body table { width: 100%; margin: 0; font-size: 13px; } .tasks-body th, .tasks-body td { padding: 6px 8px; background: transparent; border-color: var(--line); color: inherit; }
+    .tasks-body .icon { width: 20px; height: 20px; font-size: 11px; border-radius: 6px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>WasmOS</h1>
+      <p>One F# program, four systems. A small desktop — windows you drag, resize, minimise and maximise, a launcher, a menu, five apps — that is Windows, macOS, Android or a Linux desktop
+         with one click. The model is a pure function (it also runs under .NET and is tested there); the module states the DOM, and the page's CSS makes it look like each system.
+         This is what the universal shell of <a href="https://github.com/fsharp-wasm/fsharp-wasm-embedded">fsharp-wasm-embedded</a> hosts: the same application in the chrome of the device it runs on.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <div id="wasmos-root"></div>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    // `window.__instance`: the module, for the end-to-end test
+    window.__instance = await boot({ wasm: new URL("WasmOs.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

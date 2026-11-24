@@ -57,6 +57,9 @@ jobs:
       - name: The actor orchestra (a worker killed and one crashed mid-run, every chunk counted once)
         run: E2E_ROOT=site node tests/e2e/orchestra.mjs
 
+      - name: WasmOS (windows, the four systems, the Android navigation, the apps)
+        run: E2E_ROOT=site node tests/e2e/wasmos.mjs
+
       - name: Each demo's behaviour
         # tests/e2e/demos.mjs serves dist/ (a build with the compiler); here it is pointed at the committed site/
         run: node tests/e2e/demos.mjs
