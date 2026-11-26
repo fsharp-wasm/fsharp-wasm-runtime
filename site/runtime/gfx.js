@@ -6,7 +6,8 @@
  * 0..255 channels, alpha 0..255.
  *
  * `mount(instance, canvasId)` is the other direction: it forwards pointer, wheel, key and size events to the exports of
- * the module (`onResize`, `onPointer`, `onWheel`, `onKey`, `frame`) and runs the frame loop.
+ * the module (`onResize`, `onPointer`, `onWheel`, `onKey`, `frame`) and runs the frame loop.  A module that also exports `onText` is told what a person types
+ * as text (the character, with the layout, Shift, Caps Lock, AltGr and accents applied; read it with `pendingKey`) and gets the other keys as keys.
  */
 
 export const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
@@ -205,10 +206,22 @@ export function mount(instance, canvasId) {
         const k = e.key.toLowerCase();
         return k === "z" ? (e.shiftKey ? "Redo" : "Undo") : k === "y" ? "Redo" : null;
     };
-    // kind: 0 down, 1 up
+    // Text is what a person typed, as the platform made it: the layout, Shift, Caps Lock, an accent or a dead key are applied in `e.key`, which is then one character ("H", "@", "ß", "é").
+    // AltGr (Ctrl+Alt on Windows, which says so in AltGraph) and Option (macOS, with Alt alone) make characters too: on a German keyboard @ { } [ ] \\ | ~ and the euro sign.  Every other chord
+    // with Ctrl, Cmd or Alt is a shortcut, and the browser's: Alt+F is not an "f".  The space is a key (it presses a button), and the module takes it as the key it was.
+    const isText = (e) => {
+        if ([...e.key].length !== 1 || e.key === " " || e.metaKey) return false;
+        if (e.ctrlKey && e.altKey) return e.getModifierState("AltGraph");
+        if (e.ctrlKey) return false;
+        if (e.altKey) return !/[A-Za-z0-9]/.test(e.key);
+        return true;
+    };
+    // kind: 0 down, 1 up.  A module that exports `onText` is sent the characters as text (a key down only, nothing on the way up) and the other keys as keys; one that does not,
+    // gets every key as a key, as it always did.
     const onKey = (kind) => (e) => {
         const name = shortcut(e);
         if (name) { if (kind === 0) { key = name; ex.onKey(0); e.preventDefault(); } return; }
+        if (ex.onText && isText(e)) { if (kind === 0) { key = e.key; ex.onText(); e.preventDefault(); } return; }
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         key = e.key;
         ex.onKey(kind);
