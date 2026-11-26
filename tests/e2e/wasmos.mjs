@@ -43,7 +43,7 @@ const grip = await box(win('Notes').locator('.grip'));
 await page.mouse.move(grip.x + 9, grip.y + 9); await page.mouse.down(); await page.mouse.move(grip.x + 59, grip.y + 49, { steps: 6 }); await page.mouse.up();
 const resized = await box(win('Notes'));
 check('dragging the grip resizes the window', near(resized.width - after.width, 50) && near(resized.height - after.height, 40), `${resized.width - after.width}, ${resized.height - after.height}`);
-await page.mouse.move(grip.x + 59, grip.y + 49); await page.mouse.down(); await page.mouse.move(-500, -500, { steps: 6 }); await page.mouse.up();
+await page.mouse.move(grip.x + 59, grip.y + 49); await page.mouse.down(); await page.mouse.move(2, 2, { steps: 6 }); await page.mouse.up();
 const smallest = await box(win('Notes'));
 check('a window is not made smaller than 240 by 160', near(smallest.width, 240) && near(smallest.height, 160), `${smallest.width}x${smallest.height}`);
 
