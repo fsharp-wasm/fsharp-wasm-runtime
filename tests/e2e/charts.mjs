@@ -7,7 +7,7 @@ import { serve, launch, checker } from './lib.mjs';
 const { server, base } = await serve();
 const { check, failures } = checker();
 const { browser, page, errors } = await launch();
-await page.setViewportSize({ width: 1280, height: 1000 });
+await page.setViewportSize({ width: 1280, height: 1400 });          // the whole chart is in the viewport also where the page's stylesheet makes the header taller (CI)
 await page.goto(`${base}/demos/charts/`);
 await page.waitForFunction(() => /Loaded/.test(document.getElementById('status')?.textContent ?? ''), null, { timeout: 90000 });
 
