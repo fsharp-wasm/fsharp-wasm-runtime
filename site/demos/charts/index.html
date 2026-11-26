@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charts — fsharp-wasm-graphics</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    #charts { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .6rem; }
+    #charts button { width: auto; margin: 0; padding: .22rem .7rem; font-size: .85rem; }
+    #covers { margin: 0 0 .5rem; font-size: .9rem; opacity: .75; min-height: 2.8em; }
+    #gfx { display: block; width: 100%; height: min(68vh, 600px); min-height: 380px; border-radius: var(--pico-border-radius);
+           background: #0f172a; outline: none; touch-action: none; cursor: crosshair; }
+    #gfx:focus-visible { box-shadow: 0 0 0 3px var(--pico-primary-focus); }
+    .readout { display: flex; flex-wrap: wrap; gap: .3rem 1.4rem; margin: .5rem 0 0; font-size: .85rem; font-variant-numeric: tabular-nums; }
+    .readout b { font-weight: 600; }
+    .hint { font-size: .85rem; opacity: .7; }
+    #bench table { font-size: .85rem; font-variant-numeric: tabular-nums; }
+    #bench td:nth-child(n+2), #bench th:nth-child(n+2) { text-align: right; white-space: nowrap; }
+    #bench button { width: auto; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+  <script src="../../runtime/frame.js" data-compact data-here="Charts"></script>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <a href="../../index.html">← All Demos</a>
+      <span>F# → WasmGC</span>
+    </nav>
+    <hgroup>
+      <h1>Charts — fsharp-wasm-graphics</h1>
+      <p>A line of ten million samples, a stream, a density map of five million points and two hundred thousand candles,
+         drawn by the scene graph onto one canvas. A frame costs the pixels of the chart and not the points of the data:
+         a minimum and maximum pyramid finds what a pixel column covers, a summed-area table counts the points in a cell.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+
+    <div id="charts" role="tablist" aria-label="Charts"></div>
+    <p id="covers" aria-live="polite"></p>
+    <canvas id="gfx" tabindex="0" aria-label="Chart canvas"></canvas>
+    <div class="readout">
+      <span>Frame <b id="frame-ms">–</b> ms <small>(median of the last 120; 95th percentile <span id="frame-p95">–</span>)</small></span>
+      <span id="view">–</span>
+      <span id="info">–</span>
+    </div>
+    <p class="hint">Wheel zooms about the pointer, a drag pans, a double press shows everything again. Keys: <kbd>←</kbd> <kbd>→</kbd> pan,
+      <kbd>↑</kbd> <kbd>↓</kbd> zoom, <kbd>Home</kbd> everything, <kbd>End</kbd> follows the stream. A frame is drawn when something changes (or while the stream runs).</p>
+
+    <details id="bench">
+      <summary>Benchmark: the pyramid against reading every sample</summary>
+      <p class="hint">Measured here, in this browser, on this machine. The pyramid answers "what are the smallest and the largest of the samples in this pixel column"; the plain way reads them all.</p>
+      <p><button id="bench-run" type="button">Run the benchmark</button> <span id="bench-state" aria-live="polite"></span></p>
+      <table>
+        <thead><tr><th>What</th><th>Size</th><th>Time</th><th>Note</th></tr></thead>
+        <tbody id="bench-rows"></tbody>
+      </table>
+    </details>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    import { mount } from "../../runtime/gfx.js";
+
+    const $ = (id) => document.getElementById(id);
+    const canvas = $("gfx");
+    const tabs = $("charts");
+    const charts = [];                 // { id, title, covers } in the order the module announces them
+    const infos = new Map();           // id → what making the data cost
+    let exports = null;
+    let selectedId = null;
+
+    const show = (i) => {
+      const chart = charts[i];
+      if (!chart) return;
+      selectedId = chart.id;
+      [...tabs.children].forEach((b, j) => {
+        b.setAttribute("aria-selected", String(j === i));
+        b.classList.toggle("outline", j !== i);
+      });
+      $("covers").textContent = chart.covers;
+      $("info").textContent = infos.get(chart.id) ?? "";
+      history.replaceState(null, "", `#${chart.id}`);
+    };
+
+    // the module names its charts, says what making the data cost, what is in view and how long a frame takes
+    canvas.addEventListener("gfx", ({ detail: { kind, a, b } }) => {
+      if (kind.startsWith("chart:")) {
+        const i = charts.push({ id: kind.slice(6), title: a, covers: b }) - 1;
+        const button = Object.assign(document.createElement("button"), { type: "button", textContent: a });
+        button.setAttribute("role", "tab");
+        button.classList.add("outline");
+        button.addEventListener("click", () => { exports.select(i); canvas.focus(); });
+        tabs.appendChild(button);
+      } else if (kind === "selected") {
+        show(Number(a));
+        $("status").textContent = `Loaded: ${charts[Number(a)]?.title ?? ""}`;
+      } else if (kind === "busy") {
+        $("status").textContent = `Making the data of “${charts.find((c) => c.id === a)?.title ?? a}”…`;
+      } else if (kind === "info") {
+        infos.set(a, b);
+        if (a === selectedId || selectedId === null) $("info").textContent = b;
+      } else if (kind === "view") {
+        $("view").textContent = a;
+      } else if (kind === "stats") {
+        $("frame-ms").textContent = a;
+        $("frame-p95").textContent = b.split(" ")[0];
+      }
+    });
+
+    const requested = location.hash;
+    const instance = await boot({ wasm: new URL("ChartDemo.wasm", import.meta.url), entry: "start" });
+    if (instance) {
+      exports = instance.exports;
+      mount(instance, "gfx");
+      const pick = (hash) => { const i = charts.findIndex((c) => `#${c.id}` === hash); if (i >= 0) exports.select(i); };
+      pick(requested);
+      addEventListener("hashchange", () => pick(location.hash));
+      window.__charts = exports;
+    }
+
+    // ── the benchmark ────────────────────────────────────────────────────────
+    const fmt = (v, d = 2) => v.toLocaleString("en", { maximumFractionDigits: d, minimumFractionDigits: d });
+    const grouped = (n) => n.toLocaleString("en").replace(/,/g, " ");
+    const rows = $("bench-rows");
+    const row = (what, size, time, note = "") => {
+      const tr = document.createElement("tr");
+      for (const text of [what, size, time, note]) tr.appendChild(Object.assign(document.createElement("td"), { textContent: text }));
+      rows.appendChild(tr);
+      return tr;
+    };
+    // let the page paint between two measurements
+    const tick = () => new Promise((r) => setTimeout(r, 30));
+
+    $("bench-run").addEventListener("click", async () => {
+      const ex = exports, state = $("bench-state");
+      rows.replaceChildren();
+      $("bench-run").disabled = true;
+      const out = {};
+      try {
+        for (const n of [1_000_000, 10_000_000]) {
+          state.textContent = `building the pyramid of ${grouped(n)} samples…`; await tick();
+          const build = ex.benchBuild(n);
+          row("Build the pyramid", `${grouped(n)} samples`, `${fmt(build, 1)} ms`, "one pass over the samples");
+          out[`build${n}`] = build;
+        }
+        // the 10 million samples are in place now
+        const n = 10_000_000;
+        state.textContent = "appending one at a time…"; await tick();
+        const append = ex.benchAppend(1_000_000);
+        row("Append to a growing pyramid", "1 000 000 samples", `${fmt(append, 1)} ms`, `${grouped(Math.round(1_000_000 / append * 1000))} samples a second`);
+        out.append = append;
+        for (const cols of [500, 1000, 2000]) {
+          state.textContent = `one frame of ${cols} columns…`; await tick();
+          const pyramid = ex.benchColumns(cols, 200);
+          const naive = ex.benchNaive(cols, 3);
+          row(`One frame of the line, ${grouped(cols)} columns`, `${grouped(n)} samples`, `${fmt(pyramid * 1000, 0)} µs`,
+              `reading every sample: ${fmt(naive, 1)} ms, ${grouped(Math.round(naive / pyramid))} times as long`);
+          out[`columns${cols}`] = { pyramid, naive };
+        }
+        const agree = ex.benchAgree(1000);
+        row("The two agree", "1 000 columns", agree === 0 ? "exactly" : `differ by ${agree}`, "largest difference of a minimum or a maximum");
+        out.agree = agree;
+        state.textContent = "the scene of the line…"; await tick();
+        const scene = ex.benchScene(1000, 100);
+        row("Build the scene of the line (the polygons)", "1 000 pixels wide", `${fmt(scene * 1000, 0)} µs`, "what a frame adds to the columns");
+        out.scene = scene;
+        state.textContent = "the grid of five million points…"; await tick();
+        const grid = ex.benchGrid(5_000_000);
+        row("Build the density grid", "5 000 000 points", `${fmt(grid, 1)} ms`, "1 024 × 1 024 cells and their summed-area table");
+        const heat = ex.benchHeat(800, 20);
+        const shapes = ex.benchHeatShapes(800);
+        row("Scene of the density map", "800 × 360 pixels", `${fmt(heat, 2)} ms`, `${grouped(shapes)} rectangles, at any zoom`);
+        out.grid = grid; out.heat = heat; out.shapes = shapes;
+        state.textContent = "done";
+      } catch (e) {
+        state.textContent = `failed: ${e.message}`;
+        out.error = e.message;
+      }
+      $("bench-run").disabled = false;
+      window.__bench = out;
+    });
+  </script>
+</body>
+</html>

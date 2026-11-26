@@ -183,6 +183,7 @@ fsharp-wasm-runtime/
 | IndexedDB CRUD | Persistent key-value storage |
 | Worker Actor | Web Worker message passing |
 | WasmOS | One F# program as Windows, macOS, Android or a Linux desktop: windows, a launcher, five apps (the F# project is in [fsharp-wasm-embedded](https://github.com/fsharp-wasm/fsharp-wasm-embedded)) |
+| Charts | A line of ten million samples, a stream, a density map of five million points and 200 000 candles from the scene graph, with the benchmark of the pyramid against reading every sample (the F# library is [FSharp.Graphics.Charts](https://github.com/fsharp-wasm/fsharp-wasm-graphics/blob/develop/docs/charts.md)) |
 | Actor Orchestra | An Erlang-style orchestra: supervised Web Workers, mailboxes and a pure orchestrator for a Monte Carlo estimate of π; kill or crash a worker mid-run ([docs/actors.md](docs/actors.md)) |
 | WebGPU Basic | GPU availability check + canvas |
 | Benchmark | Thirteen kernels, F# vs JavaScript, timed in a worker; chart, spreads, JSON export — results in [docs/benchmarks.md](docs/benchmarks.md) |

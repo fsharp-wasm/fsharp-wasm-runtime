@@ -268,6 +268,15 @@ const ALL_DEMOS = [
         title:  "Scene Gallery — fsharp-wasm-graphics",
         desc:   "Thirteen scenes of the FSharp.Graphics library — shapes, gradients, shadows, text, animation, interaction — drawn onto one canvas.",
     },
+    {
+        // The chart components of FSharp.Graphics.Charts: four charts on one canvas, with the benchmark of the pyramid on the page.
+        name:   "charts",
+        repo:   "fsharp-wasm-graphics",
+        repoEnv: "FSHARP_WASM_GRAPHICS_DIR",
+        project: "demo/FSharp.Graphics.Browser.Charts",
+        title:  "Charts — fsharp-wasm-graphics",
+        desc:   "Ten million samples, a live stream, five million points as a density map and 200 000 candles, drawn by the scene graph: a frame costs the pixels, not the points.",
+    },
 ];
 
 /** The project directory of a demo: in this repository, or in the checkout of the repository it belongs to. */
