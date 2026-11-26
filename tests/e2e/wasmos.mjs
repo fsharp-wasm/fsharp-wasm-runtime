@@ -43,9 +43,13 @@ const grip = await box(win('Notes').locator('.grip'));
 await page.mouse.move(grip.x + 9, grip.y + 9); await page.mouse.down(); await page.mouse.move(grip.x + 59, grip.y + 49, { steps: 6 }); await page.mouse.up();
 const resized = await box(win('Notes'));
 check('dragging the grip resizes the window', near(resized.width - after.width, 50) && near(resized.height - after.height, 40), `${resized.width - after.width}, ${resized.height - after.height}`);
-await page.mouse.move(grip.x + 59, grip.y + 49); await page.mouse.down(); await page.mouse.move(2, 2, { steps: 6 }); await page.mouse.up();
+// the grip has moved with the window: look for it where it is now (and say what is under the pointer if the press does not land on it)
+const grip2 = await box(win('Notes').locator('.grip'));
+const gx = grip2.x + 9, gy = grip2.y + 9;
+const under = await page.evaluate(([x, y]) => { const e = document.elementFromPoint(x, y); return e ? `${e.tagName}.${e.className}` : 'nothing'; }, [gx, gy]);
+await page.mouse.move(gx - 6, gy - 6); await page.mouse.move(gx, gy); await page.mouse.down(); await page.mouse.move(2, 2, { steps: 6 }); await page.mouse.up();
 const smallest = await box(win('Notes'));
-check('a window is not made smaller than 240 by 160', near(smallest.width, 240) && near(smallest.height, 160), `${smallest.width}x${smallest.height}`);
+check('a window is not made smaller than 240 by 160', near(smallest.width, 240) && near(smallest.height, 160), `${smallest.width}x${smallest.height}, pressed at ${Math.round(gx)},${Math.round(gy)} on ${under}, grip ${JSON.stringify(grip2)}, viewport ${JSON.stringify(page.viewportSize())}`);
 
 // two windows: the one pressed comes to the front
 await openFromDesktop('Todo');
