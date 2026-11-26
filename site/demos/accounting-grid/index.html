@@ -23,8 +23,9 @@
     <hgroup>
       <h1>Accounting grid — fsharp-wasm-accounting</h1>
       <p>A ledger of one million journal lines as a pivot table, written in F# and compiled to WebAssembly GC. Rows and columns fold to their totals, the table turns
-         (accounts, cost centres, periods), and the lines behind a cell open as a tab. The whole interface is drawn by the module onto one canvas; JavaScript only forwards
-         pointer, wheel, key and size events.</p>
+         (accounts, cost centres, periods), the lines behind a cell open as a tab, and <strong>the budget is written</strong>: a number or a formula in a cell
+         (<code>=Actual*1.1</code>, <code>=A1+B1</code>), with every total above it moving by the difference. Each edit is a step of a graph (<code>FSharp.Wasm.Graph</code>): the History
+         tab lists what the engine did for it. The whole interface is drawn by the module onto one canvas; JavaScript only forwards pointer, wheel, key and size events.</p>
     </hgroup>
   </header>
 
@@ -33,7 +34,9 @@
 
     <canvas id="gfx" tabindex="0" aria-label="Accounting grid canvas"></canvas>
     <p class="hint">Click a <em>caret</em> to open or fold a row or a column; arrow keys move, <kbd>Space</kbd> folds the row, <kbd>Shift</kbd>+<kbd>Space</kbd> the column,
-      <kbd>Enter</kbd> (or a second click) opens the lines behind the cell as a tab, the wheel scrolls (<kbd>Shift</kbd> sideways). Drawn with <strong id="renderer">…</strong>;
+      <kbd>Enter</kbd> (or a second click) opens the lines behind the cell as a tab, the wheel scrolls (<kbd>Shift</kbd> sideways).
+      <strong>To plan the budget:</strong> choose <em>Open all</em> and the <em>Budget</em> measure, select a cell that is one account in one month and type (or <kbd>F2</kbd>); <kbd>Enter</kbd>
+      keeps it, <kbd>Esc</kbd> throws it away, <kbd>Delete</kbd> empties it, <kbd>Ctrl</kbd>+<kbd>Z</kbd> and <kbd>Ctrl</kbd>+<kbd>Y</kbd> take a step back and do it again. Drawn with <strong id="renderer">…</strong>;
       <a href="?renderer=webgpu">WebGPU</a> or <a href="?">Canvas 2D</a>. The number of lines, the time the table took to turn
       and the cost of a frame are in the <a href="https://github.com/fsharp-wasm/fsharp-wasm-accounting#what-it-costs">README</a>.</p>
   </main>

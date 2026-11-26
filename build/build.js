@@ -248,7 +248,7 @@ const ALL_DEMOS = [
         project: "src/Accounting.Browser",
         coreDir: "lib/fsharp-wasm-core",
         title:  "Accounting grid — fsharp-wasm-accounting",
-        desc:   "A ledger of a million journal lines as a pivot table that folds to its totals, turns, and opens the lines behind a cell as a tab; drawn onto one canvas.",
+        desc:   "A ledger of a million journal lines as a pivot table that folds to its totals, turns, and opens the lines behind a cell as a tab; the budget is written with numbers and formulas, every step is on a tape; drawn onto one canvas.",
     },
     {
         // The F# project lives in fsharp-wasm-embedded (the universal shell); this repo holds its page.  Built when a checkout is found next to this one (or FSHARP_WASM_EMBEDDED_DIR).
