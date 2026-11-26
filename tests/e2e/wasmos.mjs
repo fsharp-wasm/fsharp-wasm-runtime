@@ -5,7 +5,8 @@ import { serve, launch, checker } from './lib.mjs';
 const { server, base } = await serve();
 const { check, failures } = checker();
 const { browser, page, errors } = await launch();
-await page.setViewportSize({ width: 1280, height: 1000 });
+// tall enough for the whole screen under the page's header: where the stylesheet of the page is reachable (CI) the header is taller, the screen lies lower, and the mouse reaches only what is in the viewport
+await page.setViewportSize({ width: 1280, height: 1500 });
 await page.goto(`${base}/demos/wasmos/`);
 await page.waitForSelector('.stage', { timeout: 20000 });
 
