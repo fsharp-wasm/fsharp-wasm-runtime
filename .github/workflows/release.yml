@@ -2,7 +2,7 @@ name: Release
 
 # Tagging vX.Y.Z publishes a GitHub release with the showcase site as a zip (landing page + prebuilt demos), after the
 # end-to-end tests have run against exactly what is zipped.  No compiler is needed: site/ holds the prebuilt demos.
-# (A NuGet / npm package is not published yet.)
+# The npm package @fsharp-wasm/runtime (tools/npm-package) is published when the secret NPM_TOKEN is set.
 on:
   push:
     tags: ["v*"]
@@ -59,6 +59,7 @@ jobs:
         if: env.NODE_AUTH_TOKEN != ''
         run: |
           cp -r runtime tools/npm-package/runtime
+          cp LICENSE NOTICE tools/npm-package/
           cd tools/npm-package
           npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
           tag=latest; [[ "$GITHUB_REF_NAME" == *-* ]] && tag=next   # a prerelease must not become `latest`

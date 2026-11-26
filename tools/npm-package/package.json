@@ -1,34 +1,54 @@
 {
   "name": "@fsharp-wasm/runtime",
   "version": "0.1.0-experimental",
-  "description": "JavaScript runtime glue modules for F# WasmGC browser apps",
+  "description": "JavaScript runtime glue for F# compiled to WebAssembly GC: boot, DOM, canvas and WebGPU hosts, storage, workers, pub/sub",
   "type": "module",
   "main": "./index.js",
   "exports": {
-    ".":          "./index.js",
-    "./boot":     "./runtime/boot.js",
-    "./core":     "./runtime/core.js",
-    "./dom":      "./runtime/dom.js",
-    "./canvas":   "./runtime/canvas.js",
-    "./net":      "./runtime/net.js",
-    "./storage":  "./runtime/storage.js",
-    "./indexeddb":"./runtime/indexeddb.js",
-    "./workers":  "./runtime/workers.js",
-    "./pubsub":   "./runtime/pubsub.js",
-    "./timing":   "./runtime/timing.js",
-    "./gpu":      "./runtime/gpu.js",
-    "./components":"./runtime/components.js",
-    "./clipboard":"./runtime/clipboard.js",
-    "./cookies":  "./runtime/cookies.js",
+    ".": "./index.js",
+    "./boot": "./runtime/boot.js",
+    "./core": "./runtime/core.js",
+    "./dom": "./runtime/dom.js",
+    "./canvas": "./runtime/canvas.js",
+    "./net": "./runtime/net.js",
+    "./storage": "./runtime/storage.js",
+    "./indexeddb": "./runtime/indexeddb.js",
+    "./workers": "./runtime/workers.js",
+    "./pubsub": "./runtime/pubsub.js",
+    "./timing": "./runtime/timing.js",
+    "./gpu": "./runtime/gpu.js",
+    "./components": "./runtime/components.js",
+    "./clipboard": "./runtime/clipboard.js",
+    "./cookies": "./runtime/cookies.js",
     "./location": "./runtime/location.js",
-    "./pointer":  "./runtime/pointer.js",
-    "./events":   "./runtime/events.js"
+    "./pointer": "./runtime/pointer.js",
+    "./events": "./runtime/events.js",
+    "./gfx": "./runtime/gfx.js",
+    "./gfx-gpu": "./runtime/gfx-gpu.js",
+    "./frame": "./runtime/frame.js",
+    "./embed": "./runtime/embed.js",
+    "./actors": "./runtime/actors.js",
+    "./theme.css": "./runtime/theme.css",
+    "./ui.css": "./runtime/ui.css"
   },
-  "files": ["index.js", "runtime/"],
-  "keywords": ["fsharp", "wasm", "wasmgc", "browser", "runtime"],
+  "files": [
+    "index.js",
+    "runtime/"
+  ],
+  "keywords": [
+    "fsharp",
+    "wasm",
+    "wasmgc",
+    "browser",
+    "runtime"
+  ],
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/fsharp-wasm/fsharp-wasm-runtime"
+  },
+  "homepage": "https://fsharp-wasm.github.io",
+  "publishConfig": {
+    "access": "public"
   }
 }
