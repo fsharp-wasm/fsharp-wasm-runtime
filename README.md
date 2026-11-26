@@ -1,5 +1,9 @@
 # fsharp-wasm-runtime
 
+<!-- status -->
+[![CI](https://github.com/fsharp-wasm/fsharp-wasm-runtime/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/fsharp-wasm/fsharp-wasm-runtime/actions/workflows/ci.yml) [![Pages](https://github.com/fsharp-wasm/fsharp-wasm-runtime/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/fsharp-wasm/fsharp-wasm-runtime/actions/workflows/pages.yml) · [Status of every repository](https://fsharp-wasm.github.io/status/)
+<!-- /status -->
+
 <!-- platform -->
 > **Part of the [fsharp-wasm platform](https://fsharp-wasm.github.io/projects/)**: the browser. Builds on [core](https://github.com/fsharp-wasm/fsharp-wasm-core). Used by [ide](https://github.com/fsharp-wasm/fsharp-wasm-ide), [backend](https://github.com/fsharp-wasm/fsharp-wasm-backend) (the canvas client), [newsletter](https://github.com/fsharp-wasm/fsharp-wasm-newsletter).
 > [All projects](https://fsharp-wasm.github.io/projects/) · [Roadmap](https://fsharp-wasm.github.io/docs/roadmap/) · [Tests](https://fsharp-wasm.github.io/tests/) · [Benchmarks](https://fsharp-wasm.github.io/benchmarks/) · [Live demos](https://fsharp-wasm.github.io/demos/)
