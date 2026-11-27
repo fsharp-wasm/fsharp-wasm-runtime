@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- `demos/charts` has four tabs more, the science charts of fsharp-wasm-graphics (`ChartDemo.wasm` is 194 KB without its names now, measured 2026-11-27, with the data graph engine and the layout in it): a scatter coloured by value (400 000 points: a density map, markers and a colour bar when zoomed in), a **live histogram** of a column of a document that grows by 4 000 samples a second (the counts, the bars and the chart are calcs of the data graph; 200 000 samples are appended and counted in 8 ms), a field of 480 x 360 values with its contour lines and a colour bar, and the **data graph of a document as a diagram** (16 nodes, 42 links, laid out in 3 ms; panned and zoomed like a chart). `tests/e2e/charts.mjs` drives all eight tabs in Chromium.
 - `Browser.Files.download fileName mimeType text` (`runtime/files.js`, also `@fsharp-wasm/runtime/files`): a text handed to the person as a file. The newsletter designer had a click handler for it in its page (`data-download`); a module calls this now. `tests/e2e/files.mjs` takes the download in Chromium: the name, the text as UTF-8, an empty mime type, an empty text.
 
 ### Fixed

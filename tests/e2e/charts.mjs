@@ -1,6 +1,6 @@
 // End-to-end: the chart demo (fsharp-wasm-graphics, FSharp.Graphics.Charts) in a real Chromium.
 //   E2E_ROOT=site node tests/e2e/charts.mjs       (or after `node build/build.js`: dist/)
-// What is judged: that the four charts draw, that zoom keeps the point under the pointer and a drag moves the data by the distance of the pointer, that a spike one sample wide among ten million is
+// What is judged: that the charts draw, that zoom keeps the point under the pointer and a drag moves the data by the distance of the pointer, that a spike one sample wide among ten million is
 // still on the screen at the widest zoom (the point of the pyramid), that a stream grows, and the numbers of the benchmark (the pyramid against reading every sample).
 import { serve, launch, checker } from './lib.mjs';
 
@@ -51,7 +51,7 @@ const num = (t) => Number(String(t).replace(/ /g, '').replace(/,/g, ''));
 
 // ── the tabs ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 const tabs = page.locator('#charts button');
-check('the module announces four charts', (await tabs.count()) === 4 && (await tabs.allTextContents()).join('|') === 'Ten million samples|A stream|Five million points|Two hundred thousand candles', (await tabs.allTextContents()).join('|'));
+check('the module announces eight charts', (await tabs.count()) === 8 && (await tabs.allTextContents()).join('|') === 'Ten million samples|A stream|Five million points|Two hundred thousand candles|Scatter by value|A live histogram|A field with contours|The data graph', (await tabs.allTextContents()).join('|'));
 check('the first is selected and says what making the data cost', (await tabs.first().getAttribute('aria-selected')) === 'true' && /10 000 000 samples made in [\d.]+ ms, pyramid built in [\d.]+ ms/.test(await page.textContent('#info')), await page.textContent('#info'));
 console.log(`  (${await page.textContent('#info')})`);
 
@@ -157,6 +157,49 @@ check('zoomed in to a few dozen bars', d1 - d0 < 120 && d1 - d0 > 20, `${d0}..${
 console.log(`  (${Math.round(d1 - d0)} bars in view)`);
 const c1 = await look(GREEN);
 check('each bar is its own candle', c1.hits > 300, JSON.stringify(c1));
+
+// ── the science charts: a scatter by value, a live histogram on the data graph, a field with contours, the data graph as a diagram ──
+const VIRIDIS_MID = [0x21, 0x91, 0x8c], VIRIDIS_LOW = [0x44, 0x01, 0x54], VIRIDIS_HIGH = [0xfd, 0xe7, 0x25], GREEN2 = [0x22, 0xc5, 0x5e];
+await tabs.nth(4).click();
+await page.waitForFunction(() => /points made in/.test(document.getElementById('info')?.textContent ?? ''), null, { timeout: 60000 });
+await settle(500);
+const sc = await look(VIRIDIS_MID);
+check('the scatter by value is drawn on the colour map: many colours, viridis in the density map and in the colour bar', sc.colours > 12 && sc.hits > 30, JSON.stringify(sc));
+check('the scatter says what it shows', /Scatter plot of 400\W000 points/.test(await page.textContent('#view')), await page.textContent('#view'));
+
+await tabs.nth(5).click();
+await page.waitForFunction(() => /samples appended/.test(document.getElementById('info')?.textContent ?? ''), null, { timeout: 60000 });
+await settle(600);
+const countOf = async () => Number(((/Histogram of ([\d\s\u00a0\u202f,]+) samples/.exec(await page.textContent('#view')) ?? [])[1] ?? '').replace(/[\s\u00a0\u202f,]/g, ''));
+const h0 = await countOf();
+const hv = await look(GREEN2);
+check('the live histogram draws its bars in the series colour', hv.hits > 1500, JSON.stringify(hv));
+await settle(1500);
+const h1 = await countOf();
+check('and grows while it is shown: 4 000 samples a second reach the column and the bars', h1 - h0 > 3000, `${h0} then ${h1}`);
+console.log(`  (histogram: ${h0} samples, then ${h1}; ${await page.textContent('#info')})`);
+p = await plot();
+await page.mouse.move(p.x + p.w * 0.6, p.y + p.h * 0.5);
+await page.mouse.wheel(0, -300);
+await settle(400);
+const hz = await look(GREEN2);
+check('a zoom redraws the bars (the scene is made again, the counts are not)', hz.hits > 300 && hz.hash !== hv.hash, JSON.stringify(hz));
+
+await tabs.nth(6).click();
+await page.waitForFunction(() => /values made in/.test(document.getElementById('info')?.textContent ?? ''), null, { timeout: 60000 });
+await settle(500);
+const fv = await look(VIRIDIS_LOW);
+check('the field is drawn as coloured cells with contour lines: many colours, the low end and the high end of the map', fv.colours > 20 && fv.hits > 500, JSON.stringify(fv));
+check('the field says what it shows', /Field of 172\W800 values/.test(await page.textContent('#view')), await page.textContent('#view'));
+
+await tabs.nth(7).click();
+await page.waitForFunction(() => /nodes and .* links laid out/.test(document.getElementById('info')?.textContent ?? ''), null, { timeout: 60000 });
+await settle(500);
+const gv = await look();
+check('the data graph is drawn as boxes and lines', gv.colours > 6, JSON.stringify(gv));
+check('it is the graph of the document: 16 nodes and 42 links', /16 nodes and 42 links/.test(await page.textContent('#view')), await page.textContent('#view'));
+console.log(`  (${await page.textContent('#info')})`);
+await tabs.nth(3).click();                                   // the benchmark follows the candles, as before
 
 // ── the benchmark ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 await page.evaluate(() => { document.getElementById('bench').open = true; });
