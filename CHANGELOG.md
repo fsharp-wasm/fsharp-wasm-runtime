@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `Browser.Files.download fileName mimeType text` (`runtime/files.js`, also `@fsharp-wasm/runtime/files`): a text handed to the person as a file. The newsletter designer had a click handler for it in its page (`data-download`); a module calls this now. `tests/e2e/files.mjs` takes the download in Chromium: the name, the text as UTF-8, an empty mime type, an empty text.
+
 ### Fixed
 - `gfx.js` told the module the wheel in the browser's raw pixels (about 100 to a notch, positive for down); the widgets take notches with positive Y up, as the desktop hosts give them, and move 36 px a notch, so a notch down moved a `ScrollView` or a grid by thousands of pixels and the wrong way. The host converts pixels, lines and pages to notches. Found by measuring the scrolling of the accounting grid.
 

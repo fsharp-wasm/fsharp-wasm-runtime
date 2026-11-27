@@ -19,6 +19,7 @@
     "./gpu": "./runtime/gpu.js",
     "./components": "./runtime/components.js",
     "./clipboard": "./runtime/clipboard.js",
+    "./files": "./runtime/files.js",
     "./cookies": "./runtime/cookies.js",
     "./location": "./runtime/location.js",
     "./pointer": "./runtime/pointer.js",

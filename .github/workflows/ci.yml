@@ -26,6 +26,8 @@ jobs:
         run: node tests/e2e/events.mjs
       - name: Keys (what the glue tells a module about the keyboard)
         run: node tests/e2e/keys.mjs
+      - name: Files (a text handed to the person as a download)
+        run: node tests/e2e/files.mjs
 
       - name: The DOM reconciler with SVG (the namespace, a kept element, the class)
         run: node tests/e2e/dom.mjs

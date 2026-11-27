@@ -16,6 +16,7 @@ export * as timing     from "./runtime/timing.js";
 export * as gpu        from "./runtime/gpu.js";
 export * as components from "./runtime/components.js";
 export * as clipboard  from "./runtime/clipboard.js";
+export * as files      from "./runtime/files.js";
 export * as cookies    from "./runtime/cookies.js";
 export * as location_  from "./runtime/location.js";
 export * as pointer    from "./runtime/pointer.js";

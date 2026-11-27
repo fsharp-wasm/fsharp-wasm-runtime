@@ -117,6 +117,14 @@ val writeText : string -> (unit -> unit) -> (string -> unit) -> unit
 val readText  : (string -> unit) -> (string -> unit) -> unit
 ```
 
+## Browser.Files
+
+Hand a text to the person as a file (a download). Call it from a click handler: the browser saves or asks by its own rules.
+
+```fsharp
+val download : string -> string -> string -> unit   // file name, mime type ("" is text/plain), text
+```
+
 ## Browser.Location
 
 Browser URL and History API.

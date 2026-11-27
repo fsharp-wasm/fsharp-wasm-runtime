@@ -27,6 +27,7 @@ import * as timingModule    from "./timing.js";
 import * as indexeddbModule from "./indexeddb.js";
 import * as gpuModule       from "./gpu.js";
 import * as clipboardModule from "./clipboard.js";
+import * as filesModule from "./files.js";
 import * as locationModule  from "./location.js";
 import * as pointerModule   from "./pointer.js";
 import * as componentsModule from "./components.js";
@@ -94,6 +95,7 @@ function imports() {
         "runtime/indexeddb.js":  indexeddbModule,
         "runtime/gpu.js":        gpuModule,
         "runtime/clipboard.js":  clipboardModule,
+        "runtime/files.js":      filesModule,
         "runtime/location.js":   locationModule,
         "runtime/pointer.js":    pointerModule,
         "runtime/components.js": componentsModule,
