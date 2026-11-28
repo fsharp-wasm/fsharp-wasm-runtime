@@ -39,18 +39,33 @@ Workers.postMessage worker "compute something"
 
 ## WebGPU Integration
 
-Basic WebGPU support for GPU-accelerated rendering:
+`Browser.Gpu` drives WebGPU directly: the device, WGSL shaders, buffers, render and compute pipelines. A canvas that a pass
+draws into needs `configureContext`; every asynchronous step ends in a callback.
 
 ```fsharp
 open Browser.Gpu
 
-if isAvailable () then
-    let adapter = requestAdapter ()
-    let device = requestDevice adapter
-    let format = getPreferredFormat ()
-    let ctx = configureContext canvasElement device format
-    // Use GPU context for rendering
+let shader = """
+@vertex fn vs(@builtin(vertex_index) i: u32) -> @builtin(position) vec4f {
+    let p = array(vec2f(0.0, 0.7), vec2f(-0.7, -0.6), vec2f(0.7, -0.6));
+    return vec4f(p[i], 0.0, 1.0);
+}
+@fragment fn fs() -> @location(0) vec4f { return vec4f(1.0, 0.5, 0.0, 1.0); }
+"""
+
+requestDevice
+    (fun device ->
+        let format = getPreferredFormat ()
+        let context = configureContext (Element.ofId "scene") device format
+        let pipeline = createRenderPipeline device (renderDesc (createShader device shader) format)
+        submit device (fun enc ->
+            renderPass enc context (0.0, 0.0, 0.0, 1.0) (fun pass ->
+                Render.setPipeline pass pipeline
+                Render.draw pass 3 1)))
+    (fun why -> printfn "%s" why)
 ```
+
+Buffers, uniforms, vertex layouts, compute and readback are in [webgpu-direct.md](webgpu-direct.md).
 
 ## IndexedDB Persistence
 

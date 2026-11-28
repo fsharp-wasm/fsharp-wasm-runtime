@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas 2D from F# — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    canvas#scene { width: 100%; max-width: 400px; border-radius: var(--pico-border-radius); }
+    canvas#inset { display: none; }
+    .hint { font-size: .85rem; opacity: .7; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+  <script src="../../runtime/frame.js" data-compact data-here="Canvas 2D"></script>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>Canvas 2D from F#</h1>
+      <p>Everything on this canvas is drawn by an F# program compiled to WebAssembly GC through <code>Browser.Canvas</code>:
+         a gradient, a turned and shadowed rounded rectangle, a clip, an even-odd fill, a dashed curve, text, and a second canvas.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <canvas id="scene" width="400" height="300" aria-label="A picture drawn by an F# program: a gradient background, an orange card, a clipped white band, a red frame, a dashed yellow curve, a label and a small green square."></canvas>
+    <canvas id="inset" width="40" height="40"></canvas>
+    <p id="measured" class="hint"></p>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    boot({ wasm: new URL("CanvasDraw.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

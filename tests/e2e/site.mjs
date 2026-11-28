@@ -70,7 +70,7 @@ check('benchmark: F# and JavaScript agree on every result', rows.every((r) => r[
 
 // every demo in the gallery opens and boots
 const links = await page.locator('#demos .gallery a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
-check('gallery lists sixteen demos', links.length === 16, String(links.length));
+check('gallery lists eighteen demos', links.length === 18, String(links.length));
 for (const href of links) {
   const p = await browser.newPage();
   const errs = [];

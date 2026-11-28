@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGPU from F# — F# → WasmGC</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    canvas#scene { width: 100%; max-width: 400px; border-radius: var(--pico-border-radius); background: #0d1326; }
+    .readout { font-family: var(--pico-font-family-monospace); font-size: .9rem; margin: .25rem 0; }
+  </style>
+  <script src="../../runtime/embed.js"></script>
+  <script src="../../runtime/frame.js" data-compact data-here="WebGPU direct"></script>
+</head>
+<body>
+  <header class="container">
+    <nav><a href="../../index.html">← All Demos</a><span>F# → WasmGC</span></nav>
+    <hgroup>
+      <h1>WebGPU from F#</h1>
+      <p>A WGSL render pipeline and two compute jobs, driven by an F# program compiled to WebAssembly GC through <code>Browser.Gpu</code>:
+         a vertex buffer, a uniform written every frame, the same triangle drawn into a texture and read back as pixels, and a storage buffer squared on the GPU and read back as text and through linear memory.</p>
+    </hgroup>
+  </header>
+
+  <main class="container">
+    <article id="status-banner"><p id="status">Loading…</p></article>
+    <p id="gpu" class="readout">Waiting for the GPU…</p>
+    <button id="animate">Animate on the canvas</button>
+    <canvas id="scene" width="400" height="300" aria-label="A triangle drawn and turned by the GPU: red at the top, green at the bottom left, blue at the bottom right."></canvas>
+    <p id="canvas-status" class="readout"></p>
+    <p id="frames" class="readout"></p>
+    <p id="offscreen" class="readout"></p>
+    <p id="squares" class="readout"></p>
+    <p id="memory-sum" class="readout"></p>
+  </main>
+
+  <script type="module">
+    import { boot } from "../../runtime/boot.js";
+    boot({ wasm: new URL("WebGpuDirect.wasm", import.meta.url), entry: "start" });
+  </script>
+</body>
+</html>

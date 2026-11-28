@@ -171,7 +171,7 @@ fsharp-wasm-runtime/
 | `Browser.IndexedDb` | IndexedDB wrapper |
 | `Browser.Workers` | Web Workers |
 | `Browser.Timing` | setTimeout, setInterval, rAF |
-| `Browser.Gpu` | WebGPU (basic) |
+| `Browser.Gpu` | WebGPU directly: device, WGSL shaders, buffers, render and compute pipelines, bind groups, readback |
 | `Browser.Css` | CSS DSL with active patterns |
 | `Browser.Quotations` | Meta-programming with quotations |
 
@@ -190,6 +190,8 @@ fsharp-wasm-runtime/
 | Charts | A line of ten million samples, a stream, a density map of five million points and 200 000 candles from the scene graph, with the benchmark of the pyramid against reading every sample (the F# library is [FSharp.Graphics.Charts](https://github.com/fsharp-wasm/fsharp-wasm-graphics/blob/develop/docs/charts.md)) |
 | Actor Orchestra | An Erlang-style orchestra: supervised Web Workers, mailboxes and a pure orchestrator for a Monte Carlo estimate of π; kill or crash a worker mid-run ([docs/actors.md](docs/actors.md)) |
 | WebGPU Basic | GPU availability check + canvas |
+| WebGPU from F# | `Browser.Gpu` directly: a triangle drawn into a texture and read back as pixels, an animated one on a canvas, and two compute jobs read back as text and through linear memory ([docs/webgpu-direct.md](docs/webgpu-direct.md)) |
+| Canvas 2D from F# | The whole of `Browser.Canvas`: gradient, transforms, shadow, clip, even-odd fill, curves, dashes, text and a second canvas |
 | Benchmark | Thirteen kernels, F# vs JavaScript, timed in a worker; chart, spreads, JSON export — results in [docs/benchmarks.md](docs/benchmarks.md) |
 | Benchmarks (results) | Speed, size and network load times, recorded and public: [`/benchmarks/`](site/benchmarks/index.html), [docs/benchmarks.md](docs/benchmarks.md) |
 | Full Dashboard | All features combined |

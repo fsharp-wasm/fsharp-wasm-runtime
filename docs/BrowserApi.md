@@ -147,25 +147,76 @@ val onPopState  : (string -> unit) -> unit
 
 ## Browser.Canvas
 
+The 2D canvas. See `demos/canvas-draw` for all of it on one picture; the e2e test checks its pixels.
+
 ```fsharp
 type Context2D                          // Typed 2D context wrapper
+type Gradient
 
 val getContext : Element -> Context2D
+
+// rectangles and paths
 val fillRect : Context2D -> float -> float -> float -> float -> unit
 val strokeRect : Context2D -> float -> float -> float -> float -> unit
 val clearRect : Context2D -> float -> float -> float -> float -> unit
-val setFillStyle : Context2D -> string -> unit
-val setStrokeStyle : Context2D -> string -> unit
-val setLineWidth : Context2D -> float -> unit
 val beginPath : Context2D -> unit
 val closePath : Context2D -> unit
 val moveTo : Context2D -> float -> float -> unit
 val lineTo : Context2D -> float -> float -> unit
 val arc : Context2D -> float -> float -> float -> float -> float -> unit
+val arcTo : Context2D -> float -> float -> float -> float -> float -> unit
+val ellipse : Context2D -> float -> float -> float -> float -> float -> float -> float -> unit
+val rect : Context2D -> float -> float -> float -> float -> unit          // a rectangle as a subpath
+val roundRect : Context2D -> float -> float -> float -> float -> float -> unit
+val quadraticCurveTo : Context2D -> float -> float -> float -> float -> unit
+val bezierCurveTo : Context2D -> float -> float -> float -> float -> float -> float -> unit
 val fill : Context2D -> unit
+val fillEvenOdd : Context2D -> unit     // a subpath inside another one is a hole
 val stroke : Context2D -> unit
-val fillText : Context2D -> string -> float -> float -> unit
+val clip : Context2D -> unit            // what is drawn next shows only inside the path
+val clipEvenOdd : Context2D -> unit
+
+// transforms and state
+val save : Context2D -> unit
+val restore : Context2D -> unit
+val withState : Context2D -> (unit -> 'T) -> 'T    // save, run, restore: the transform, clip and style are put back
+val translate : Context2D -> float -> float -> unit
+val rotate : Context2D -> float -> unit            // radians
+val scale : Context2D -> float -> float -> unit
+val setTransform : Context2D -> float -> float -> float -> float -> float -> float -> unit
+val resetTransform : Context2D -> unit
+
+// colour, line, shadow, compositing
+val setFillStyle : Context2D -> string -> unit
+val setStrokeStyle : Context2D -> string -> unit
+val setLineWidth : Context2D -> float -> unit
+val setLineCap : Context2D -> string -> unit       // "butt" | "round" | "square"
+val setLineJoin : Context2D -> string -> unit      // "miter" | "round" | "bevel"
+val setMiterLimit : Context2D -> float -> unit
+val setLineDash : Context2D -> float list -> unit  // dash and gap lengths; [] is a solid line
+val setGlobalAlpha : Context2D -> float -> unit
+val setShadow : Context2D -> string -> float -> float -> float -> unit   // colour, blur, dx, dy
+val clearShadow : Context2D -> unit
+val setCompositeOperation : Context2D -> string -> unit                  // "source-over", "multiply", "lighter", …
+
+// gradients
+val createLinearGradient : Context2D -> float -> float -> float -> float -> Gradient
+val createRadialGradient : Context2D -> float -> float -> float -> float -> float -> float -> Gradient
+val addColorStop : Gradient -> float -> string -> unit
+val setFillGradient : Context2D -> Gradient -> unit
+val setStrokeGradient : Context2D -> Gradient -> unit
+val linearGradient : Context2D -> float -> float -> float -> float -> (float * string) list -> Gradient
+
+// text
 val setFont : Context2D -> string -> unit
+val fillText : Context2D -> string -> float -> float -> unit
+val strokeText : Context2D -> string -> float -> float -> unit
+val setTextAlign : Context2D -> string -> unit
+val setTextBaseline : Context2D -> string -> unit
+val measureText : Context2D -> string -> float     // the width the text takes in the current font
+
+// another canvas drawn into this one
+val drawCanvas : Context2D -> Element -> float -> float -> float -> float -> unit
 ```
 
 ## Browser.Components
@@ -278,18 +329,66 @@ val cancelAnimationFrame : int -> unit
 
 ## Browser.Gpu
 
-WebGPU (basic support).
+WebGPU, directly: a device, WGSL shaders, buffers, render and compute pipelines, bind groups, passes and readback. What is
+asynchronous (`requestDevice`, `readFloats`, `readToMemory`, `shaderErrors`) ends in a callback. What is made once is a handle
+in the runtime's store; an encoder and a pass live for one frame and are released by `submit`, `renderPass` and `computePass`,
+so a frame loop leaks nothing. See `docs/webgpu-direct.md` and `demos/webgpu-direct`.
 
 ```fsharp
-type Adapter
-type Device
-type GpuContext
+type Device; GpuContext; GpuTexture; Shader; GpuBuffer; RenderPipeline; ComputePipeline; BindGroup; Encoder; RenderPass; ComputePass
+
+module Usage =                                    // GPUBufferUsage, combined with |||
+    val mapRead; mapWrite; copySrc; copyDst; index; vertex; uniform; storage : int
 
 val isAvailable : unit -> bool
-val requestAdapter : unit -> Adapter
-val requestDevice : Adapter -> Device
-val configureContext : Element -> Device -> string -> GpuContext
 val getPreferredFormat : unit -> string
+val requestDevice : (Device -> unit) -> (string -> unit) -> unit      // onReady, onFail (why there is none)
+val configureContext : Element -> Device -> string -> GpuContext
+
+val createShader : Device -> string -> Shader                         // WGSL
+val shaderErrors : Shader -> (string -> unit) -> unit                 // "error line:col message" lines, "" when clean
+
+module TextureUsage =                             // GPUTextureUsage, combined with |||
+    val copySrc; copyDst; textureBinding; storageBinding; renderAttachment : int
+
+val onLost : Device -> (string -> unit) -> unit                       // "reason: message", when the device is lost
+
+val createBuffer : Device -> int -> int -> GpuBuffer                  // size in bytes (a multiple of 4), usage
+val destroyBuffer : GpuBuffer -> unit
+val writeFloats : Device -> GpuBuffer -> int -> float list -> unit    // float32, at a byte offset
+val writeUints : Device -> GpuBuffer -> int -> int list -> unit       // uint32
+val writeFromMemory : Device -> GpuBuffer -> int -> int -> int -> unit // byte offset, memory offset, byte length
+val readFloats : Device -> GpuBuffer -> int -> (float list -> unit) -> unit
+val readToMemory : Device -> GpuBuffer -> int -> int -> (bool -> unit) -> unit
+
+val createTexture : Device -> int -> int -> string -> int -> GpuTexture   // width, height, format ("rgba8unorm"), usage
+val destroyTexture : GpuTexture -> unit
+val readPixels : Device -> GpuTexture -> int -> int -> int -> int -> (int list -> unit) -> unit   // x, y, width, height; r,g,b,a,…
+
+type VertexFormat = Float32 | Float32x2 | Float32x3 | Float32x4 | Uint32 | Sint32 | Unorm8x4
+type Topology = TriangleList | TriangleStrip | LineList | LineStrip | PointList
+type VertexAttribute = { Location: int; Format: VertexFormat; Offset: int }
+type VertexLayout = { Stride: int; PerInstance: bool; Attributes: VertexAttribute list }
+type RenderPipelineDesc = { Shader; VertexEntry; FragmentEntry; Format; Topology; Layouts; Blend }
+val renderDesc : Shader -> string -> RenderPipelineDesc               // entry points "vs" and "fs", triangles, no blending
+val createRenderPipeline : Device -> RenderPipelineDesc -> RenderPipeline
+val createComputePipeline : Device -> Shader -> string -> ComputePipeline
+
+type Binding = { Slot: int; Buffer: GpuBuffer; Offset: int; Size: int }
+val bindBuffer : int -> GpuBuffer -> Binding
+val createRenderBindGroup : Device -> RenderPipeline -> int -> Binding list -> BindGroup
+val createComputeBindGroup : Device -> ComputePipeline -> int -> Binding list -> BindGroup
+
+val submit : Device -> (Encoder -> unit) -> unit
+val copyBuffer : Encoder -> GpuBuffer -> int -> GpuBuffer -> int -> int -> unit
+val renderPass : Encoder -> GpuContext -> (float * float * float * float) -> (RenderPass -> unit) -> unit
+val renderPassToTexture : Encoder -> GpuTexture -> (float * float * float * float) -> (RenderPass -> unit) -> unit
+val computePass : Encoder -> (ComputePass -> unit) -> unit
+module Render =  setPipeline; setBindGroup; setVertexBuffer; setIndexBuffer; draw; drawIndexed; setViewport; setScissor
+module Compute = setPipeline; setBindGroup; dispatch
+
+val validate : Device -> (unit -> unit) -> (string -> unit) -> unit   // the first validation error of the body, "" when none
+val releaseShader; releaseRenderPipeline; releaseComputePipeline; releaseBindGroup
 ```
 
 ## Browser.Css
