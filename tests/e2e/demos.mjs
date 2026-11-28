@@ -1,16 +1,16 @@
 // End-to-end: every demo, compiled from F# to WasmGC, runs in a real Chromium and does what its source says.
 //   node build/build.js && node tests/e2e/demos.mjs [demo …]      (E2E_ROOT=site: test the committed site instead of dist/)
-import { serve, launch, checker } from './lib.mjs';
+import { serve, launch, checker, GPU_FLAGS } from './lib.mjs';
 
 const { server, base } = await serve();
 const { check, failures } = checker();
 const only = process.argv.slice(2);
 
-/** One demo = one page: run `body(page, t)` against it and assert that nothing threw. */
-const demo = async (name, body) => {
+/** One demo = one page: run `body(page, t)` against it and assert that nothing threw. `args` are flags for Chromium (GPU_FLAGS: a WebGPU adapter without a GPU). */
+const demo = async (name, body, args = []) => {
   if (only.length && !only.includes(name)) return;
   console.log(`\n── ${name}`);
-  const { browser, page, errors } = await launch();
+  const { browser, page, errors } = await launch(args);
   try {
     await page.goto(`${base}/demos/${name}/`);
     await page.waitForFunction(() => /Loaded|loaded/.test(document.getElementById('status')?.textContent ?? ''), null, { timeout: 15000 });
@@ -195,6 +195,43 @@ await demo('canvas-draw', async (page) => {
   check('a second canvas is drawn into the first: green edge, white middle',
     near(await at(333, 233), [22, 163, 74]) && near(await at(350, 250), [255, 255, 255]), JSON.stringify([await at(333, 233), await at(350, 250)]));
 });
+
+await demo('webgpu-direct', async (page) => {
+  const read = (sel) => page.evaluate((sel) => document.querySelector(sel)?.textContent ?? '', sel);
+  const until = (sel, re) => page.waitForFunction(([sel, re]) => new RegExp(re).test(document.querySelector(sel)?.textContent ?? ''), [sel, re], { timeout: 20000 });
+  await until('#gpu', 'ready|WebGPU');
+  check('a WebGPU device was had (SwiftShader)', /device ready/.test(await read('#gpu')), await read('#gpu'));
+
+  // compute through text: 1..8 go in as text, are squared on the GPU and come back as text
+  await until('#squares', 'squares: ');
+  check('compute through text: the squares of 1..8', (await read('#squares')) === 'squares: 1,4,9,16,25,36,49,64', await read('#squares'));
+
+  // compute through the module's linear memory: 1024 numbers in, squared on the GPU, back in memory, summed by the module
+  await until('#memory-sum', 'sum of squares');
+  const n = 1024, want = (n - 1) * n * (2 * n - 1) / 6;
+  check('compute through linear memory: the sum of the squares of 0..1023', (await read('#memory-sum')) === `sum of squares: ${want}`, `${await read('#memory-sum')} (want ${want})`);
+
+  // the triangle drawn into a texture (nothing is presented) and read back: the render pipeline, the vertex buffer, the uniform and the bind group by pixels
+  await until('#offscreen', 'offscreen pixels');
+  const text = await read('#offscreen');
+  const pixel = (name) => (new RegExp(`${name}=(\\d+),(\\d+),(\\d+),(\\d+)`).exec(text) ?? []).slice(1).map(Number);
+  const [corner, middle, top] = [pixel('corner'), pixel('middle'), pixel('top')];
+  const near = (got, want, tol) => got.length === want.length && got.every((v, i) => Math.abs(v - want[i]) <= tol);
+  check('the texture is cleared to the dark blue outside the triangle', near(corner, [13, 18, 38, 255], 2), text);
+  // at angle 0 the middle is red 46 %, green and blue 27 % each: (118, 69, 69)
+  check('the middle of the triangle is the blend of the three vertex colours', near(middle, [118, 69, 69, 255], 10), text);
+  check('near the top vertex the triangle is red', top[0] > 200 && top[1] < 45 && top[2] < 45 && top[3] === 255, text);
+
+  // the animation, last: a uniform written every frame, presented on the canvas when the button is pressed. A software adapter loses its device when a
+  // canvas is presented again and again (measured with plain WebGPU), so what is judged is that the loop ran and either goes on or says why it stopped.
+  await page.click('#animate');
+  await until('#canvas-status', 'drawing|lost');
+  await page.waitForTimeout(1000);
+  const frames = Number((/\d+/.exec(await read('#frames')) ?? ['0'])[0]);
+  const status = await read('#canvas-status');
+  check('the animation ran: frames were drawn, and it goes on or says why it stopped', frames >= 1 && /drawing|lost/.test(status), `${frames} frames; ${status}`);
+  console.log(`  (animation: ${frames} frames; ${status})`);
+}, GPU_FLAGS);
 
 await demo('webgpu-basic', async (page) => {
   await page.click('button:has-text("Check WebGPU")');

@@ -175,6 +175,12 @@ const ALL_DEMOS = [
         desc:   "The whole of Browser.Canvas: a gradient, transforms, shadow, clip, even-odd fill, curves, dashes, text and a second canvas.",
     },
     {
+        name:   "webgpu-direct",
+        fsproj: "demos/webgpu-direct/WebGpuDirect.fsproj",
+        title:  "WebGPU from F#",
+        desc:   "Direct WebGPU through Browser.Gpu: a WGSL render pipeline with a vertex buffer and a uniform, and compute jobs read back as text and through linear memory.",
+    },
+    {
         name:   "counter",
         fsproj: "demos/counter/Counter.fsproj",
         title:  "Counter — Elmish MVU",

@@ -134,6 +134,7 @@ export async function boot({ wasm, entry, imports: replace }) {
         }
 
         ({ instance } = await WebAssembly.instantiateStreaming(response, imports, COMPILE_OPTIONS));
+        coreModule.setInstance(instance);
 
         const entryFn = instance.exports[entry];
         if (typeof entryFn !== "function") {

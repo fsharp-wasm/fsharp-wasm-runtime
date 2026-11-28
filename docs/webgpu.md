@@ -2,6 +2,8 @@
 
 Dated 2026-11-24. What was run that day is said as measured; what was not measured is said as not measured.
 
+(This is the scene graph's canvas host. For F# programs that drive WebGPU themselves — shaders, buffers, pipelines, compute — see [webgpu-direct.md](webgpu-direct.md).)
+
 ## Where it stood
 
 Before this: `runtime/gpu.js` could ask for an adapter and a device and configure a canvas, and `demos/webgpu-basic` checked that `navigator.gpu` exists. Nothing drew with it.
