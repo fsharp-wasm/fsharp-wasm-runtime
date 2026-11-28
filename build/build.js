@@ -169,6 +169,12 @@ const ALL_DEMOS = [
         desc:   "Pure F# escape-time algorithm compiled to WasmGC, rendering to a 2D canvas.",
     },
     {
+        name:   "canvas-draw",
+        fsproj: "demos/canvas-draw/CanvasDraw.fsproj",
+        title:  "Canvas 2D from F#",
+        desc:   "The whole of Browser.Canvas: a gradient, transforms, shadow, clip, even-odd fill, curves, dashes, text and a second canvas.",
+    },
+    {
         name:   "counter",
         fsproj: "demos/counter/Counter.fsproj",
         title:  "Counter — Elmish MVU",

@@ -165,6 +165,37 @@ await demo('worker-actor', async (page) => {
   check('worker answered', (await page.locator('li').count()) > 0, await text(page, 'section'));
 });
 
+await demo('canvas-draw', async (page) => {
+  // what the F# program draws, point by point (device pixels = CSS pixels here); a tolerance for the gradient and the anti-aliased edges
+  const near = (got, want, tol = 8) => got.every((v, i) => Math.abs(v - want[i]) <= tol);
+  const at = (x, y) => canvasPixel(page, x, y, 'scene');
+  check('gradient: dark blue at the top', near(await at(2, 1), [30, 58, 138], 14), JSON.stringify(await at(2, 1)));
+  check('gradient: light blue at the bottom', near(await at(2, 298), [56, 189, 248], 14), JSON.stringify(await at(2, 298)));
+  check('a turned, shadowed rounded rectangle is orange in the middle', near(await at(200, 150), [245, 158, 11]), JSON.stringify(await at(200, 150)));
+  check('the clip: white band inside the circle', near(await at(70, 70), [255, 255, 255]), JSON.stringify(await at(70, 70)));
+  check('the clip: nothing of the band outside the circle', !near(await at(135, 70), [255, 255, 255], 30), JSON.stringify(await at(135, 70)));
+  check('even-odd: the ring of the frame is red', near(await at(295, 25), [220, 38, 38]), JSON.stringify(await at(295, 25)));
+  check('even-odd: the hole is not filled', !near(await at(335, 65), [220, 38, 38], 40), JSON.stringify(await at(335, 65)));
+  // the curve starts at (20, 270), dashed and with round caps: some pixel of the first dash is yellow
+  const yellow = await page.evaluate(() => {
+    const d = document.getElementById('scene').getContext('2d').getImageData(14, 262, 16, 16).data;
+    let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] > 200 && d[i + 1] > 150 && d[i + 2] < 90) n++;
+    return n;
+  });
+  check('the dashed curve starts with a yellow dash', yellow > 6, String(yellow));
+  const white = await page.evaluate(() => {
+    const d = document.getElementById('scene').getContext('2d').getImageData(20, 12, 130, 24).data;
+    let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] > 235 && d[i + 1] > 235 && d[i + 2] > 235) n++;
+    return n;
+  });
+  check('the label is drawn in white', white > 60, String(white));
+  const measured = await text(page, '#measured');
+  const px = Number((/(\d+) px/.exec(measured) ?? [])[1]);
+  check('measureText reports the width of the label', px > 100 && px < 200, measured);
+  check('a second canvas is drawn into the first: green edge, white middle',
+    near(await at(333, 233), [22, 163, 74]) && near(await at(350, 250), [255, 255, 255]), JSON.stringify([await at(333, 233), await at(350, 250)]));
+});
+
 await demo('webgpu-basic', async (page) => {
   await page.click('button:has-text("Check WebGPU")');
   await page.waitForTimeout(500);
